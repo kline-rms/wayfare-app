@@ -1,0 +1,64 @@
+{
+  "artboards": [
+    {
+      "file": "Purpose.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Purpose"
+    },
+    {
+      "file": "Proposals.dc.html",
+      "x": 490,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Proposals"
+    },
+    {
+      "file": "CustomizeActivities.dc.html",
+      "x": 980,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "CustomizeActivities"
+    },
+    {
+      "file": "RecommendedPlaces.dc.html",
+      "x": 1470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "RecommendedPlaces"
+    },
+    {
+      "file": "CustomizePlaces.dc.html",
+      "x": 1960,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "CustomizePlaces"
+    },
+    {
+      "file": "ConfirmGenerate.dc.html",
+      "x": 2450,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "ConfirmGenerate"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t",
+      "x": 0,
+      "y": -130,
+      "w": 940,
+      "text": "Wayfare — Itinerary Builder (redesigned: immersive, borderless, type-led)\nPurpose (big serif prompt) → immersive full-screen proposal pager (swipe 3; activities overlaid, no side-border cards) → borderless customize · big-row swaps → photo-forward recommended places (we recommend) → choose among picks → cinematic confirm & generate."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "artboards": [
+    {
+      "file": "PurposePicker.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "PurposePicker"
+    },
+    {
+      "file": "Date.dc.html",
+      "x": 500,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Date"
+    },
+    {
+      "file": "City.dc.html",
+      "x": 1000,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "City"
+    },
+    {
+      "file": "Foodie.dc.html",
+      "x": 1500,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Foodie"
+    },
+    {
+      "file": "Family.dc.html",
+      "x": 2000,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Family"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t",
+      "x": 0,
+      "y": -140,
+      "w": 940,
+      "text": "Wayfare — Purpose templates: different STRUCTURE + mood per purpose, same itinerary FORMAT underneath (time · destination · plan · travel mode+cost · food cost range · from-origin)."
+    },
+    {
+      "id": "p",
+      "x": 0,
+      "y": -42,
+      "w": 390,
+      "text": "Picker → builds the chosen layout."
+    },
+    {
+      "id": "d",
+      "x": 500,
+      "y": -42,
+      "w": 390,
+      "text": "Date — romantic evening timeline (serif, dark). Travel connectors + food ranges."
+    },
+    {
+      "id": "c",
+      "x": 1000,
+      "y": -42,
+      "w": 390,
+      "text": "City — fresh multi-day dashboard: day rail + map + highlights grid w/ time+travel+cost."
+    },
+    {
+      "id": "f",
+      "x": 1500,
+      "y": -42,
+      "w": 390,
+      "text": "Foodie — delicious feed: numbered dishes, walk connectors, food price ranges."
+    },
+    {
+      "id": "fa",
+      "x": 2000,
+      "y": -42,
+      "w": 390,
+      "text": "Family — warm cozy blocks: time, plan, duration·ages·travel·cost chips, checklist."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "artboards": [
+    {
+      "file": "Tangerine.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Tangerine Warmth"
+    },
+    {
+      "file": "Tropical.dc.html",
+      "x": 480,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Tropical Fresh"
+    },
+    {
+      "file": "Electric.dc.html",
+      "x": 960,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Electric Play"
+    },
+    {
+      "file": "Sunset.dc.html",
+      "x": 1440,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Sunset Pop"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t",
+      "x": 0,
+      "y": -150,
+      "w": 700,
+      "text": "Wayfare — Color Directions\nSame screen, four palettes. Pick the vibe; I'll apply the winner across all screens. Structure/rounding is the target look; only the color changes."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

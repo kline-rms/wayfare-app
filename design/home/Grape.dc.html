@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
+<style>
+  .serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+  .grotesk{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.5px}
+  .mono{font-family:ui-monospace,'SF Mono','DM Mono',monospace}
+  :root{
+    --bg:#F6F2FF; --card:#FFFFFF; --ink:#241A33; --sec:#867B9C; --ter:#CBC2E0;
+    --line:#EAE4F8; --primary:#7C4DF0; --primaryd:#6A3CE0; --black:#7C4DF0; --knob:#6A3CE0;
+    --orange:#FF4D8D; --green:#3EA6FF; --blue:#23C99A; --purple:#FFB020;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration:none}
+  .frame{width:390px;height:844px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative}
+  .safe{height:52px;flex-shrink:0}
+  .pad{padding:0 22px}
+  .card{background:var(--card);border-radius:24px;box-shadow:0 8px 22px rgba(20,20,20,.06)}
+  .sec{color:var(--sec)}
+  .h1{font-size:28px;font-weight:800;letter-spacing:-.7px;line-height:1.08;margin:0}
+  .cta{position:relative;height:60px;border-radius:30px;background:var(--black);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;box-shadow:0 14px 26px rgba(23,24,26,.26)}
+  .cta .knob{position:absolute;right:8px;top:8px;width:44px;height:44px;border-radius:50%;background:var(--knob);display:flex;align-items:center;justify-content:center}
+  .chipbtn{height:38px;border-radius:19px;background:var(--card);box-shadow:0 6px 16px rgba(20,20,20,.10);display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:700}
+  .rbtn{box-shadow:0 8px 18px rgba(23,24,26,.22)}
+  .softsh{box-shadow:0 10px 24px rgba(20,20,20,.10)}
+  .navbtn{box-shadow:0 7px 16px rgba(0,0,0,.16)}
+  .stopcard{margin-bottom:10px}
+  .iconchip{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .weather{background:var(--card);border-radius:15px;padding:7px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(20,20,20,.05)}
+  .orb{width:26px;height:26px;border-radius:50%;flex-shrink:0;background-color:var(--ink);background-repeat:no-repeat;background-position:center;background-size:56%;background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M12%202l1.9%206.4L20%2010l-6.1%201.6L12%2018l-1.9-6.4L4%2010l6.1-1.6z'%20fill='%23fff'/%3E%3C/svg%3E");animation:orbpulse 2.8s ease-in-out infinite}
+  .aitip{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:22px;padding:14px;box-shadow:0 6px 16px rgba(20,20,20,.05)}
+  .stat{flex:1;display:flex;flex-direction:column;gap:3px}
+  .stat b{font-size:19px;font-weight:800;letter-spacing:-.4px}
+  .stat span{font-size:12px;color:var(--sec);font-weight:500}
+  .rail{width:40px;display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .dash{width:2px;flex:1;margin-top:6px;background-image:repeating-linear-gradient(to bottom,var(--ter) 0 4px,transparent 4px 10px)}
+  .stopcard{flex:1;background:var(--card);border-radius:20px;box-shadow:0 6px 16px rgba(20,20,20,.06);padding:14px 15px;margin-bottom:12px}
+  .field{height:56px;border-radius:16px;background:var(--card);box-shadow:0 3px 10px rgba(20,20,20,.04);display:flex;align-items:center;gap:12px;padding:0 16px}
+  .field input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;font-weight:500;color:var(--ink);width:100%}
+  .field input::placeholder{color:var(--ter)}
+  .label{font-size:13px;font-weight:600;color:var(--sec);margin-bottom:8px}
+  .photo{background:linear-gradient(135deg,#DAD8D3 0%,#C8C5BF 55%,#D2CFC9 100%);position:relative;overflow:hidden}
+  .photo .pi{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.45}
+  .dots{display:flex;gap:6px;align-items:center}
+  .dots i{width:6px;height:6px;border-radius:3px;background:var(--ter);display:block}
+  .dots i.on{width:20px;background:var(--ink)}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes sheetUp{0%{transform:translateY(115%)}70%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  @keyframes springIn{0%{transform:scale(.5);opacity:0}55%{transform:scale(1.1);opacity:1}75%{transform:scale(.96)}100%{transform:scale(1)}}
+  @keyframes popIn{0%{transform:scale(.86) translateY(12px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+  @keyframes ring{0%{transform:scale(.25);opacity:.5}100%{transform:scale(2.7);opacity:0}}
+  @keyframes floatUp{0%{transform:translate(0,0) scale(1);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx,0),-96px) scale(.35);opacity:0}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes drift{0%,100%{transform:translateY(5px)}50%{transform:translateY(-5px)}}
+  @keyframes drawline{to{stroke-dashoffset:0}}
+  @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(23,24,26,.18)}50%{box-shadow:0 0 40px 6px rgba(23,24,26,.10)}}
+  @keyframes orbpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  @keyframes staggerUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.16)}}
+  @keyframes livepulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.9);opacity:0}}
+  @keyframes fillbar{from{width:0}}
+  .kb{animation:kenburns 20s ease-in-out infinite alternate}
+  .a-fade{animation:fadeIn .35s ease both}
+  .a-sheet{animation:sheetUp .5s cubic-bezier(.2,.8,.2,1) both}
+  .a-spring{animation:springIn .7s cubic-bezier(.2,.9,.3,1.2) both}
+  .a-pop{animation:popIn .4s cubic-bezier(.2,.8,.2,1) both}
+  .a-spin{animation:spin 1s linear infinite}
+  .a-drift{animation:drift 3s ease-in-out infinite}
+</style>
+</helmet>
+<div class="frame">
+  <div class="safe"></div>
+  <div class="pad" style="padding-top:4px;display:flex;align-items:center;gap:12px">
+    <div style="width:46px;height:46px;border-radius:16px;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;animation:springIn .7s cubic-bezier(.2,.9,.3,1.25) both">KL</div>
+    <div style="flex:1"><div class="sec" style="font-size:12.5px;font-weight:600">Good morning</div><div style="font-size:19px;font-weight:800;letter-spacing:-.3px">Kline</div></div>
+    <div style="width:46px;height:46px;border-radius:16px;background:var(--card);box-shadow:0 6px 16px rgba(20,20,20,.10);display:flex;align-items:center;justify-content:center;position:relative"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.5 21a2 2 0 0 0 3 0"/></svg><span style="position:absolute;top:11px;right:12px;width:9px;height:9px;border-radius:50%;background:#FF4D8D;border:2px solid var(--card)"></span></div>
+  </div>
+
+  <div style="flex:1;overflow:hidden;padding-top:14px">
+    <!-- CINEMATIC HERO -->
+    <div class="pad"><div style="border-radius:28px;overflow:hidden;position:relative;height:298px;box-shadow:0 20px 44px rgba(20,20,20,.18);animation:popIn .6s cubic-bezier(.2,.8,.2,1) both">
+      <div class="kb" style="position:absolute;inset:0;background-image:url('bgc.jpg');background-size:cover;background-position:center"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,transparent 34%,rgba(0,0,0,.78) 100%)"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(140deg,#8B5CF63d,transparent 52%)"></div>
+      <div style="position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.34);backdrop-filter:blur(6px);border-radius:999px;padding:6px 12px">
+        <span style="position:relative;width:8px;height:8px"><span style="position:absolute;inset:0;border-radius:50%;background:#FF4D8D;animation:livepulse 1.8s ease-out infinite"></span><span style="position:absolute;inset:2px;border-radius:50%;background:#FF4D8D"></span></span>
+        <span style="color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px">LIVE · DAY 4</span>
+      </div>
+      <div style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border-radius:999px;padding:6px 11px;display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5.5L19.5 10l-5.5 2L12 17l-2-5-5.5-2L10 8.5z"/></svg><span style="color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.3px">AI PLAN</span></div>
+      <div style="position:absolute;left:18px;right:18px;bottom:16px;color:#fff">
+        <div class="a-pop" style="animation-delay:.25s"><div style="font-size:27px;font-weight:800;letter-spacing:-.6px">BGC + Manila</div>
+          <div style="font-size:12.5px;font-weight:600;opacity:.88;margin-top:2px">from Avida, Taguig · Aug 26 – Sep 6</div></div>
+        <div class="a-pop" style="animation-delay:.4s;display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.15);backdrop-filter:blur(6px);border-radius:15px;padding:8px 10px">
+          <div style="width:36px;height:36px;border-radius:11px;background-image:url('museum.jpg');background-size:cover;background-position:center;flex-shrink:0"></div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:800">Next · National Museum</div><div style="font-size:11px;font-weight:600;opacity:.85">1.4 km · 6 min · 12:30 PM</div></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        </div>
+        <div class="a-pop" style="animation-delay:.55s;display:flex;align-items:center;gap:12px;margin-top:12px">
+          <div style="flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.3);overflow:hidden"><div style="width:38%;height:6px;border-radius:3px;background:#fff;animation:fillbar 1.2s .3s ease-out both"></div></div>
+          <div style="background:var(--primary);color:#fff;border-radius:999px;padding:9px 20px;font-size:13px;font-weight:800;box-shadow:0 8px 18px #7C4DF066">Continue</div>
+        </div>
+      </div>
+    </div></div>
+
+    <!-- QUICK CREATE -->
+    <div class="pad a-pop" style="margin-top:16px;animation-delay:.12s;display:flex;gap:10px">
+      <div style="flex:1;height:56px;border-radius:999px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15.5px;font-weight:800;box-shadow:0 12px 26px #7C4DF059"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5.5L19.5 10l-5.5 2L12 17l-2-5-5.5-2L10 8.5z"/></svg> Plan a new trip</div>
+      <div style="width:56px;height:56px;border-radius:999px;background:var(--card);box-shadow:0 8px 18px rgba(20,20,20,.10);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></div>
+    </div>
+
+    <!-- TODAY AT A GLANCE (the generated format) -->
+    <div class="pad a-pop" style="margin-top:22px;animation-delay:.2s">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="font-size:16px;font-weight:800">Today at a glance</b><span style="font-size:12.5px;font-weight:700;color:var(--primary)">Open calendar</span></div>
+      <div class="card" style="border-radius:22px;padding:14px 15px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px"><span class="mono" style="font-size:10.5px;color:var(--ter);width:42px">9–12</span><div style="flex:1;height:28px;border-radius:9px;background:#7C4DF022;display:flex;align-items:center;padding:0 11px;font-size:11.5px;font-weight:800;color:#7C4DF0">National Museum · Intramuros</div></div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="mono" style="font-size:10.5px;color:var(--ter);width:42px">1 PM</span><div style="flex:1;height:28px;border-radius:9px;background:#8882;display:flex;align-items:center;padding:0 11px;font-size:11.5px;font-weight:800;color:#867B9C">Lunch · Binondo food crawl</div></div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="mono" style="font-size:10.5px;color:var(--ter);width:42px">5:30</span><div style="flex:1;height:28px;border-radius:9px;background:#8882;display:flex;align-items:center;padding:0 11px;font-size:11.5px;font-weight:800;color:#867B9C">Manila Bay · sunset</div></div>
+      </div>
+    </div>
+
+    <!-- YOUR TRIPS -->
+    <div class="pad a-pop" style="margin-top:22px;animation-delay:.28s">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="font-size:16px;font-weight:800">Your trips</b><span class="sec" style="font-size:12.5px;font-weight:700">See all</span></div>
+      <div style="display:flex;gap:12px">
+        <div class="card" style="width:160px;flex-shrink:0;border-radius:20px;overflow:hidden;padding:0"><div style="height:96px;background-image:url('manilabay.jpg');background-size:cover;background-position:center"></div><div style="padding:11px 13px"><div style="font-size:14px;font-weight:800">Iloilo Getaway</div><div class="sec" style="font-size:11.5px;font-weight:600;margin-top:2px">Sep 2026 · planned</div></div></div><div class="card" style="width:160px;flex-shrink:0;border-radius:20px;overflow:hidden;padding:0"><div style="height:96px;background-image:url('city.jpg');background-size:cover;background-position:center"></div><div style="padding:11px 13px"><div style="font-size:14px;font-weight:800">Cebu Food Run</div><div class="sec" style="font-size:11.5px;font-weight:600;margin-top:2px">Feb 2026 · past</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div style="height:76px;flex-shrink:0;background:var(--card);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;padding:6px 8px 12px">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg><span style="font-size:10.5px;font-weight:800;color:var(--ink)">Home</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CBC2E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg><span style="font-size:10.5px;font-weight:600;color:#CBC2E0">Trips</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CBC2E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.5 21a2 2 0 0 0 3 0"/></svg><span style="font-size:10.5px;font-weight:600;color:#CBC2E0">Alerts</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CBC2E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span style="font-size:10.5px;font-weight:600;color:#CBC2E0">Profile</span></div></div>
+</div>
+</x-dc>
+</body>
+</html>

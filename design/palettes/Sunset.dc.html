@@ -1,0 +1,62 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><script src="./support.js"></script></head><body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  *{box-sizing:border-box} body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#2A1720;background:#FFF3EF}
+  a{color:#FF5C7A;text-decoration:none}
+  .orb{width:26px;height:26px;border-radius:50%;position:relative;background:radial-gradient(circle at 34% 28%,#CFF8D8 0%,#63DB8D 36%,#2BB161 70%,#159A4F 100%);box-shadow:inset 0 -3px 6px rgba(0,70,25,.35),0 3px 7px rgba(45,177,97,.45)}
+  .orb::after{content:"";position:absolute;top:4px;left:6px;width:9px;height:6px;border-radius:50%;background:rgba(255,255,255,.8)}
+</style>
+</helmet>
+<div style="width:390px;height:844px;overflow:hidden;background:#FFF3EF;display:flex;flex-direction:column;position:relative">
+  <div style="height:50px;flex-shrink:0"></div>
+
+  <!-- photo banner (very rounded) -->
+  <div style="margin:6px 18px 0;height:186px;border-radius:30px;background-image:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.55)),url('bgc.jpg');background-size:cover;background-position:center;position:relative;overflow:hidden">
+    <div style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.92);border-radius:16px;padding:7px 11px;display:flex;align-items:center;gap:8px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="9" r="4" fill="#F7C948"/><g stroke="#F2B21A" stroke-width="1.6" stroke-linecap="round"><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.8 3.8l1.4 1.4M14.2 3.8l-1.4 1.4"/></g><path d="M8 13a4.5 4.5 0 0 1 4.4-3.5A4.5 4.5 0 0 1 21 12a3.5 3.5 0 0 1-.5 7H8a3.8 3.8 0 0 1 0-6z" fill="#E4E9EE" stroke="#CDD4DB" stroke-width="1.2"/></svg><div style="line-height:1.05"><b style="font-size:15px;font-weight:800">10°</b><div style="font-size:10px;color:#9E8088;font-weight:600">Cloudy</div></div></div>
+    <div style="position:absolute;left:18px;bottom:16px;color:#fff">
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.5px">BGC + Manila · 12 days</div>
+      <div style="font-size:12.5px;font-weight:600;opacity:.9;margin-top:3px">from Avida, BGC · Aug 26 – Sep 6</div>
+    </div>
+  </div>
+
+  <!-- category chips -->
+  <div style="display:flex;gap:12px;padding:20px 20px 0">
+    <div style="width:52px;height:52px;border-radius:18px;background:#FF9E45;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a3 3 0 0 1 0 6h-1"/><path d="M3 8h14v6a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8Z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg></div><div style="width:52px;height:52px;border-radius:18px;background:#7C5CFF;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21v-9M20 21v-9M10 21v-4a2 2 0 0 1 4 0v4M2 12l10-6 10 6"/></svg></div><div style="width:52px;height:52px;border-radius:18px;background:#23C99A;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-6M8 16a4 4 0 0 1-1-7.5A4.5 4.5 0 0 1 15.5 6 4 4 0 0 1 16 16H8Z"/></svg></div><div style="width:52px;height:52px;border-radius:18px;background:#FFC24B;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 4 0V3M6 3v18M15 3c-1.5 1-2 3-2 5s.5 3 2 3v10"/></svg></div>
+  </div>
+
+  <!-- stat row -->
+  <div style="display:flex;gap:6px;padding:22px 22px 0">
+    <div style="flex:1"><div style="font-size:19px;font-weight:800;letter-spacing:-.4px">5h 20m</div><div style="font-size:12px;color:#9E8088;font-weight:500">Travel</div></div><div style="flex:1"><div style="font-size:19px;font-weight:800;letter-spacing:-.4px">8 km</div><div style="font-size:12px;color:#9E8088;font-weight:500">Distance</div></div><div style="flex:1"><div style="font-size:19px;font-weight:800;letter-spacing:-.4px">4 stops</div><div style="font-size:12px;color:#9E8088;font-weight:500">Planned</div></div>
+  </div>
+
+  <!-- AI tip -->
+  <div style="margin:18px 22px 0;display:flex;align-items:center;gap:12px;background:#FFFFFF;border-radius:22px;padding:14px;box-shadow:0 8px 20px rgba(20,20,20,.06)">
+    <div class="orb"></div><div style="font-size:13px;font-weight:500;color:#9E8088;line-height:1.4">Old Manila is quietest <b style="color:">right at 9 AM</b> — start there.</div>
+  </div>
+
+  <!-- stop card with food photo -->
+  <div style="margin:14px 22px 0;display:flex;align-items:center;gap:13px;background:#FFFFFF;border-radius:22px;padding:12px;box-shadow:0 8px 20px rgba(20,20,20,.06)">
+    <div style="width:56px;height:56px;border-radius:16px;background-image:url('dinner.jpg');background-size:cover;background-position:center;flex-shrink:0"></div>
+    <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700">Old Manila lunch</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9E8088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span style="font-size:12.5px;color:#9E8088;font-weight:500">1:00 PM</span><span style="width:1px;height:11px;background:#F6E4DE"></span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9E8088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg><span style="font-size:12.5px;color:#9E8088;font-weight:500">Intramuros, Manila</span></div>
+    </div>
+    <div style="width:32px;height:32px;border-radius:16px;background:#FF9E4522;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FF9E45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 4 0V3M6 3v18M15 3c-1.5 1-2 3-2 5s.5 3 2 3v10"/></svg></div>
+  </div>
+
+  <div style="flex:1"></div>
+
+  <!-- bottom: floating white rounded card with inner rounded PRIMARY button -->
+  <div style="margin:0 18px 26px;background:#FFFFFF;border-radius:28px;padding:14px 14px 14px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 14px 30px rgba(20,20,20,.10)">
+    <div style="flex:1"><div style="font-size:16px;font-weight:800">You're at the Museum</div><div style="font-size:12.5px;color:#9E8088;font-weight:500">Confirm to complete this stop.</div></div>
+    <div style="height:52px;border-radius:26px;background:#FF5C7A;color:#fff;display:flex;align-items:center;gap:8px;padding:0 20px;font-size:15px;font-weight:700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> I'm here</div>
+  </div>
+
+  <!-- palette label -->
+  <div style="position:absolute;top:14px;left:0;right:0;display:flex;justify-content:center"><div style="background:#2A1720;color:#FFF3EF;font-size:11px;font-weight:800;letter-spacing:.5px;padding:5px 13px;border-radius:999px">SUNSET POP</div></div>
+</div>
+</x-dc>
+</body></html>

@@ -1,0 +1,191 @@
+{
+  "artboards": [
+    {
+      "file": "Splash.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Onboarding.dc.html",
+      "x": 500,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "OnboardingB.dc.html",
+      "x": 1000,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "OnboardingC.dc.html",
+      "x": 1500,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Register.dc.html",
+      "x": 2000,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Login.dc.html",
+      "x": 0,
+      "y": 994,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "ForgotPassword.dc.html",
+      "x": 500,
+      "y": 994,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "PermissionLocation.dc.html",
+      "x": 1000,
+      "y": 994,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "PermissionNotifications.dc.html",
+      "x": 1500,
+      "y": 994,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Home.dc.html",
+      "x": 2000,
+      "y": 994,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "HomeEmpty.dc.html",
+      "x": 0,
+      "y": 1988,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Main.dc.html",
+      "x": 500,
+      "y": 1988,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Proposals.dc.html",
+      "x": 1000,
+      "y": 1988,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "TripOverview.dc.html",
+      "x": 1500,
+      "y": 1988,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Itinerary.dc.html",
+      "x": 2000,
+      "y": 1988,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "RouteMap.dc.html",
+      "x": 0,
+      "y": 2982,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Calendar.dc.html",
+      "x": 500,
+      "y": 2982,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "PlaceDetail.dc.html",
+      "x": 1000,
+      "y": 2982,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "PlaceSearch.dc.html",
+      "x": 1500,
+      "y": 2982,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "StopEditor.dc.html",
+      "x": 2000,
+      "y": 2982,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Commitments.dc.html",
+      "x": 0,
+      "y": 3976,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Notifications.dc.html",
+      "x": 500,
+      "y": 3976,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "ReminderSettings.dc.html",
+      "x": 1000,
+      "y": 3976,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "PushBanner.dc.html",
+      "x": 1500,
+      "y": 3976,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "Profile.dc.html",
+      "x": 2000,
+      "y": 3976,
+      "w": 390,
+      "h": 844
+    }
+  ],
+  "annotations": [
+    {
+      "id": "title",
+      "x": 0,
+      "y": -150,
+      "w": 900,
+      "text": "Wayfare — full app (Neutral)\nRow 1: Splash · Onboarding · Register · Login · Home.  Row 2: Chat · Proposals · Trip Overview · Day Route · Map.  Row 3: Place Detail (check-in) · Alerts · Reminder Settings · Push · Profile."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

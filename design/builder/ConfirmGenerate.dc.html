@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
+<style>
+  .serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+  .grotesk{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.5px}
+  .mono{font-family:ui-monospace,'SF Mono','DM Mono',monospace}
+  :root{
+    --bg:#141110; --card:#1E1A17; --ink:#F4EEE5; --sec:#A99C8C; --ter:#8B7F70;
+    --line:#2C2622; --primary:#FF6A3D; --primaryd:#E8532A; --black:#FF6A3D; --knob:#E8532A;
+    --orange:#F2B36B; --green:#F0563F; --blue:#6AA6FF; --purple:#E0447E;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration:none}
+  .frame{width:390px;height:844px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative}
+  .safe{height:52px;flex-shrink:0}
+  .pad{padding:0 22px}
+  .card{background:var(--card);border-radius:24px;box-shadow:0 8px 22px rgba(20,20,20,.06)}
+  .sec{color:var(--sec)}
+  .h1{font-size:28px;font-weight:800;letter-spacing:-.7px;line-height:1.08;margin:0}
+  .cta{position:relative;height:60px;border-radius:30px;background:var(--black);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;box-shadow:0 14px 26px rgba(23,24,26,.26)}
+  .cta .knob{position:absolute;right:8px;top:8px;width:44px;height:44px;border-radius:50%;background:var(--knob);display:flex;align-items:center;justify-content:center}
+  .chipbtn{height:38px;border-radius:19px;background:var(--card);box-shadow:0 6px 16px rgba(20,20,20,.10);display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:700}
+  .rbtn{box-shadow:0 8px 18px rgba(23,24,26,.22)}
+  .softsh{box-shadow:0 10px 24px rgba(20,20,20,.10)}
+  .navbtn{box-shadow:0 7px 16px rgba(0,0,0,.16)}
+  .stopcard{margin-bottom:10px}
+  .iconchip{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .weather{background:var(--card);border-radius:15px;padding:7px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(20,20,20,.05)}
+  .orb{width:26px;height:26px;border-radius:50%;flex-shrink:0;background-color:var(--ink);background-repeat:no-repeat;background-position:center;background-size:56%;background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M12%202l1.9%206.4L20%2010l-6.1%201.6L12%2018l-1.9-6.4L4%2010l6.1-1.6z'%20fill='%23fff'/%3E%3C/svg%3E");animation:orbpulse 2.8s ease-in-out infinite}
+  .aitip{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:22px;padding:14px;box-shadow:0 6px 16px rgba(20,20,20,.05)}
+  .stat{flex:1;display:flex;flex-direction:column;gap:3px}
+  .stat b{font-size:19px;font-weight:800;letter-spacing:-.4px}
+  .stat span{font-size:12px;color:var(--sec);font-weight:500}
+  .rail{width:40px;display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .dash{width:2px;flex:1;margin-top:6px;background-image:repeating-linear-gradient(to bottom,var(--ter) 0 4px,transparent 4px 10px)}
+  .stopcard{flex:1;background:var(--card);border-radius:20px;box-shadow:0 6px 16px rgba(20,20,20,.06);padding:14px 15px;margin-bottom:12px}
+  .field{height:56px;border-radius:16px;background:var(--card);box-shadow:0 3px 10px rgba(20,20,20,.04);display:flex;align-items:center;gap:12px;padding:0 16px}
+  .field input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;font-weight:500;color:var(--ink);width:100%}
+  .field input::placeholder{color:var(--ter)}
+  .label{font-size:13px;font-weight:600;color:var(--sec);margin-bottom:8px}
+  .photo{background:linear-gradient(135deg,#DAD8D3 0%,#C8C5BF 55%,#D2CFC9 100%);position:relative;overflow:hidden}
+  .photo .pi{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.45}
+  .dots{display:flex;gap:6px;align-items:center}
+  .dots i{width:6px;height:6px;border-radius:3px;background:var(--ter);display:block}
+  .dots i.on{width:20px;background:var(--ink)}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes sheetUp{0%{transform:translateY(115%)}70%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  @keyframes springIn{0%{transform:scale(.5);opacity:0}55%{transform:scale(1.1);opacity:1}75%{transform:scale(.96)}100%{transform:scale(1)}}
+  @keyframes popIn{0%{transform:scale(.86) translateY(12px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+  @keyframes ring{0%{transform:scale(.25);opacity:.5}100%{transform:scale(2.7);opacity:0}}
+  @keyframes floatUp{0%{transform:translate(0,0) scale(1);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx,0),-96px) scale(.35);opacity:0}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes drift{0%,100%{transform:translateY(5px)}50%{transform:translateY(-5px)}}
+  @keyframes drawline{to{stroke-dashoffset:0}}
+  @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(23,24,26,.18)}50%{box-shadow:0 0 40px 6px rgba(23,24,26,.10)}}
+  @keyframes orbpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  @keyframes staggerUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.16)}}
+  @keyframes livepulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.9);opacity:0}}
+  @keyframes fillbar{from{width:0}}
+  .kb{animation:kenburns 20s ease-in-out infinite alternate}
+  .a-fade{animation:fadeIn .35s ease both}
+  .a-sheet{animation:sheetUp .5s cubic-bezier(.2,.8,.2,1) both}
+  .a-spring{animation:springIn .7s cubic-bezier(.2,.9,.3,1.2) both}
+  .a-pop{animation:popIn .4s cubic-bezier(.2,.8,.2,1) both}
+  .a-spin{animation:spin 1s linear infinite}
+  .a-drift{animation:drift 3s ease-in-out infinite}
+</style>
+</helmet>
+<div class="frame">
+  <div class="safe"></div>
+  <div class="pad" style="padding-top:2px;display:flex;align-items:center;justify-content:space-between">
+    <div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></div>
+    <span class="mono" style="font-size:11px;letter-spacing:.18em;color:var(--sec)">CONFIRM</span>
+    <span class="mono" style="font-size:12px;color:var(--primary)">5/5</span>
+  </div>
+  <div class="pad" style="margin-top:24px"><h1 class="serif" style="font-size:44px;line-height:.92;margin:0">Your night,<br><span style="font-style:italic;color:var(--primary)">in order.</span></h1></div>
+  <div style="flex:1;overflow:hidden;padding:24px 26px 0">
+    <div style="display:flex;gap:14px;padding-bottom:18px">
+  <div style="display:flex;flex-direction:column;align-items:center;padding-top:3px"><div style="width:11px;height:11px;border-radius:50%;background:var(--primary)"></div><div style="width:2px;flex:1;background:var(--line);margin-top:3px"></div></div>
+  <div style="flex:1"><div class="mono" style="font-size:11px;color:var(--primary)">6:00 PM</div><div style="font-size:16px;font-weight:800;margin-top:2px">Sunset drinks</div><div class="sec" style="font-size:12.5px;font-weight:600;margin-top:1px">The Blue Leaf Sky · Makati</div></div></div>
+    <div style="display:flex;gap:14px;padding-bottom:18px">
+  <div style="display:flex;flex-direction:column;align-items:center;padding-top:3px"><div style="width:11px;height:11px;border-radius:50%;background:var(--primary)"></div><div style="width:2px;flex:1;background:var(--line);margin-top:3px"></div></div>
+  <div style="flex:1"><div class="mono" style="font-size:11px;color:var(--primary)">7:30 PM</div><div style="font-size:16px;font-weight:800;margin-top:2px">A long dinner</div><div class="sec" style="font-size:12.5px;font-weight:600;margin-top:1px">Osteria Daniele · Salcedo</div></div></div>
+    <div style="display:flex;gap:14px;padding-bottom:0px">
+  <div style="display:flex;flex-direction:column;align-items:center;padding-top:3px"><div style="width:11px;height:11px;border-radius:50%;background:var(--primary)"></div></div>
+  <div style="flex:1"><div class="mono" style="font-size:11px;color:var(--primary)">9:30 PM</div><div style="font-size:16px;font-weight:800;margin-top:2px">Dessert walk</div><div class="sec" style="font-size:12.5px;font-weight:600;margin-top:1px">Café Bola · BGC</div></div></div>
+  </div>
+  <div class="pad" style="display:flex;gap:12px;margin-bottom:6px">
+    <div style="flex:1"><div class="mono" style="font-size:10px;color:var(--sec)">WINDOW</div><div style="font-size:15px;font-weight:800">6 – 11 PM</div></div>
+    <div style="flex:1"><div class="mono" style="font-size:10px;color:var(--sec)">EST. COST</div><div style="font-size:15px;font-weight:800">₱4.5k – 7k</div></div>
+  </div>
+  <div class="pad" style="padding-bottom:24px;padding-top:12px"><div class="cta">Generate the timeline<div class="knob"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5.5L19.5 10l-5.5 2L12 17l-2-5-5.5-2L10 8.5z"/></svg></div></div></div>
+</div>
+</x-dc>
+</body>
+</html>

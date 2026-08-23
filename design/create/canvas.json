@@ -1,0 +1,96 @@
+{
+  "artboards": [
+    {
+      "file": "StartMethod.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "StartMethod"
+    },
+    {
+      "file": "ImportUpload.dc.html",
+      "x": 490,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "ImportUpload"
+    },
+    {
+      "file": "Import.dc.html",
+      "x": 980,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Import"
+    },
+    {
+      "file": "ImportError.dc.html",
+      "x": 1470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "ImportError"
+    },
+    {
+      "file": "Basics.dc.html",
+      "x": 1960,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Basics"
+    },
+    {
+      "file": "Vibe.dc.html",
+      "x": 0,
+      "y": 994,
+      "w": 390,
+      "h": 844,
+      "title": "Vibe"
+    },
+    {
+      "file": "Interests.dc.html",
+      "x": 490,
+      "y": 994,
+      "w": 390,
+      "h": 844,
+      "title": "Interests"
+    },
+    {
+      "file": "Review.dc.html",
+      "x": 980,
+      "y": 994,
+      "w": 390,
+      "h": 844,
+      "title": "Review"
+    },
+    {
+      "file": "Generating.dc.html",
+      "x": 1470,
+      "y": 994,
+      "w": 390,
+      "h": 844,
+      "title": "Generating"
+    },
+    {
+      "file": "GenerateError.dc.html",
+      "x": 1960,
+      "y": 994,
+      "w": 390,
+      "h": 844,
+      "title": "GenerateError"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t",
+      "x": 0,
+      "y": -130,
+      "w": 900,
+      "text": "Wayfare — Create Your Own Itinerary (skeleton form → AI generation)\nStart (AI / build / import) · Import upload → map → error · Basics · Vibe · Interests · Review · Generating → error/retry. Collects the xlsx fields; AI fills timings, plans, costs, travel modes & map pins."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

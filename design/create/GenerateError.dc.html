@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
+<style>
+  .serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+  .grotesk{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.5px}
+  .mono{font-family:ui-monospace,'SF Mono','DM Mono',monospace}
+  :root{
+    --bg:#ECEBE8; --card:#FFFFFF; --ink:#191A1C; --sec:#9B9A96; --ter:#C3C1BC;
+    --line:#EEEDEA; --primary:#17181A; --primaryd:#2C2D31; --black:#17181A; --knob:#2C2D31;
+    --orange:#F26B2A; --green:#34B87E; --blue:#3E97E5; --purple:#8B7CF0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration:none}
+  .frame{width:390px;height:844px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative}
+  .safe{height:52px;flex-shrink:0}
+  .pad{padding:0 22px}
+  .card{background:var(--card);border-radius:24px;box-shadow:0 8px 22px rgba(20,20,20,.06)}
+  .sec{color:var(--sec)}
+  .h1{font-size:28px;font-weight:800;letter-spacing:-.7px;line-height:1.08;margin:0}
+  .cta{position:relative;height:60px;border-radius:30px;background:var(--black);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;box-shadow:0 14px 26px rgba(23,24,26,.26)}
+  .cta .knob{position:absolute;right:8px;top:8px;width:44px;height:44px;border-radius:50%;background:var(--knob);display:flex;align-items:center;justify-content:center}
+  .chipbtn{height:38px;border-radius:19px;background:var(--card);box-shadow:0 6px 16px rgba(20,20,20,.10);display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:700}
+  .rbtn{box-shadow:0 8px 18px rgba(23,24,26,.22)}
+  .softsh{box-shadow:0 10px 24px rgba(20,20,20,.10)}
+  .navbtn{box-shadow:0 7px 16px rgba(0,0,0,.16)}
+  .stopcard{margin-bottom:10px}
+  .iconchip{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .weather{background:var(--card);border-radius:15px;padding:7px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(20,20,20,.05)}
+  .orb{width:26px;height:26px;border-radius:50%;flex-shrink:0;background-color:var(--ink);background-repeat:no-repeat;background-position:center;background-size:56%;background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M12%202l1.9%206.4L20%2010l-6.1%201.6L12%2018l-1.9-6.4L4%2010l6.1-1.6z'%20fill='%23fff'/%3E%3C/svg%3E");animation:orbpulse 2.8s ease-in-out infinite}
+  .aitip{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:22px;padding:14px;box-shadow:0 6px 16px rgba(20,20,20,.05)}
+  .stat{flex:1;display:flex;flex-direction:column;gap:3px}
+  .stat b{font-size:19px;font-weight:800;letter-spacing:-.4px}
+  .stat span{font-size:12px;color:var(--sec);font-weight:500}
+  .rail{width:40px;display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .dash{width:2px;flex:1;margin-top:6px;background-image:repeating-linear-gradient(to bottom,var(--ter) 0 4px,transparent 4px 10px)}
+  .stopcard{flex:1;background:var(--card);border-radius:20px;box-shadow:0 6px 16px rgba(20,20,20,.06);padding:14px 15px;margin-bottom:12px}
+  .field{height:56px;border-radius:16px;background:var(--card);box-shadow:0 3px 10px rgba(20,20,20,.04);display:flex;align-items:center;gap:12px;padding:0 16px}
+  .field input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;font-weight:500;color:var(--ink);width:100%}
+  .field input::placeholder{color:var(--ter)}
+  .label{font-size:13px;font-weight:600;color:var(--sec);margin-bottom:8px}
+  .photo{background:linear-gradient(135deg,#DAD8D3 0%,#C8C5BF 55%,#D2CFC9 100%);position:relative;overflow:hidden}
+  .photo .pi{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.45}
+  .dots{display:flex;gap:6px;align-items:center}
+  .dots i{width:6px;height:6px;border-radius:3px;background:var(--ter);display:block}
+  .dots i.on{width:20px;background:var(--ink)}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes sheetUp{0%{transform:translateY(115%)}70%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  @keyframes springIn{0%{transform:scale(.5);opacity:0}55%{transform:scale(1.1);opacity:1}75%{transform:scale(.96)}100%{transform:scale(1)}}
+  @keyframes popIn{0%{transform:scale(.86) translateY(12px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+  @keyframes ring{0%{transform:scale(.25);opacity:.5}100%{transform:scale(2.7);opacity:0}}
+  @keyframes floatUp{0%{transform:translate(0,0) scale(1);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx,0),-96px) scale(.35);opacity:0}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes drift{0%,100%{transform:translateY(5px)}50%{transform:translateY(-5px)}}
+  @keyframes drawline{to{stroke-dashoffset:0}}
+  @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(23,24,26,.18)}50%{box-shadow:0 0 40px 6px rgba(23,24,26,.10)}}
+  @keyframes orbpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  @keyframes staggerUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.16)}}
+  @keyframes livepulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.9);opacity:0}}
+  @keyframes fillbar{from{width:0}}
+  .kb{animation:kenburns 20s ease-in-out infinite alternate}
+  .a-fade{animation:fadeIn .35s ease both}
+  .a-sheet{animation:sheetUp .5s cubic-bezier(.2,.8,.2,1) both}
+  .a-spring{animation:springIn .7s cubic-bezier(.2,.9,.3,1.2) both}
+  .a-pop{animation:popIn .4s cubic-bezier(.2,.8,.2,1) both}
+  .a-spin{animation:spin 1s linear infinite}
+  .a-drift{animation:drift 3s ease-in-out infinite}
+</style>
+</helmet>
+<div class="frame" style="align-items:center;justify-content:center;padding:0 30px;text-align:center">
+  <div style="width:96px;height:96px;border-radius:30px;background:#FDEBEA;display:flex;align-items:center;justify-content:center;animation:springIn .7s cubic-bezier(.2,.9,.3,1.25) both"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#D8524D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+  <h1 class="h1 a-pop" style="font-size:26px;margin-top:26px;animation-delay:.15s">That didn't<br>go through</h1>
+  <p class="sec a-pop" style="font-size:15px;font-weight:500;line-height:1.55;margin:12px 0 0;animation-delay:.25s;max-width:300px">We couldn't build your plan just now. Your answers are saved — give it another go.</p>
+  <div class="a-pop" style="width:100%;margin-top:28px;animation-delay:.35s"><div class="cta">Try again<div class="knob"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div></div></div>
+  <div style="height:52px;display:flex;align-items:center;justify-content:center;margin-top:6px"><span style="font-size:15px;font-weight:700;color:var(--sec)">Edit my inputs</span></div>
+</div>
+</x-dc>
+</body>
+</html>

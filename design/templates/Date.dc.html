@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
+<style>
+  .serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+  .grotesk{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.5px}
+  .mono{font-family:ui-monospace,'SF Mono','DM Mono',monospace}
+  :root{
+    --bg:#141110; --card:#1E1A17; --ink:#F4EEE5; --sec:#A99C8C; --ter:#8B7F70;
+    --line:#2C2622; --primary:#FF6A3D; --primaryd:#E8532A; --black:#FF6A3D; --knob:#E8532A;
+    --orange:#F2B36B; --green:#F0563F; --blue:#6AA6FF; --purple:#E0447E;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration:none}
+  .frame{width:390px;height:844px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative}
+  .safe{height:52px;flex-shrink:0}
+  .pad{padding:0 22px}
+  .card{background:var(--card);border-radius:24px;box-shadow:0 8px 22px rgba(20,20,20,.06)}
+  .sec{color:var(--sec)}
+  .h1{font-size:28px;font-weight:800;letter-spacing:-.7px;line-height:1.08;margin:0}
+  .cta{position:relative;height:60px;border-radius:30px;background:var(--black);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;box-shadow:0 14px 26px rgba(23,24,26,.26)}
+  .cta .knob{position:absolute;right:8px;top:8px;width:44px;height:44px;border-radius:50%;background:var(--knob);display:flex;align-items:center;justify-content:center}
+  .chipbtn{height:38px;border-radius:19px;background:var(--card);box-shadow:0 6px 16px rgba(20,20,20,.10);display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:700}
+  .rbtn{box-shadow:0 8px 18px rgba(23,24,26,.22)}
+  .softsh{box-shadow:0 10px 24px rgba(20,20,20,.10)}
+  .navbtn{box-shadow:0 7px 16px rgba(0,0,0,.16)}
+  .stopcard{margin-bottom:10px}
+  .iconchip{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .weather{background:var(--card);border-radius:15px;padding:7px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(20,20,20,.05)}
+  .orb{width:26px;height:26px;border-radius:50%;flex-shrink:0;background-color:var(--ink);background-repeat:no-repeat;background-position:center;background-size:56%;background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M12%202l1.9%206.4L20%2010l-6.1%201.6L12%2018l-1.9-6.4L4%2010l6.1-1.6z'%20fill='%23fff'/%3E%3C/svg%3E");animation:orbpulse 2.8s ease-in-out infinite}
+  .aitip{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:22px;padding:14px;box-shadow:0 6px 16px rgba(20,20,20,.05)}
+  .stat{flex:1;display:flex;flex-direction:column;gap:3px}
+  .stat b{font-size:19px;font-weight:800;letter-spacing:-.4px}
+  .stat span{font-size:12px;color:var(--sec);font-weight:500}
+  .rail{width:40px;display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .dash{width:2px;flex:1;margin-top:6px;background-image:repeating-linear-gradient(to bottom,var(--ter) 0 4px,transparent 4px 10px)}
+  .stopcard{flex:1;background:var(--card);border-radius:20px;box-shadow:0 6px 16px rgba(20,20,20,.06);padding:14px 15px;margin-bottom:12px}
+  .field{height:56px;border-radius:16px;background:var(--card);box-shadow:0 3px 10px rgba(20,20,20,.04);display:flex;align-items:center;gap:12px;padding:0 16px}
+  .field input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;font-weight:500;color:var(--ink);width:100%}
+  .field input::placeholder{color:var(--ter)}
+  .label{font-size:13px;font-weight:600;color:var(--sec);margin-bottom:8px}
+  .photo{background:linear-gradient(135deg,#DAD8D3 0%,#C8C5BF 55%,#D2CFC9 100%);position:relative;overflow:hidden}
+  .photo .pi{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.45}
+  .dots{display:flex;gap:6px;align-items:center}
+  .dots i{width:6px;height:6px;border-radius:3px;background:var(--ter);display:block}
+  .dots i.on{width:20px;background:var(--ink)}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes sheetUp{0%{transform:translateY(115%)}70%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  @keyframes springIn{0%{transform:scale(.5);opacity:0}55%{transform:scale(1.1);opacity:1}75%{transform:scale(.96)}100%{transform:scale(1)}}
+  @keyframes popIn{0%{transform:scale(.86) translateY(12px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+  @keyframes ring{0%{transform:scale(.25);opacity:.5}100%{transform:scale(2.7);opacity:0}}
+  @keyframes floatUp{0%{transform:translate(0,0) scale(1);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx,0),-96px) scale(.35);opacity:0}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes drift{0%,100%{transform:translateY(5px)}50%{transform:translateY(-5px)}}
+  @keyframes drawline{to{stroke-dashoffset:0}}
+  @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(23,24,26,.18)}50%{box-shadow:0 0 40px 6px rgba(23,24,26,.10)}}
+  @keyframes orbpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  @keyframes staggerUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.16)}}
+  @keyframes livepulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.9);opacity:0}}
+  @keyframes fillbar{from{width:0}}
+  .kb{animation:kenburns 20s ease-in-out infinite alternate}
+  .a-fade{animation:fadeIn .35s ease both}
+  .a-sheet{animation:sheetUp .5s cubic-bezier(.2,.8,.2,1) both}
+  .a-spring{animation:springIn .7s cubic-bezier(.2,.9,.3,1.2) both}
+  .a-pop{animation:popIn .4s cubic-bezier(.2,.8,.2,1) both}
+  .a-spin{animation:spin 1s linear infinite}
+  .a-drift{animation:drift 3s ease-in-out infinite}
+</style>
+</helmet>
+<div class="frame" style="position:relative">
+  <div style="height:230px;flex-shrink:0;position:relative;overflow:hidden">
+    <div class="kb" style="position:absolute;inset:0;background-image:url('city.jpg');background-size:cover;background-position:center"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,17,16,.5),transparent 34%,rgba(20,17,16,.98))"></div>
+    <div class="safe"></div>
+    <div class="pad" style="position:relative;display:flex;justify-content:space-between"><div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></div><div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v13M7 8l5-5 5 5"/></svg></div></div>
+    <div style="position:absolute;left:22px;right:22px;bottom:16px;color:#fff">
+      <div class="mono a-pop" style="font-size:11px;letter-spacing:.22em;color:var(--primary)">DATE NIGHT · FRI AUG 29</div>
+      <h1 class="serif a-pop" style="animation-delay:.1s;font-size:42px;line-height:.9;margin:8px 0 0">The Golden Evening</h1>
+      <div class="a-pop" style="animation-delay:.16s;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.78);margin-top:6px">from Avida, Makati · 2 people · est. ₱4.5–7k</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow:hidden;padding:14px 22px 0">
+    <div style="display:flex;align-items:center;gap:7px;padding:8px 0 8px 71px;color:rgba(255,255,255,.5);font-size:11px;font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H7v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M7 16h.01M17 16h.01"/></svg>6 min by Grab from Avida</div>
+    <div style="display:flex;gap:13px;align-items:flex-start">
+  <div style="width:58px;height:58px;border-radius:16px;background-image:url('rooftop.jpg');background-size:cover;background-position:center;flex-shrink:0"></div>
+  <div style="flex:1;min-width:0">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="mono" style="font-size:11px;letter-spacing:.1em;color:var(--primary)">6:00 PM</div><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--sec)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--sec)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18M15 3c-1.5 1-2 3-2 5s.5 3 2 3v10"/></svg>₱1.2–2.4k</div></div>
+    <div class="serif" style="font-size:24px;line-height:1;margin-top:4px;color:var(--ink)">The Blue Leaf Sky</div>
+    <div style="font-size:12px;font-weight:600;color:var(--sec);margin-top:2px">Rooftop bar · Poblacion, Makati</div>
+    <div style="font-size:12.5px;font-weight:500;color:var(--sec);font-style:italic;margin-top:5px;opacity:.9">Cocktails as the skyline glows.</div>
+  </div></div>
+    <div style="display:flex;align-items:center;gap:7px;padding:8px 0 8px 71px;color:rgba(255,255,255,.5);font-size:11px;font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H7v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M7 16h.01M17 16h.01"/></svg>8 min by Grab · ₱150</div>
+    <div style="display:flex;gap:13px;align-items:flex-start">
+  <div style="width:58px;height:58px;border-radius:16px;background-image:url('dinner.jpg');background-size:cover;background-position:center;flex-shrink:0"></div>
+  <div style="flex:1;min-width:0">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="mono" style="font-size:11px;letter-spacing:.1em;color:var(--primary)">7:30 PM</div><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--sec)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--sec)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18M15 3c-1.5 1-2 3-2 5s.5 3 2 3v10"/></svg>₱2.4–4.2k</div></div>
+    <div class="serif" style="font-size:24px;line-height:1;margin-top:4px;color:var(--ink)">Osteria Daniele</div>
+    <div style="font-size:12px;font-weight:600;color:var(--sec);margin-top:2px">Italian · Salcedo, Makati</div>
+    <div style="font-size:12.5px;font-weight:500;color:var(--sec);font-style:italic;margin-top:5px;opacity:.9">A long, candle-lit dinner.</div>
+  </div></div>
+    <div style="display:flex;align-items:center;gap:7px;padding:8px 0 8px 71px;color:rgba(255,255,255,.5);font-size:11px;font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13"/><path d="M4 13h16v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H7v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M7 16h.01M17 16h.01"/></svg>14 min by Grab · ₱280 → BGC</div>
+    <div style="display:flex;gap:13px;align-items:flex-start">
+  <div style="width:58px;height:58px;border-radius:16px;background-image:url('icecream.jpg');background-size:cover;background-position:center;flex-shrink:0"></div>
+  <div style="flex:1;min-width:0">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="mono" style="font-size:11px;letter-spacing:.1em;color:var(--primary)">9:30 PM</div><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--sec)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--sec)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18M15 3c-1.5 1-2 3-2 5s.5 3 2 3v10"/></svg>₱0.6–1.2k</div></div>
+    <div class="serif" style="font-size:24px;line-height:1;margin-top:4px;color:var(--ink)">Café Bola</div>
+    <div style="font-size:12px;font-weight:600;color:var(--sec);margin-top:2px">Dessert · High Street, BGC</div>
+    <div style="font-size:12.5px;font-weight:500;color:var(--sec);font-style:italic;margin-top:5px;opacity:.9">Gelato and a night walk.</div>
+  </div></div>
+  </div>
+  <div class="pad" style="padding-bottom:22px;padding-top:4px"><div style="height:60px;border-radius:999px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;font-size:16px;font-weight:800;box-shadow:0 14px 26px rgba(0,0,0,.42)">Start the night <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div></div>
+</div>
+</x-dc>
+</body>
+</html>

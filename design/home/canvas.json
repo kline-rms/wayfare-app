@@ -1,0 +1,108 @@
+{
+  "artboards": [
+    {
+      "file": "Sunset.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "A · Sunset Voyage"
+    },
+    {
+      "file": "Aqua.dc.html",
+      "x": 486,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "A · Aqua Escape"
+    },
+    {
+      "file": "Grape.dc.html",
+      "x": 972,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "A · Grape Pop"
+    },
+    {
+      "file": "Neon.dc.html",
+      "x": 1458,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "A · Neon Dusk"
+    },
+    {
+      "file": "SunsetB.dc.html",
+      "x": 0,
+      "y": 1014,
+      "w": 390,
+      "h": 844,
+      "title": "B · Sunset Voyage"
+    },
+    {
+      "file": "AquaB.dc.html",
+      "x": 486,
+      "y": 1014,
+      "w": 390,
+      "h": 844,
+      "title": "B · Aqua Escape"
+    },
+    {
+      "file": "GrapeB.dc.html",
+      "x": 972,
+      "y": 1014,
+      "w": 390,
+      "h": 844,
+      "title": "B · Grape Pop"
+    },
+    {
+      "file": "NeonB.dc.html",
+      "x": 1458,
+      "y": 1014,
+      "w": 390,
+      "h": 844,
+      "title": "B · Neon Dusk"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t",
+      "x": 0,
+      "y": -150,
+      "w": 940,
+      "text": "Wayfare — Home, two structures × four feeling-first palettes\nStructure A (top): cinematic active-trip hero (Ken-Burns, LIVE badge, animated progress) + today's schedule + trips.\nStructure B (bottom): recommendation-forward — search, a compact Continue strip, curated ‘ideas’ we recommend, categories, and popular-near-you."
+    },
+    {
+      "id": "la0",
+      "x": 0,
+      "y": -46,
+      "w": 390,
+      "text": "Sunset Voyage — golden-hour wanderlust"
+    },
+    {
+      "id": "la1",
+      "x": 486,
+      "y": -46,
+      "w": 390,
+      "text": "Aqua Escape — fresh tropical getaway"
+    },
+    {
+      "id": "la2",
+      "x": 972,
+      "y": -46,
+      "w": 390,
+      "text": "Grape Pop — playful & modern"
+    },
+    {
+      "id": "la3",
+      "x": 1458,
+      "y": -46,
+      "w": 390,
+      "text": "Neon Dusk — cinematic night"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

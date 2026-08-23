@@ -1,0 +1,48 @@
+{
+  "artboards": [
+    {
+      "file": "SuccessCinematic.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "SuccessCinematic"
+    },
+    {
+      "file": "ConfirmCancel.dc.html",
+      "x": 490,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "ConfirmCancel"
+    },
+    {
+      "file": "CalendarPopup.dc.html",
+      "x": 980,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "CalendarPopup"
+    },
+    {
+      "file": "CalendarWeek.dc.html",
+      "x": 1470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "CalendarWeek"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t",
+      "x": 0,
+      "y": -130,
+      "w": 900,
+      "text": "Wayfare — Interactions & Motion\nCinematic success (animated rings + spark burst, not a plain check) · confirm-before-decision sheet · calendar Day↔Week views · tap a block → schedule popup. Open each artboard to see the animation play."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

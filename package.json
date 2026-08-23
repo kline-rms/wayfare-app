@@ -1,0 +1,12 @@
+{
+  "name": "itinerary-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "seed": "npm run seed --prefix server",
+    "server": "npm run dev --prefix server",
+    "app": "npm run start --prefix app",
+    "web": "npm run web --prefix app",
+    "ios": "npm run ios --prefix app"
+  }
+}

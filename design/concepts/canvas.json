@@ -1,0 +1,76 @@
+{
+  "artboards": [
+    {
+      "file": "ImmersiveCover.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "ImmersiveCover"
+    },
+    {
+      "file": "Reel.dc.html",
+      "x": 510,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Reel"
+    },
+    {
+      "file": "Editorial.dc.html",
+      "x": 1020,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Editorial"
+    },
+    {
+      "file": "Atlas.dc.html",
+      "x": 1530,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Atlas"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t",
+      "x": 0,
+      "y": -150,
+      "w": 900,
+      "text": "Wayfare — Home, 3 unique cinematic structures (one dark palette, focus on layout)\nEach avoids the greeting-card-list pattern and the side-accent-bar card."
+    },
+    {
+      "id": "a",
+      "x": 0,
+      "y": -44,
+      "w": 390,
+      "text": "① Immersive Cover — the whole screen is the trip; a floating live ‘boarding pass’; swipe-up peek; gesture dock."
+    },
+    {
+      "id": "b",
+      "x": 510,
+      "y": -44,
+      "w": 390,
+      "text": "② Reel — your day as a vertical filmstrip; the NOW frame expands, done frames dim above, upcoming below."
+    },
+    {
+      "id": "c",
+      "x": 1020,
+      "y": -44,
+      "w": 390,
+      "text": "③ Editorial — type-led magazine; huge serif masthead, offset image, numbered ‘programme’ index."
+    },
+    {
+      "id": "d",
+      "x": 1530,
+      "y": -44,
+      "w": 390,
+      "text": "④ Atlas — map-home; your route on the map, photo pins, ‘near you’ recommendations, gesture dock."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

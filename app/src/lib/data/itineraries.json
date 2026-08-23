@@ -1,0 +1,1012 @@
+{
+  "itineraries": [
+    {
+      "id": "bgc-manila-2026",
+      "title": "Couple's BGC + Manila Itinerary",
+      "subtitle": "August 26 – September 6, 2026",
+      "dateRange": {
+        "start": "2026-08-26",
+        "end": "2026-09-06"
+      },
+      "partySize": 2,
+      "currency": "PHP",
+      "homeBase": "Avida Towers Verte, BGC, Taguig",
+      "assumptions": [
+        {
+          "label": "Home Base",
+          "value": "Avida Towers Verte, BGC, Taguig"
+        },
+        {
+          "label": "Work Schedule",
+          "value": "7:00 AM–4:00 PM weekdays; weekday plans stay close to home"
+        },
+        {
+          "label": "Holiday",
+          "value": "Monday, Aug 31, 2026 – National Heroes Day"
+        },
+        {
+          "label": "Travel estimates",
+          "value": "Rough Grab/taxi estimates for the couple; actual fares depend on traffic/surge"
+        },
+        {
+          "label": "Price estimates",
+          "value": "Rough couple totals for food + listed activities; shopping, flights, and optional premium upgrades excluded"
+        }
+      ],
+      "disclaimer": "All prices are planning estimates, not live quotes. Grab fares, restaurant bills, spa rates, attraction schedules, and holiday operating hours can vary. Confirm reservations/hours before each outing.",
+      "proposals": [
+        {
+          "id": "p1-balanced",
+          "name": "Balanced Couple Week",
+          "shortName": "P1 Balanced",
+          "style": "Best overall mix",
+          "bestFor": "Best overall mix",
+          "fullDayFocus": "Sat Manila, Sun Makati, Mon relaxed BGC",
+          "weekdayRule": "BGC/McKinley only",
+          "estTotal": {
+            "low": 19350,
+            "high": 33650
+          },
+          "travelTotal": 2750,
+          "days": [
+            {
+              "id": "p1-balanced-2026-08-26",
+              "date": "2026-08-26",
+              "dateLabel": "Wed, Aug 26",
+              "theme": "Arrival Night",
+              "timeWindow": "8:00 PM–10:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC / Home",
+              "detailedPlan": "Wife arrives; settle in; late dinner/order food; short walk if desired; rest early for Thursday work.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 500,
+                "foodHigh": 900
+              },
+              "notes": "Low-key arrival night",
+              "location": {
+                "mapAnchor": "Avida Towers Verte",
+                "lat": 14.5555,
+                "lng": 121.0528,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.5555,121.0528"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-08-27",
+              "date": "2026-08-27",
+              "dateLabel": "Thu, Aug 27",
+              "theme": "Workday – Welcome to BGC",
+              "timeWindow": "5:30 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Bonifacio High Street, BGC",
+              "detailedPlan": "After 7AM–4PM work: change/rest, High Street walk, casual dinner, dessert/coffee, leisurely walk, home early.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 1200,
+                "foodHigh": 2200
+              },
+              "notes": "Keep close because of work",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-08-28",
+              "date": "2026-08-28",
+              "dateLabel": "Fri, Aug 28",
+              "theme": "Workday – Proper Date Night",
+              "timeWindow": "6:30 PM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Nice dinner (Italian/Spanish/French style), dessert or drinks, High Street/Burgos Circle/Forbes Town walk.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 1800,
+                "foodHigh": 3500
+              },
+              "notes": "Can stay later; Saturday is free",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-08-29",
+              "date": "2026-08-29",
+              "dateLabel": "Sat, Aug 29",
+              "theme": "Old Manila Day",
+              "timeWindow": "9:00 AM–9:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "National Museum + Intramuros + Manila",
+              "detailedPlan": "National Museum of Fine Arts; lunch; Manila Cathedral/Plaza Roma; Casa Manila; San Agustin area; Fort Santiago; sunset; dinner; return to BGC.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 700,
+                "foodLow": 1800,
+                "foodHigh": 3200
+              },
+              "notes": "Museum is generally free; allow small entrance fees in Intramuros",
+              "location": {
+                "mapAnchor": "National Museum of Fine Arts",
+                "lat": 14.58689,
+                "lng": 120.98131,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.58689,120.98131"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-08-30",
+              "date": "2026-08-30",
+              "dateLabel": "Sun, Aug 30",
+              "theme": "Makati + Relaxation",
+              "timeWindow": "10:00 AM–9:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Makati",
+              "detailedPlan": "Sleep in; brunch; Ayala Museum; Ayala Triangle; return toward BGC; couples massage; dinner.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 450,
+                "foodLow": 3000,
+                "foodHigh": 5500
+              },
+              "notes": "Relaxed after Saturday",
+              "location": {
+                "mapAnchor": "Ayala Museum",
+                "lat": 14.55358,
+                "lng": 121.02325,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55358,121.02325"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-08-31",
+              "date": "2026-08-31",
+              "dateLabel": "Mon, Aug 31",
+              "theme": "Holiday Couple Day",
+              "timeWindow": "10:00 AM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC / nearby",
+              "detailedPlan": "No alarm; brunch; couples spa/massage; coffee; home/nap; dress up; special dinner; optional drinks.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 250,
+                "foodLow": 3500,
+                "foodHigh": 6500
+              },
+              "notes": "National Heroes Day; deliberately relaxed",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-09-01",
+              "date": "2026-09-01",
+              "dateLabel": "Tue, Sep 1",
+              "theme": "Workday – Movie Date",
+              "timeWindow": "5:30 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Dinner, movie, dessert, home early.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 1400,
+                "foodHigh": 2500
+              },
+              "notes": "Close and easy after work",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-09-02",
+              "date": "2026-09-02",
+              "dateLabel": "Wed, Sep 2",
+              "theme": "Workday – McKinley Evening",
+              "timeWindow": "6:00 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Venice Grand Canal, McKinley Hill",
+              "detailedPlan": "Short Grab; dinner; canal walk/photos; dessert/coffee; return home.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 350,
+                "foodLow": 1200,
+                "foodHigh": 2400
+              },
+              "notes": "One of the farther weekday options, but still nearby",
+              "location": {
+                "mapAnchor": "Venice Grand Canal Mall",
+                "lat": 14.53443,
+                "lng": 121.05079,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.53443,121.05079"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-09-03",
+              "date": "2026-09-03",
+              "dateLabel": "Thu, Sep 3",
+              "theme": "Workday – Final BGC Date",
+              "timeWindow": "7:00 PM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Rest/change after work; nicer final dinner; High Street/5th Ave/Burgos Circle walk; dessert/coffee; pack afterward.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 2200,
+                "foodHigh": 4200
+              },
+              "notes": "Final date before Iloilo",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p1-balanced-2026-09-04",
+              "date": "2026-09-04",
+              "dateLabel": "Fri, Sep 4",
+              "theme": "Travel",
+              "timeWindow": "TBD",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Iloilo",
+              "detailedPlan": "Travel to Iloilo.",
+              "travelMode": "Airport transfer + flight",
+              "cost": {
+                "travel": 500,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Flight cost excluded"
+            },
+            {
+              "id": "p1-balanced-2026-09-05",
+              "date": "2026-09-05",
+              "dateLabel": "Sat, Sep 5",
+              "theme": "Iloilo",
+              "timeWindow": "Flexible",
+              "comingFrom": "Iloilo",
+              "destination": "Iloilo",
+              "detailedPlan": "Personal/family time.",
+              "travelMode": "Varies",
+              "cost": {
+                "travel": 0,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Not costed"
+            },
+            {
+              "id": "p1-balanced-2026-09-06",
+              "date": "2026-09-06",
+              "dateLabel": "Sun, Sep 6",
+              "theme": "Return",
+              "timeWindow": "TBD",
+              "comingFrom": "Iloilo",
+              "destination": "Avida Towers Verte, BGC, Taguig",
+              "detailedPlan": "Return to BGC.",
+              "travelMode": "Flight + airport transfer",
+              "cost": {
+                "travel": 500,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Flight cost excluded"
+            }
+          ]
+        },
+        {
+          "id": "p2-romantic",
+          "name": "Romantic / Staycation",
+          "shortName": "P2 Romantic",
+          "style": "More couple time, less touring",
+          "bestFor": "More couple time, less touring",
+          "fullDayFocus": "Sat BGC+Makati, Sun lazy, Mon romantic",
+          "weekdayRule": "BGC/McKinley only",
+          "estTotal": {
+            "low": 21450,
+            "high": 37550
+          },
+          "travelTotal": 2250,
+          "days": [
+            {
+              "id": "p2-romantic-2026-08-26",
+              "date": "2026-08-26",
+              "dateLabel": "Wed, Aug 26",
+              "theme": "Arrival + Stay Home",
+              "timeWindow": "8:00 PM–10:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC / Home",
+              "detailedPlan": "Arrival, food, settle in, talk, rest.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 500,
+                "foodHigh": 900
+              },
+              "notes": "No packed schedule",
+              "location": {
+                "mapAnchor": "Avida Towers Verte",
+                "lat": 14.5555,
+                "lng": 121.0528,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.5555,121.0528"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-08-27",
+              "date": "2026-08-27",
+              "dateLabel": "Thu, Aug 27",
+              "theme": "Workday – High Street",
+              "timeWindow": "6:00 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Bonifacio High Street",
+              "detailedPlan": "Dinner + walk + coffee/dessert.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 1200,
+                "foodHigh": 2200
+              },
+              "notes": "Close to home",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-08-28",
+              "date": "2026-08-28",
+              "dateLabel": "Fri, Aug 28",
+              "theme": "Fancy Dinner Date",
+              "timeWindow": "6:30 PM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Dress up; nicer restaurant; dessert/drinks; evening walk.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 2500,
+                "foodHigh": 4500
+              },
+              "notes": "Romantic focus",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-08-29",
+              "date": "2026-08-29",
+              "dateLabel": "Sat, Aug 29",
+              "theme": "Romantic Staycation-Style Day",
+              "timeWindow": "10:00 AM–10:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC + Makati",
+              "detailedPlan": "Late breakfast/brunch; couples massage; coffee; Makati stroll; Ayala area; rooftop/nice dinner.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 500,
+                "foodLow": 4200,
+                "foodHigh": 7500
+              },
+              "notes": "Less sightseeing, more time together",
+              "location": {
+                "mapAnchor": "Ayala Museum",
+                "lat": 14.55358,
+                "lng": 121.02325,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55358,121.02325"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-08-30",
+              "date": "2026-08-30",
+              "dateLabel": "Sun, Aug 30",
+              "theme": "Lazy Couple Sunday",
+              "timeWindow": "10:30 AM–9:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC / nearby",
+              "detailedPlan": "Sleep in; brunch; movie/shopping; coffee; optional groceries; cook/order dinner together.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 150,
+                "foodLow": 1800,
+                "foodHigh": 3200
+              },
+              "notes": "Very low-pressure day",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-08-31",
+              "date": "2026-08-31",
+              "dateLabel": "Mon, Aug 31",
+              "theme": "Holiday Romantic Day",
+              "timeWindow": "10:00 AM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC / nearby",
+              "detailedPlan": "Sleep in; brunch; spa; coffee; nap; dress up; special dinner; optional wine/drinks.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 250,
+                "foodLow": 3800,
+                "foodHigh": 7000
+              },
+              "notes": "Holiday centerpiece",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-09-01",
+              "date": "2026-09-01",
+              "dateLabel": "Tue, Sep 1",
+              "theme": "Workday – Dinner + Movie",
+              "timeWindow": "5:30 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Easy dinner and movie.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 1400,
+                "foodHigh": 2500
+              },
+              "notes": "Home early",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-09-02",
+              "date": "2026-09-02",
+              "dateLabel": "Wed, Sep 2",
+              "theme": "Workday – Venice Date",
+              "timeWindow": "6:00 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Venice Grand Canal, McKinley Hill",
+              "detailedPlan": "Dinner, canal walk, photos, dessert.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 350,
+                "foodLow": 1300,
+                "foodHigh": 2500
+              },
+              "notes": "Scenic but still close",
+              "location": {
+                "mapAnchor": "Venice Grand Canal Mall",
+                "lat": 14.53443,
+                "lng": 121.05079,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.53443,121.05079"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-09-03",
+              "date": "2026-09-03",
+              "dateLabel": "Thu, Sep 3",
+              "theme": "Final Romantic Dinner",
+              "timeWindow": "7:00 PM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Final special dinner; walk; dessert; pack.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 2500,
+                "foodHigh": 5000
+              },
+              "notes": "End the visit on a date",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p2-romantic-2026-09-04",
+              "date": "2026-09-04",
+              "dateLabel": "Fri, Sep 4",
+              "theme": "Travel",
+              "timeWindow": "TBD",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Iloilo",
+              "detailedPlan": "Travel to Iloilo.",
+              "travelMode": "Airport transfer + flight",
+              "cost": {
+                "travel": 500,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Flight excluded"
+            },
+            {
+              "id": "p2-romantic-2026-09-05",
+              "date": "2026-09-05",
+              "dateLabel": "Sat, Sep 5",
+              "theme": "Iloilo",
+              "timeWindow": "Flexible",
+              "comingFrom": "Iloilo",
+              "destination": "Iloilo",
+              "detailedPlan": "Personal/family time.",
+              "travelMode": "Varies",
+              "cost": {
+                "travel": 0,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Not costed"
+            },
+            {
+              "id": "p2-romantic-2026-09-06",
+              "date": "2026-09-06",
+              "dateLabel": "Sun, Sep 6",
+              "theme": "Return",
+              "timeWindow": "TBD",
+              "comingFrom": "Iloilo",
+              "destination": "Avida Towers Verte, BGC, Taguig",
+              "detailedPlan": "Return to BGC.",
+              "travelMode": "Flight + airport transfer",
+              "cost": {
+                "travel": 500,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Flight excluded"
+            }
+          ]
+        },
+        {
+          "id": "p3-explore",
+          "name": "Explore Manila",
+          "shortName": "P3 Explore Manila",
+          "style": "Maximize sightseeing",
+          "bestFor": "Maximize sightseeing",
+          "fullDayFocus": "Sat Old Manila, Sun Binondo, Mon Makati/BGC",
+          "weekdayRule": "BGC/McKinley only",
+          "estTotal": {
+            "low": 18950,
+            "high": 33450
+          },
+          "travelTotal": 3450,
+          "days": [
+            {
+              "id": "p3-explore-2026-08-26",
+              "date": "2026-08-26",
+              "dateLabel": "Wed, Aug 26",
+              "theme": "Arrival",
+              "timeWindow": "8:00 PM–10:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC / Home",
+              "detailedPlan": "Settle in and rest.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 500,
+                "foodHigh": 900
+              },
+              "notes": "Keep arrival simple",
+              "location": {
+                "mapAnchor": "Avida Towers Verte",
+                "lat": 14.5555,
+                "lng": 121.0528,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.5555,121.0528"
+              }
+            },
+            {
+              "id": "p3-explore-2026-08-27",
+              "date": "2026-08-27",
+              "dateLabel": "Thu, Aug 27",
+              "theme": "Workday – BGC High Street",
+              "timeWindow": "6:00 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Bonifacio High Street",
+              "detailedPlan": "Dinner, High Street walk, dessert/coffee.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 1200,
+                "foodHigh": 2200
+              },
+              "notes": "Close to home",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p3-explore-2026-08-28",
+              "date": "2026-08-28",
+              "dateLabel": "Fri, Aug 28",
+              "theme": "Workday – BGC Date Night",
+              "timeWindow": "6:30 PM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Nice dinner; optional rooftop/drinks; walk.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 2000,
+                "foodHigh": 4000
+              },
+              "notes": "No cross-Manila trip after work",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p3-explore-2026-08-29",
+              "date": "2026-08-29",
+              "dateLabel": "Sat, Aug 29",
+              "theme": "Manila Mega Day",
+              "timeWindow": "8:30 AM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "National Museum + Intramuros + Manila Bay",
+              "detailedPlan": "National Museum; Intramuros; Casa Manila; Fort Santiago; Manila Bay/sunset; dinner.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 800,
+                "foodLow": 2000,
+                "foodHigh": 3600
+              },
+              "notes": "Full sightseeing day",
+              "location": {
+                "mapAnchor": "National Museum of Fine Arts",
+                "lat": 14.58689,
+                "lng": 120.98131,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.58689,120.98131"
+              }
+            },
+            {
+              "id": "p3-explore-2026-08-30",
+              "date": "2026-08-30",
+              "dateLabel": "Sun, Aug 30",
+              "theme": "Binondo Food Adventure",
+              "timeWindow": "9:30 AM–8:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Binondo + Manila",
+              "detailedPlan": "Ongpin/Chinatown food crawl; share dumplings/noodles/lumpia/hopia/pastries; optional Rizal Park, Manila Bay, Ocean Park, mall or early return.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 800,
+                "foodLow": 1800,
+                "foodHigh": 3800
+              },
+              "notes": "Ocean Park admission, if chosen, is extra",
+              "location": {
+                "mapAnchor": "Binondo Church / Ongpin",
+                "lat": 14.6002,
+                "lng": 120.9747,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.6002,120.9747"
+              }
+            },
+            {
+              "id": "p3-explore-2026-08-31",
+              "date": "2026-08-31",
+              "dateLabel": "Mon, Aug 31",
+              "theme": "Holiday – Manila/BGC Flex Day",
+              "timeWindow": "10:00 AM–10:00 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Makati + BGC",
+              "detailedPlan": "Brunch; Ayala/Makati exploration; coffee; return BGC; spa or rest; special dinner.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 500,
+                "foodLow": 3000,
+                "foodHigh": 6000
+              },
+              "notes": "Use holiday as flexible third full day",
+              "location": {
+                "mapAnchor": "Ayala Museum",
+                "lat": 14.55358,
+                "lng": 121.02325,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55358,121.02325"
+              }
+            },
+            {
+              "id": "p3-explore-2026-09-01",
+              "date": "2026-09-01",
+              "dateLabel": "Tue, Sep 1",
+              "theme": "Workday – Movie",
+              "timeWindow": "5:30 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Dinner + movie + dessert.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 1400,
+                "foodHigh": 2500
+              },
+              "notes": "Close only",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p3-explore-2026-09-02",
+              "date": "2026-09-02",
+              "dateLabel": "Wed, Sep 2",
+              "theme": "Workday – McKinley",
+              "timeWindow": "6:00 PM–9:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Venice Grand Canal, McKinley Hill",
+              "detailedPlan": "Dinner + canal walk + photos + dessert.",
+              "travelMode": "Grab / taxi",
+              "cost": {
+                "travel": 350,
+                "foodLow": 1300,
+                "foodHigh": 2500
+              },
+              "notes": "Nearby weekday excursion",
+              "location": {
+                "mapAnchor": "Venice Grand Canal Mall",
+                "lat": 14.53443,
+                "lng": 121.05079,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.53443,121.05079"
+              }
+            },
+            {
+              "id": "p3-explore-2026-09-03",
+              "date": "2026-09-03",
+              "dateLabel": "Thu, Sep 3",
+              "theme": "Workday – Final BGC Night",
+              "timeWindow": "7:00 PM–10:30 PM",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "BGC",
+              "detailedPlan": "Nice dinner; evening walk; dessert; pack.",
+              "travelMode": "Walk / short Grab",
+              "cost": {
+                "travel": 0,
+                "foodLow": 2300,
+                "foodHigh": 4500
+              },
+              "notes": "Final night",
+              "location": {
+                "mapAnchor": "Bonifacio High Street",
+                "lat": 14.55056,
+                "lng": 121.05139,
+                "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139"
+              }
+            },
+            {
+              "id": "p3-explore-2026-09-04",
+              "date": "2026-09-04",
+              "dateLabel": "Fri, Sep 4",
+              "theme": "Travel",
+              "timeWindow": "TBD",
+              "comingFrom": "Avida Towers Verte, BGC, Taguig",
+              "destination": "Iloilo",
+              "detailedPlan": "Travel to Iloilo.",
+              "travelMode": "Airport transfer + flight",
+              "cost": {
+                "travel": 500,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Flight excluded"
+            },
+            {
+              "id": "p3-explore-2026-09-05",
+              "date": "2026-09-05",
+              "dateLabel": "Sat, Sep 5",
+              "theme": "Iloilo",
+              "timeWindow": "Flexible",
+              "comingFrom": "Iloilo",
+              "destination": "Iloilo",
+              "detailedPlan": "Personal/family time.",
+              "travelMode": "Varies",
+              "cost": {
+                "travel": 0,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Not costed"
+            },
+            {
+              "id": "p3-explore-2026-09-06",
+              "date": "2026-09-06",
+              "dateLabel": "Sun, Sep 6",
+              "theme": "Return",
+              "timeWindow": "TBD",
+              "comingFrom": "Iloilo",
+              "destination": "Avida Towers Verte, BGC, Taguig",
+              "detailedPlan": "Return to BGC.",
+              "travelMode": "Flight + airport transfer",
+              "cost": {
+                "travel": 500,
+                "foodLow": 0,
+                "foodHigh": 0
+              },
+              "notes": "Flight excluded"
+            }
+          ]
+        }
+      ],
+      "places": [
+        {
+          "name": "Avida Towers Verte (Home Base)",
+          "area": "BGC, Taguig",
+          "lat": 14.5555,
+          "lng": 121.0528,
+          "coordinates": "14.5555, 121.0528",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.5555,121.0528",
+          "why": "Home base / starting point for most trips",
+          "coordinateSource": "https://www.google.com/maps/search/?api=1&query=Avida+Towers+Verte+BGC"
+        },
+        {
+          "name": "Bonifacio High Street",
+          "area": "BGC, Taguig",
+          "lat": 14.55056,
+          "lng": 121.05139,
+          "coordinates": "14.55056, 121.05139",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55056,121.05139",
+          "why": "Weekday walks, dining, shopping",
+          "imageUrl": "https://blog.kakaocdn.net/dna/sSaDz/btsuPPBxMdT/AAAAAAAAAAAAAAAAAAAAAFvmqJCnfYhEStoEd9eYjBPQMgJlYTebTaCINBEjewNE/img.jpg?allow_ip=&allow_referer=",
+          "coordinateSource": "https://www.wikidata.org/wiki/Q17064247"
+        },
+        {
+          "name": "Venice Grand Canal Mall",
+          "area": "McKinley Hill, Taguig",
+          "lat": 14.53443,
+          "lng": 121.05079,
+          "coordinates": "14.53443, 121.05079",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.53443,121.05079",
+          "why": "Wednesday evening option",
+          "imageUrl": "https://ak-d.tripcdn.com/images/1mi2z224x98t5ehvoD356_R_600_400_R5_Q90.jpg?proc=source%2Ftrip",
+          "coordinateSource": "https://mapcarta.com/Venice_Grand_Canal_Mall_R6320197"
+        },
+        {
+          "name": "Ayala Museum",
+          "area": "Makati",
+          "lat": 14.55358,
+          "lng": 121.02325,
+          "coordinates": "14.55358, 121.02325",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55358,121.02325",
+          "why": "Museum / Makati day",
+          "imageUrl": "https://www.ayalafoundation.org/wp-content/uploads/2021/05/59-scaled.jpg",
+          "coordinateSource": "https://mapcarta.com/N21717872"
+        },
+        {
+          "name": "Ayala Triangle Gardens",
+          "area": "Makati",
+          "lat": 14.55612,
+          "lng": 121.02325,
+          "coordinates": "14.55612, 121.02325",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.55612,121.02325",
+          "why": "Relaxed Makati walk",
+          "imageUrl": "https://insiderph.com/uploads/articles/ej-obiena-atletang-ayala-bring-historic-pole-vault-event-to-ph-2-1200x674.webp",
+          "coordinateSource": "https://mapcarta.com/W777918857"
+        },
+        {
+          "name": "National Museum of Fine Arts",
+          "area": "Ermita, Manila",
+          "lat": 14.58689,
+          "lng": 120.98131,
+          "coordinates": "14.58689, 120.98131",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.58689,120.98131",
+          "why": "Main museum stop on Old Manila day",
+          "coordinateSource": "https://www.wikidata.org/wiki/Q123815605"
+        },
+        {
+          "name": "Manila Cathedral",
+          "area": "Intramuros, Manila",
+          "lat": 14.59151,
+          "lng": 120.97361,
+          "coordinates": "14.59151, 120.97361",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.59151,120.97361",
+          "why": "Intramuros walking route",
+          "coordinateSource": "https://mapcarta.com/36499366"
+        },
+        {
+          "name": "Casa Manila",
+          "area": "Intramuros, Manila",
+          "lat": 14.58966,
+          "lng": 120.97517,
+          "coordinates": "14.58966, 120.97517",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.58966,120.97517",
+          "why": "Spanish-colonial house museum",
+          "coordinateSource": "https://www.wikidata.org/wiki/Q2110598"
+        },
+        {
+          "name": "Fort Santiago",
+          "area": "Intramuros, Manila",
+          "lat": 14.59447,
+          "lng": 120.97006,
+          "coordinates": "14.59447, 120.97006",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.59447,120.97006",
+          "why": "Historic fort / Intramuros highlight",
+          "imageUrl": "https://cdn.sanity.io/images/nxpteyfv/goguides/02a9cc2ff464e5fee518642d0a787f94e0da4798-1600x1066.jpg",
+          "coordinateSource": "https://mapcarta.com/15721266"
+        },
+        {
+          "name": "Binondo Church",
+          "area": "Binondo, Manila",
+          "lat": 14.6002,
+          "lng": 120.9747,
+          "coordinates": "14.6002, 120.9747",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.6002,120.9747",
+          "why": "Good anchor point for Binondo food crawl",
+          "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/50/Binondo_Church_in_front_of_Plaza_San_Lorenzo_Ruiz%2C_Binondo%2C_Manila_%282%29.jpg",
+          "coordinateSource": "https://www.wikidata.org/wiki/Q864029"
+        },
+        {
+          "name": "Ongpin Street / Chinatown",
+          "area": "Binondo, Manila",
+          "lat": 14.60083,
+          "lng": 120.97528,
+          "coordinates": "14.60083, 120.97528",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.60083,120.97528",
+          "why": "Food crawl area",
+          "coordinateSource": "https://commons.wikimedia.org/wiki/File:1594Philtrust_Ongpin_Street_01.jpg"
+        },
+        {
+          "name": "Rizal Park",
+          "area": "Ermita, Manila",
+          "lat": 14.58263,
+          "lng": 120.97857,
+          "coordinates": "14.58263, 120.97857",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.58263,120.97857",
+          "why": "Optional Sunday/Manila stop",
+          "coordinateSource": "https://fr.wikipedia.org/wiki/Rizal_Park"
+        },
+        {
+          "name": "Manila Ocean Park",
+          "area": "Ermita, Manila",
+          "lat": 14.57936,
+          "lng": 120.97263,
+          "coordinates": "14.57936, 120.97263",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.57936,120.97263",
+          "why": "Optional Sunday activity"
+        },
+        {
+          "name": "Manila Baywalk",
+          "area": "Roxas Blvd, Manila",
+          "lat": 14.56914,
+          "lng": 120.98247,
+          "coordinates": "14.56914, 120.98247",
+          "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=14.56914,120.98247",
+          "why": "Sunset / evening option",
+          "coordinateSource": "https://mapcarta.com/W755100264"
+        }
+      ],
+      "createdAt": "2026-08-23T00:00:00.000Z",
+      "updatedAt": "2026-08-23T00:00:00.000Z"
+    }
+  ]
+}

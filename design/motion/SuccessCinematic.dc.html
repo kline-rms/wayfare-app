@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
+<style>
+  .serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+  .grotesk{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.5px}
+  .mono{font-family:ui-monospace,'SF Mono','DM Mono',monospace}
+  :root{
+    --bg:#ECEBE8; --card:#FFFFFF; --ink:#191A1C; --sec:#9B9A96; --ter:#C3C1BC;
+    --line:#EEEDEA; --primary:#17181A; --primaryd:#2C2D31; --black:#17181A; --knob:#2C2D31;
+    --orange:#F26B2A; --green:#34B87E; --blue:#3E97E5; --purple:#8B7CF0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration:none}
+  .frame{width:390px;height:844px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative}
+  .safe{height:52px;flex-shrink:0}
+  .pad{padding:0 22px}
+  .card{background:var(--card);border-radius:24px;box-shadow:0 8px 22px rgba(20,20,20,.06)}
+  .sec{color:var(--sec)}
+  .h1{font-size:28px;font-weight:800;letter-spacing:-.7px;line-height:1.08;margin:0}
+  .cta{position:relative;height:60px;border-radius:30px;background:var(--black);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;box-shadow:0 14px 26px rgba(23,24,26,.26)}
+  .cta .knob{position:absolute;right:8px;top:8px;width:44px;height:44px;border-radius:50%;background:var(--knob);display:flex;align-items:center;justify-content:center}
+  .chipbtn{height:38px;border-radius:19px;background:var(--card);box-shadow:0 6px 16px rgba(20,20,20,.10);display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:700}
+  .rbtn{box-shadow:0 8px 18px rgba(23,24,26,.22)}
+  .softsh{box-shadow:0 10px 24px rgba(20,20,20,.10)}
+  .navbtn{box-shadow:0 7px 16px rgba(0,0,0,.16)}
+  .stopcard{margin-bottom:10px}
+  .iconchip{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .weather{background:var(--card);border-radius:15px;padding:7px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(20,20,20,.05)}
+  .orb{width:26px;height:26px;border-radius:50%;flex-shrink:0;background-color:var(--ink);background-repeat:no-repeat;background-position:center;background-size:56%;background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M12%202l1.9%206.4L20%2010l-6.1%201.6L12%2018l-1.9-6.4L4%2010l6.1-1.6z'%20fill='%23fff'/%3E%3C/svg%3E");animation:orbpulse 2.8s ease-in-out infinite}
+  .aitip{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:22px;padding:14px;box-shadow:0 6px 16px rgba(20,20,20,.05)}
+  .stat{flex:1;display:flex;flex-direction:column;gap:3px}
+  .stat b{font-size:19px;font-weight:800;letter-spacing:-.4px}
+  .stat span{font-size:12px;color:var(--sec);font-weight:500}
+  .rail{width:40px;display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .dash{width:2px;flex:1;margin-top:6px;background-image:repeating-linear-gradient(to bottom,var(--ter) 0 4px,transparent 4px 10px)}
+  .stopcard{flex:1;background:var(--card);border-radius:20px;box-shadow:0 6px 16px rgba(20,20,20,.06);padding:14px 15px;margin-bottom:12px}
+  .field{height:56px;border-radius:16px;background:var(--card);box-shadow:0 3px 10px rgba(20,20,20,.04);display:flex;align-items:center;gap:12px;padding:0 16px}
+  .field input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;font-weight:500;color:var(--ink);width:100%}
+  .field input::placeholder{color:var(--ter)}
+  .label{font-size:13px;font-weight:600;color:var(--sec);margin-bottom:8px}
+  .photo{background:linear-gradient(135deg,#DAD8D3 0%,#C8C5BF 55%,#D2CFC9 100%);position:relative;overflow:hidden}
+  .photo .pi{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.45}
+  .dots{display:flex;gap:6px;align-items:center}
+  .dots i{width:6px;height:6px;border-radius:3px;background:var(--ter);display:block}
+  .dots i.on{width:20px;background:var(--ink)}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes sheetUp{0%{transform:translateY(115%)}70%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  @keyframes springIn{0%{transform:scale(.5);opacity:0}55%{transform:scale(1.1);opacity:1}75%{transform:scale(.96)}100%{transform:scale(1)}}
+  @keyframes popIn{0%{transform:scale(.86) translateY(12px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+  @keyframes ring{0%{transform:scale(.25);opacity:.5}100%{transform:scale(2.7);opacity:0}}
+  @keyframes floatUp{0%{transform:translate(0,0) scale(1);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx,0),-96px) scale(.35);opacity:0}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes drift{0%,100%{transform:translateY(5px)}50%{transform:translateY(-5px)}}
+  @keyframes drawline{to{stroke-dashoffset:0}}
+  @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(23,24,26,.18)}50%{box-shadow:0 0 40px 6px rgba(23,24,26,.10)}}
+  @keyframes orbpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  @keyframes staggerUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.16)}}
+  @keyframes livepulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.9);opacity:0}}
+  @keyframes fillbar{from{width:0}}
+  .kb{animation:kenburns 20s ease-in-out infinite alternate}
+  .a-fade{animation:fadeIn .35s ease both}
+  .a-sheet{animation:sheetUp .5s cubic-bezier(.2,.8,.2,1) both}
+  .a-spring{animation:springIn .7s cubic-bezier(.2,.9,.3,1.2) both}
+  .a-pop{animation:popIn .4s cubic-bezier(.2,.8,.2,1) both}
+  .a-spin{animation:spin 1s linear infinite}
+  .a-drift{animation:drift 3s ease-in-out infinite}
+</style>
+</helmet>
+<div class="frame" style="background:linear-gradient(160deg,#23252E 0%,#0D0E12 100%);position:relative;overflow:hidden">
+  <div style="flex:1;position:relative">
+    <div style="position:absolute;left:50%;top:44%;width:0;height:0">
+      <div style="position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:2px solid rgba(255,255,255,.45);animation:ring 2.4s ease-out 0s infinite"></div><div style="position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:2px solid rgba(255,255,255,.45);animation:ring 2.4s ease-out 0.8s infinite"></div><div style="position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:2px solid rgba(255,255,255,.45);animation:ring 2.4s ease-out 1.6s infinite"></div>
+      <div style="position:absolute;left:calc(50% + -62px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 0s infinite;--dx:16px"></div><div style="position:absolute;left:calc(50% + 66px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 0.5s infinite;--dx:-14px"></div><div style="position:absolute;left:calc(50% + -42px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 1s infinite;--dx:22px"></div><div style="position:absolute;left:calc(50% + 52px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 1.4s infinite;--dx:-18px"></div><div style="position:absolute;left:calc(50% + -8px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 0.3s infinite;--dx:10px"></div><div style="position:absolute;left:calc(50% + 26px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 1.7s infinite;--dx:-8px"></div><div style="position:absolute;left:calc(50% + 80px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 0.9s infinite;--dx:8px"></div><div style="position:absolute;left:calc(50% + -78px);top:50%;margin-top:-4px;width:8px;height:8px;border-radius:2px;background:#fff;opacity:0;animation:floatUp 2.6s ease-out 1.2s infinite;--dx:-10px"></div>
+      <div style="position:absolute;left:50%;top:50%;margin:-54px 0 0 -54px;width:108px;height:108px;border-radius:34px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:springIn .75s cubic-bezier(.2,.9,.3,1.25) both,glow 2.6s ease-in-out 1s infinite"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H14a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h5.5"/></svg></div>
+    </div>
+  </div>
+  <div style="padding:0 30px 46px;text-align:center">
+    <div class="a-pop" style="animation-delay:.55s"><h1 style="font-size:30px;font-weight:800;color:#fff;letter-spacing:-.7px;margin:0;line-height:1.08">Your itinerary<br>is ready</h1>
+      <p style="font-size:15px;font-weight:500;color:rgba(255,255,255,.72);margin:12px 0 0;line-height:1.5">5 balanced days · 3 stops today — all mapped with timings, costs &amp; routes.</p></div>
+    <div class="a-pop" style="animation-delay:.8s;margin-top:26px"><div style="height:58px;border-radius:999px;background:#fff;color:#17181A;display:flex;align-items:center;justify-content:center;gap:9px;font-size:16px;font-weight:800;box-shadow:0 14px 30px rgba(0,0,0,.35)">See your plan <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17181A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div></div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

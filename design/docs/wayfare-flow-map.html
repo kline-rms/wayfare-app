@@ -1,0 +1,369 @@
+<title>Wayfare Flow Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#F4F2EC; --surface:#FBFAF6; --raise:#FFFFFF;
+    --ink:#1B1C1F; --muted:#6E6A60; --faint:#9A9384; --line:#E4E0D5;
+    --accent:#2F6DB4; --activity:#3E97E5; --travel:#D99A3A; --nature:#34A06E; --ai:#7C5CF0; --crit:#D8524D;
+    --diagram:#FBFAF6; --diagram-line:#D8D2C4;
+    --maxw:940px; --read:66ch;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --paper:#151619; --surface:#1C1D21; --raise:#212226;
+    --ink:#ECEAE3; --muted:#A6A196; --faint:#6F6B62; --line:#2C2D31;
+    --accent:#6FA8E6; --activity:#5AA6EC; --travel:#E0AC5A; --nature:#48BE86; --ai:#9A80F5; --crit:#E86D68;
+  }}
+  :root[data-theme="dark"]{
+    --paper:#151619; --surface:#1C1D21; --raise:#212226;
+    --ink:#ECEAE3; --muted:#A6A196; --faint:#6F6B62; --line:#2C2D31;
+    --accent:#6FA8E6; --activity:#5AA6EC; --travel:#E0AC5A; --nature:#48BE86; --ai:#9A80F5; --crit:#E86D68;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{animation:none!important;transition:none!important} }
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .disp{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em;line-height:1.05;text-wrap:balance;margin:0}
+  .mono{font-family:'DM Mono',ui-monospace,monospace}
+  .eyebrow{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  a{color:var(--accent);text-underline-offset:3px}
+  p{max-width:var(--read)}
+
+  /* header */
+  header.hero{padding:76px 0 40px;border-bottom:1px solid var(--line)}
+  header.hero h1{font-size:clamp(40px,7vw,68px);font-weight:800;margin:16px 0 0}
+  header.hero .lede{font-size:clamp(17px,2.2vw,21px);color:var(--muted);margin:20px 0 0;max-width:52ch}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+  .chip{font-family:'DM Mono',monospace;font-size:12.5px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted)}
+
+  /* section */
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px}
+  .sec-head .num{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);padding-top:4px}
+  .sec-head h2{font-size:clamp(24px,3.4vw,34px);font-weight:700;margin:0}
+  .sec-sub{color:var(--muted);margin:-14px 0 26px}
+
+  /* callout / model card */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  .model{font-family:'DM Mono',monospace;font-size:14px;line-height:1.9;color:var(--ink)}
+  .model .k{color:var(--accent)}
+  .model .c{color:var(--faint)}
+
+  /* table */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:14.5px}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:'DM Mono',monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:500;background:var(--paper);position:sticky;top:0}
+  tbody tr:last-child td{border-bottom:none}
+  td.area{font-weight:700}
+  .st{font-family:'DM Mono',monospace;font-size:11px;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .st.done{background:color-mix(in oklab,var(--nature) 18%,transparent);color:var(--nature)}
+  .st.anim{background:color-mix(in oklab,var(--ai) 20%,transparent);color:var(--ai)}
+  .st.gap{background:color-mix(in oklab,var(--crit) 18%,transparent);color:var(--crit)}
+  .pri{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px}
+  .p1{background:color-mix(in oklab,var(--crit) 20%,transparent);color:var(--crit)}
+  .p2{background:color-mix(in oklab,var(--travel) 24%,transparent);color:var(--travel)}
+  .p3{background:color-mix(in oklab,var(--muted) 18%,transparent);color:var(--muted)}
+
+  /* diagram panel — a fixed light drafting surface in both themes (a figure) */
+  figure.dia{margin:0;background:var(--diagram);border:1px solid var(--diagram-line);border-radius:16px;padding:18px;overflow-x:auto}
+  figure.dia figcaption{font-family:'DM Mono',monospace;font-size:12px;color:#8A8479;margin-bottom:10px;letter-spacing:.04em}
+  .mermaid{min-width:560px}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+  /* list */
+  ol.build{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px}
+  ol.build li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:14px;align-items:start}
+  ol.build li::before{content:counter(s);font-family:'DM Mono',monospace;font-size:14px;color:var(--accent);border:1px solid var(--line);border-radius:9px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--surface)}
+  ol.build b{font-weight:700}
+  ol.build .d{color:var(--muted);font-size:14.5px}
+
+  footer{padding:40px 0 70px;color:var(--faint);font-size:13px;font-family:'DM Mono',monospace}
+  .toc{position:sticky;top:0;z-index:5;background:color-mix(in oklab,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 0}
+  .toc .wrap{display:flex;gap:6px;flex-wrap:wrap;font-family:'DM Mono',monospace;font-size:12.5px}
+  .toc a{color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:8px}
+  .toc a:hover{color:var(--ink);background:var(--surface)}
+</style>
+
+<nav class="toc"><div class="wrap">
+  <a href="#shape">01 Shape</a><a href="#screens">02 Screens</a><a href="#nav">03 Navigation</a>
+  <a href="#journeys">04 Journeys</a><a href="#seq">05 Sequences</a><a href="#data">06 Data flow</a>
+  <a href="#gaps">07 Gaps</a><a href="#order">08 Build order</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">Product architecture · v0 designs</div>
+  <h1 class="disp">Wayfare,<br>end to end.</h1>
+  <p class="lede">How every screen connects — the complete journeys, the calls behind them, and the pages we still owe the flow.</p>
+  <div class="chips">
+    <span class="chip">28 screens</span><span class="chip">3 design artifacts</span>
+    <span class="chip">1 API · 2 clients</span><span class="chip">Itinerary → Proposal → Day</span>
+  </div>
+</div></header>
+
+<section id="shape"><div class="wrap">
+  <div class="sec-head"><span class="num">01</span><h2 class="disp">The shape of it</h2></div>
+  <p>Wayfare turns a <b>starting place</b>, a <b>destination</b>, and a <b>purpose</b> into a day-by-day plan. You begin one of three ways — chat with the AI, build it by hand, or import a spreadsheet — and the AI fills in the timings, cost ranges, travel modes, and map pins. On the road it runs your <b>live day</b>: the next stop, how far it is from your GPS, arrival check-ins, and reminders — all scheduled around the hours you've blocked for work and other commitments.</p>
+  <div class="grid2" style="margin-top:24px">
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:12px">Data model</div>
+      <div class="model">
+        <span class="k">Itinerary</span> <span class="c">— trip, currency, home base</span><br>
+        &nbsp;├─ <span class="k">Proposal[]</span> <span class="c">— style variants</span><br>
+        &nbsp;│&nbsp;&nbsp;&nbsp;└─ <span class="k">Day[]</span> <span class="c">— date · theme · stops</span><br>
+        &nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ <span class="k">Stop</span> <span class="c">· time · plan · cost · geo</span><br>
+        &nbsp;├─ <span class="k">Place[]</span> <span class="c">— maps catalog</span><br>
+        &nbsp;└─ <span class="k">Commitment[]</span> <span class="c">— work / blocks</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:12px">One source, two clients</div>
+      <p style="margin:0;font-size:15px">The web app and the mobile app talk to the <b>same Fastify API</b>. Every itinerary is stored under an <span class="mono">ownerId</span> (the signed-in account), so a spreadsheet imported on the web appears on the phone with no extra work. Storage is JSON today, Firestore later — behind one <span class="mono">Repo</span> seam. AI generation and map geocoding happen <b>server-side</b>; the OpenAI key never ships in a client.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="screens"><div class="wrap">
+  <div class="sec-head"><span class="num">02</span><h2 class="disp">Screen inventory</h2></div>
+  <p class="sec-sub">28 screens across three design artifacts. <span class="st done">Designed</span> is drawn; <span class="st anim">Animated</span> carries motion.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Area</th><th>Screen</th><th>Its job</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td class="area" rowspan="4">Onboard &amp; auth</td><td>Splash</td><td>Brand + route to auth/home</td><td><span class="st anim">Animated</span></td></tr>
+      <tr><td>Onboarding</td><td>Walkthrough (slide 1 of 3)</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Register / Login</td><td>Email + Google sign-in</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Commitments</td><td>Work hours, engagements, stay-up-late</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td class="area" rowspan="4">Home &amp; account</td><td>Home / My Trips</td><td>Upcoming trip, your trips, new trip</td><td><span class="st anim">Animated</span></td></tr>
+      <tr><td>Notifications</td><td>Reminder &amp; check-in inbox</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Reminder Settings</td><td>Intervals (1h + 15m), travel-aware</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Profile</td><td>Home base, currency, reminders, sign out</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td class="area" rowspan="7">Create a trip</td><td>Start Method</td><td>AI · build · import</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Import</td><td>Column mapping → enhance</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Basics</td><td>Origin → destination, dates, travelers</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Vibe</td><td>Occasion, pace, budget</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Interests</td><td>Interests + must-visit places</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Review</td><td>Summary → generate</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Generating</td><td>Cinematic AI build</td><td><span class="st anim">Animated</span></td></tr>
+      <tr><td class="area" rowspan="7">Plan &amp; live day</td><td>Proposals</td><td>3 style variants (staggered)</td><td><span class="st anim">Animated</span></td></tr>
+      <tr><td>Trip Overview</td><td>Photo header + day list</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Itinerary (day)</td><td>Up-next photo + GPS distance + cancel</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Route Map</td><td>Google-embed map, distance, cancel next</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Calendar · Day / Week</td><td>Gantt of blocks; work vs activity</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Place Detail</td><td>Hero, hours, reviews, arrival check-in</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td>Push banner</td><td>Lock-screen reminder</td><td><span class="st done">Designed</span></td></tr>
+      <tr><td class="area" rowspan="3">Interactions</td><td>Success (cinematic)</td><td>Post-generate celebration</td><td><span class="st anim">Animated</span></td></tr>
+      <tr><td>Confirm sheet</td><td>Decision guard (cancel / delete)</td><td><span class="st anim">Animated</span></td></tr>
+      <tr><td>Calendar popup</td><td>Tap a block → schedule detail</td><td><span class="st anim">Animated</span></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="nav"><div class="wrap">
+  <div class="sec-head"><span class="num">03</span><h2 class="disp">Navigation map</h2></div>
+  <p class="sec-sub">Every screen and the paths between them. Node color is its kind.</p>
+  <figure class="dia"><figcaption>flow · screens ↔ screens</figcaption>
+<pre class="mermaid">
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'DM Mono, monospace','fontSize':'13px','background':'#FBFAF6','primaryColor':'#EFECE3','primaryBorderColor':'#C9C2B4','primaryTextColor':'#1B1C1F','lineColor':'#9A9384'}}}%%
+flowchart TD
+  Splash --> Onb[Onboarding ×3] --> Auth[Register / Login]
+  Auth --> Home
+  Home --> New{New trip}
+  Home --> Trip[Trip Overview]
+  Home -.tabs.-> Alerts[Notifications] & Profile & Cal[Calendar]
+  New --> Chat[AI Chat] & Build[Basics→Vibe→Interests→Review] & Import
+  Chat --> Gen[Generating]
+  Build --> Gen
+  Import --> Gen
+  Gen --> Success[Success] --> Props[Proposals]
+  Props --> Trip
+  Trip --> Day[Itinerary · day]
+  Day --> Map[Route Map]
+  Day --> Place[Place Detail]
+  Day --> Cancel[Confirm: cancel next]
+  Place --> Checkin[Arrival check-in]
+  Cal --> Week[Week view] & Pop[Block popup]
+  Alerts --> RSet[Reminder Settings]
+  Profile --> Commit[Commitments] & RSet
+  RSet -.schedules.-> Push[Push banner]
+  classDef s fill:#F3F0E7,stroke:#C9C2B4,color:#1B1C1F;
+  classDef create fill:#EFE9FB,stroke:#C6B9F2,color:#2A2350;
+  classDef live fill:#E7EFFA,stroke:#B8D2F0,color:#1E4E7E;
+  classDef sys fill:#FBF0DD,stroke:#E6C98D,color:#7A5A18;
+  class Splash,Onb,Auth,Home,Trip,Profile,Alerts s;
+  class New,Chat,Build,Import,Gen,Success,Props create;
+  class Day,Map,Place,Checkin,Cal,Week,Pop,Cancel live;
+  class RSet,Commit,Push sys;
+</pre>
+    <div class="legend"><span><i style="background:#EAD9AD"></i>onboarding / home</span><span><i style="background:#C6B9F2"></i>create</span><span><i style="background:#B8D2F0"></i>plan &amp; live</span><span><i style="background:#E6C98D"></i>reminders</span></div>
+  </figure>
+</div></section>
+
+<section id="journeys"><div class="wrap">
+  <div class="sec-head"><span class="num">04</span><h2 class="disp">User journeys</h2></div>
+
+  <p class="sec-sub">Three ways to create — every path lands on the same generated plan.</p>
+  <figure class="dia"><figcaption>journey · create a trip</figcaption>
+<pre class="mermaid">
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'DM Mono, monospace','fontSize':'13px','background':'#FBFAF6','primaryColor':'#EFECE3','primaryBorderColor':'#C9C2B4','primaryTextColor':'#1B1C1F','lineColor':'#9A9384'}}}%%
+flowchart LR
+  Start([New trip]) --> M{How?}
+  M -->|Chat| A1[Ask origin, dest,<br>purpose, work blocks]
+  A1 --> A2[Confirm summary]
+  M -->|Build| B1[Basics] --> B2[Vibe] --> B3[Interests<br>+ must-dos] --> B4[Review]
+  M -->|Import| C1[Upload CSV/XLSX] --> C2[Map columns]
+  A2 --> G[[Generate<br>server → OpenAI]]
+  B4 --> G
+  C2 --> G
+  G --> R([3 proposals ready])
+</pre>
+  </figure>
+
+  <p class="sec-sub" style="margin-top:34px">The live day — from opening the trip to completing each stop.</p>
+  <figure class="dia"><figcaption>journey · live day</figcaption>
+<pre class="mermaid">
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'DM Mono, monospace','fontSize':'13px','background':'#FBFAF6','primaryColor':'#EFECE3','primaryBorderColor':'#C9C2B4','primaryTextColor':'#1B1C1F','lineColor':'#9A9384'}}}%%
+flowchart LR
+  Open([Open today]) --> Up[Up next + GPS distance]
+  Up --> Nav[Route map · navigate]
+  Nav --> Arr{At the place?}
+  Arr -->|Yes| Chk[Check in · I'm here] --> Done[Stop complete] --> Up
+  Arr -->|Stay longer| Can[Confirm: cancel next] --> Reflow[Reflow day] --> Up
+  Up -. 1h & 15m before .-> Push[Push reminder]
+  Done --> End([Day wrapped])
+</pre>
+  </figure>
+</div></section>
+
+<section id="seq"><div class="wrap">
+  <div class="sec-head"><span class="num">05</span><h2 class="disp">Under the hood</h2></div>
+
+  <p class="sec-sub">AI generation — the client never holds the key.</p>
+  <figure class="dia"><figcaption>sequence · generate itinerary</figcaption>
+<pre class="mermaid">
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'DM Mono, monospace','fontSize':'13px','actorBkg':'#EFECE3','actorBorder':'#C9C2B4','actorTextColor':'#1B1C1F','signalColor':'#6E6A60','signalTextColor':'#1B1C1F','noteBkgColor':'#E7EFFA','noteBorderColor':'#B8D2F0'}}}%%
+sequenceDiagram
+  participant App as App (web/mobile)
+  participant API as Fastify API
+  participant AI as OpenAI
+  participant Geo as Google Maps
+  participant DB as Store (JSON→Firestore)
+  App->>API: POST /api/generate {origin,dest,purpose,dates,blocks}
+  API->>AI: structured prompt
+  AI-->>API: proposals JSON
+  API->>API: validate vs schema
+  API->>Geo: geocode stops → lat/lng
+  Geo-->>API: coordinates
+  API->>DB: save under ownerId
+  API-->>App: itinerary
+  App->>App: render Proposals (staggered)
+</pre>
+  </figure>
+
+  <p class="sec-sub" style="margin-top:34px">Import on web, appears on mobile — same account.</p>
+  <figure class="dia"><figcaption>sequence · import &amp; sync</figcaption>
+<pre class="mermaid">
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'DM Mono, monospace','fontSize':'13px','actorBkg':'#EFECE3','actorBorder':'#C9C2B4','actorTextColor':'#1B1C1F','signalColor':'#6E6A60','signalTextColor':'#1B1C1F','noteBkgColor':'#E9F5EF','noteBorderColor':'#B7E0C8'}}}%%
+sequenceDiagram
+  participant Web as Web client
+  participant API as Fastify API
+  participant AI as OpenAI
+  participant DB as Store
+  participant Mob as Mobile client
+  Web->>API: POST /api/imports (file)
+  API->>API: parse xlsx/csv → Itinerary shape
+  API->>AI: fill gaps (timings, pins) — optional
+  AI-->>API: enriched days
+  API->>DB: save under ownerId
+  API-->>Web: imported trip
+  Note over DB,Mob: later, on the phone
+  Mob->>API: GET /api/itineraries?owner
+  API->>DB: read ownerId
+  DB-->>API: trips
+  API-->>Mob: trips (reflects the import)
+</pre>
+  </figure>
+</div></section>
+
+<section id="data"><div class="wrap">
+  <div class="sec-head"><span class="num">06</span><h2 class="disp">Data flow</h2></div>
+  <p class="sec-sub">Where each capability lives — and what stays on the device.</p>
+  <figure class="dia"><figcaption>data flow · systems</figcaption>
+<pre class="mermaid">
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'DM Mono, monospace','fontSize':'13px','background':'#FBFAF6','primaryColor':'#EFECE3','primaryBorderColor':'#C9C2B4','primaryTextColor':'#1B1C1F','lineColor':'#9A9384'}}}%%
+flowchart LR
+  subgraph Clients
+    W[Web app] ; Mo[Mobile app]
+  end
+  subgraph Device[On device]
+    GPS[GPS · distance] ; LN[Local notifications]
+  end
+  API[[Fastify API]]
+  Repo[(Repo · JSON→Firestore)]
+  Auth{{Firebase Auth · ownerId}}
+  W & Mo --> API
+  API --> Repo
+  API --> OpenAI[OpenAI · generate]
+  W & Mo --> Maps[Google Maps Embed · pins]
+  Mo --> GPS
+  Mo --> LN
+  Auth -. gates .- API
+  LN -. from itinerary .- Repo
+  classDef c fill:#F3F0E7,stroke:#C9C2B4,color:#1B1C1F;
+  classDef ext fill:#FBF0DD,stroke:#E6C98D,color:#7A5A18;
+  classDef store fill:#E9F5EF,stroke:#B7E0C8,color:#1E7C54;
+  class W,Mo,GPS,LN c; class OpenAI,Maps,Auth ext; class Repo,API store;
+</pre>
+    <div class="legend"><span><i style="background:#C9C2B4"></i>clients / device</span><span><i style="background:#B7E0C8"></i>our services</span><span><i style="background:#E6C98D"></i>external</span></div>
+  </figure>
+</div></section>
+
+<section id="gaps"><div class="wrap">
+  <div class="sec-head"><span class="num">07</span><h2 class="disp">Gaps — what the flow still needs</h2></div>
+  <p class="sec-sub">Pages the end-to-end flow implies but we haven't drawn yet. <span class="pri p1">P1</span> blocks a complete first run · <span class="pri p2">P2</span> completes the experience · <span class="pri p3">P3</span> later.</p>
+  <div class="card" style="margin-bottom:20px;border-color:color-mix(in oklab,var(--nature) 40%,var(--line));display:flex;align-items:center;gap:12px">
+    <span class="st done" style="font-size:12px">v0.2 · shipped</span>
+    <p style="margin:0;font-size:14.5px">All <b>P1</b> pages below are now designed — onboarding 2–3, permission priming, forgot-password, home empty state, import upload &amp; error, place search, and the stop editor. P2 / P3 remain open.</p>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Missing page</th><th>Why the flow needs it</th><th>Pri</th></tr></thead>
+    <tbody>
+      <tr><td>Onboarding slides 2 &amp; 3</td><td>Only slide 1 exists; the walkthrough promises three.</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Permission prompts</td><td>Location (for GPS distance) and notifications (reminders) must be requested before those features work.</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Forgot / reset password</td><td>Login links to it; there's no target.</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Home empty state</td><td>A brand-new account has no trips — needs a first-run "plan your first trip".</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Import: upload &amp; error states</td><td>We drew the column-mapping step but not choosing a file, or a parse failure.</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Place search</td><td>Reused everywhere — Basics destination, must-dos, add-a-stop, edit home base — but never designed.</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Add / edit a stop &amp; day</td><td>"Add stop" buttons exist; manual editing of a day has no editor.</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Generation error / retry</td><td>The happy path generates; a failed or empty AI response needs a recover screen.</td><td><span class="pri p1">P1</span></td></tr>
+      <tr><td>Offline / no-GPS state</td><td>The live day assumes a signal; needs a graceful fallback on Route Map &amp; Itinerary.</td><td><span class="pri p2">P2</span></td></tr>
+      <tr><td>Trip settings — rename, delete, share</td><td>No way to manage a trip after it's made.</td><td><span class="pri p2">P2</span></td></tr>
+      <tr><td>Editors: currency, interval, engagement</td><td>Settings rows point at pickers/editors that aren't drawn.</td><td><span class="pri p2">P2</span></td></tr>
+      <tr><td>All-trips / archive list</td><td>"See all" on Home has no destination.</td><td><span class="pri p2">P2</span></td></tr>
+      <tr><td>Shared trip / co-traveler</td><td>Couples plan together — inviting a partner to a trip.</td><td><span class="pri p3">P3</span></td></tr>
+      <tr><td>Reservations (B2B)</td><td>The parked "Reserve — soon" concept for venues.</td><td><span class="pri p3">P3</span></td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="order"><div class="wrap">
+  <div class="sec-head"><span class="num">08</span><h2 class="disp">Recommended build order</h2></div>
+  <p class="sec-sub">This is a real sequence — each step unblocks the next.</p>
+  <ol class="build">
+    <li><div><b>Server: save + import.</b><div class="d">Wire <span class="mono">POST /api/itineraries</span> and <span class="mono">POST /api/imports</span> (CSV/XLSX → our shape). Testable today against the real <span class="mono">docs/*.xlsx</span> — no API key needed.</div></div></li>
+    <li><div><b>Server: AI generate.</b><div class="d"><span class="mono">POST /api/generate</span> calling OpenAI with the key in a server <span class="mono">.env</span>; validate against the Day schema; geocode stops.</div></div></li>
+    <li><div><b>Fill the P1 gap pages.</b><div class="d">Onboarding 2–3, permissions, empty state, place search, stop/day editor, import upload/error, generation retry.</div></div></li>
+    <li><div><b>Expo: read paths.</b><div class="d">Home → Proposals → Trip → Day → Route Map / Place Detail, all reading the live API by account.</div></div></li>
+    <li><div><b>Expo: live day.</b><div class="d">GPS distance to next stop, arrival check-in, cancel-next reflow, and the Google Maps embed pin.</div></div></li>
+    <li><div><b>Reminders.</b><div class="d">Schedule local notifications from each itinerary at the configured intervals, respecting work blocks and stay-up-late.</div></div></li>
+    <li><div><b>Motion pass.</b><div class="d">Port the cinematic success + confirm sheets to Reanimated/Moti; wire confirmations to every destructive action.</div></div></li>
+  </ol>
+</div></section>
+
+<footer><div class="wrap">Wayfare flow map · generated from the current design set · Itinerary → Proposal → Day</div></footer>

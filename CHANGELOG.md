@@ -3,6 +3,19 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] — 2026-08-31
+
+### Added
+- **Add-a-stop.** Insert a place into a specific day (e.g. Star City on Sat Sep 12):
+  search → geocode (Nominatim) → pick time / type / cost. It's **insert-only** — the
+  rest of the plan is never re-sorted or re-generated. Added stops get a coral map
+  pin + **ADDED** badge + an **×** to remove (undo); the form **flags** a time that
+  overlaps an existing block. Non-destructive guarantees are enforced server-side:
+  originals can't be removed and shared samples keep their `ownerId`.
+- New endpoints `POST` / `DELETE /api/itineraries/:id/activities`; `lib/geocode.ts`,
+  reactive `lib/edits.ts`, `api.addActivity` / `removeActivity`; additive
+  `Activity.added` flag (shared + app types).
+
 ## [2.2.0] — 2026-08-31
 
 ### Added
@@ -76,6 +89,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.3.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.3.0
 [2.2.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.2.0
 [2.1.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.1.0
 [2.0.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.0.0

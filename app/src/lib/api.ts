@@ -11,6 +11,7 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { authStore } from './auth';
 import type {
+  Activity,
   GenerateRequest,
   Itinerary,
   ItinerarySummary,
@@ -88,6 +89,21 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
   return (await res.json()) as T;
 }
 
+async function delJson<T>(path: string): Promise<T> {
+  const url = `${API_BASE_URL}${path}`;
+  let res: Response;
+  try {
+    res = await fetch(url, { method: 'DELETE', headers: authHeaders() });
+  } catch (cause) {
+    throw new Error(`Cannot reach the itinerary server at ${API_BASE_URL}. Is it running?`, { cause });
+  }
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({}));
+    throw new Error((detail as { error?: string }).error ?? `Request failed (${res.status}) for ${path}`);
+  }
+  return (await res.json()) as T;
+}
+
 export interface AuthResult {
   token: string;
   user: User;
@@ -124,6 +140,13 @@ export const api = {
   // Persist a generated itinerary. Saving also kicks off the finalize place
   // crawl server-side (Place IDs are linked back within a few seconds).
   saveItinerary: (itinerary: Itinerary): Promise<Itinerary> => postJson('/api/itineraries', itinerary),
+
+  // Add a stop to a day (insert-only; never re-plans the rest). Returns the
+  // updated itinerary. Removing is limited to user-added stops server-side.
+  addActivity: (itineraryId: string, dayId: string, activity: Activity): Promise<Itinerary> =>
+    postJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/activities`, { dayId, activity }),
+  removeActivity: (itineraryId: string, activityId: string): Promise<Itinerary> =>
+    delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/activities/${encodeURIComponent(activityId)}`),
 
   // ---- places (Google enrichment, cached; see docs/places-caching-design.md) ----
   // Cached facts + live photo URLs for one place.

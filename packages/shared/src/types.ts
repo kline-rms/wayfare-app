@@ -79,6 +79,8 @@ export interface Activity {
   cost?: number;
   /** Whether the block is optional (Yes/No in the source). */
   optional?: boolean;
+  /** User-added stop (not from the original AI plan) — shown as editable/removable. */
+  added?: boolean;
 }
 
 export interface Day {

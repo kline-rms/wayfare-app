@@ -150,7 +150,8 @@ monorepo config).
 | `release/v1.0.0` · tag `v1.0.0` | original Wayfare app (light design + Android APK) |
 | `release/v2.0.0` · tag `v2.0.0` | Map-first **3D night** redesign |
 | `release/v2.1.0` · tag `v2.1.0` | + Home itinerary switcher |
-| `release/v2.2.0` · tag `v2.2.0` | + Time-and-place-aware dining guide (current) |
+| `release/v2.2.0` · tag `v2.2.0` | + Time-and-place-aware dining guide |
+| `release/v2.3.0` · tag `v2.3.0` | + Add-a-stop (non-destructive day editing) (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

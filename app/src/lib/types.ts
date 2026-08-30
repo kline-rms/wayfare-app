@@ -46,6 +46,8 @@ export interface Activity {
   restNap?: string;
   cost?: number;
   optional?: boolean;
+  /** User-added stop (not from the original AI plan) — shown as editable/removable. */
+  added?: boolean;
 }
 
 export interface Day {

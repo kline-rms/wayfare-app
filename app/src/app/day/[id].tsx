@@ -19,6 +19,7 @@ import { api } from '@/lib/api';
 import { money } from '@/lib/format';
 import { img, photoForPlace } from '@/lib/images';
 import { back, go } from '@/lib/nav';
+import { edits, useEditsVersion } from '@/lib/edits';
 import { hasSplitRoles } from '@/lib/activity';
 import { openMaps } from '@/lib/maps';
 import { scheduleDayReminders, supportsReminders } from '@/lib/reminders';
@@ -82,7 +83,8 @@ export default function DayScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { c, cardShadow } = useWayfare();
   const [remindMsg, setRemindMsg] = useState<string | null>(null);
-  const { data, loading, error, reload } = useAsync(() => loadDay(id), [id]);
+  const editsVersion = useEditsVersion();
+  const { data, loading, error, reload } = useAsync(() => loadDay(id), [id, editsVersion]);
   const [route, setRoute] = useState<LineGeometry | undefined>();
   const [focus, setFocus] = useState<Focus>(null);
   const [expanded, setExpanded] = useState(true);
@@ -90,10 +92,16 @@ export default function DayScreen() {
   const [activeBlock, setActiveBlock] = useState<number | null>(null);
   const mapStops = useMemo<MapStop[]>(() => {
     if (!data) return [];
-    return placesFor(data.it, data.day)
+    const base = placesFor(data.it, data.day)
       .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng) && !(p.lat === 0 && p.lng === 0))
       .map((p, i) => ({ lat: p.lat, lng: p.lng, label: p.name, sub: p.area, color: PIN[i % 3], you: i === 0 }));
+    // user-added stops get a coral pin so they stand out
+    const added = (data.day.activities ?? [])
+      .filter((a) => a.added && Number.isFinite(a.lat) && Number.isFinite(a.lng) && !(a.lat === 0 && a.lng === 0))
+      .map((a) => ({ lat: a.lat as number, lng: a.lng as number, label: a.activity, sub: a.where, color: '#FF4667' }));
+    return [...base, ...added];
   }, [data]);
+
   useEffect(() => {
     let alive = true;
     if (mapStops.length > 1) walkRoute(mapStops).then((r) => alive && setRoute(r));
@@ -112,6 +120,28 @@ export default function DayScreen() {
   const nowMeal = nowAct && isMeal(nowAct) ? nowAct : null;
   const mealBlocks = (day.activities ?? []).filter(isMeal);
   const orderedMeals = nowMeal ? [nowMeal, ...mealBlocks.filter((m) => m.id !== nowMeal.id)] : mealBlocks;
+
+  // Add-a-stop (insert only) + remove (user-added blocks only).
+  const region = [day.destination, 'Philippines'].filter(Boolean).join(', ');
+  const goAddStop = () =>
+    go({
+      pathname: '/add-stop',
+      params: {
+        it: it.id,
+        day: day.id,
+        label: day.dateLabel,
+        dest: region,
+        times: (day.activities ?? []).map((a) => a.time).filter(Boolean).join('|'),
+      },
+    });
+  const removeStop = async (activityId: string) => {
+    try {
+      await api.removeActivity(it.id, activityId);
+      edits.markStale(); // reactive bump → the day refetches
+    } catch (e) {
+      setRemindMsg((e as Error).message);
+    }
+  };
 
   // In-app "navigate": maximise the map and fit the A→B route across the day.
   const navigate = () => {
@@ -315,13 +345,19 @@ export default function DayScreen() {
               <View style={{ gap: Space.s, marginTop: Space.s }}>
                 {day.activities.map((a, i) => (
                   <Animated.View key={a.id} entering={FadeInDown.delay(Math.min(i, 8) * 45).duration(320)}>
-                    <ActivityBlock a={a} itId={it.id} dayId={day.id} />
+                    <ActivityBlock a={a} itId={it.id} dayId={day.id} onRemove={a.added ? () => removeStop(a.id) : undefined} />
                   </Animated.View>
                 ))}
               </View>
             )}
           </>
         ) : null}
+
+        {/* add a stop — insert-only; the rest of the plan is untouched */}
+        <Pressable onPress={goAddStop} style={[styles.addStop, { borderColor: c.a3 }]}>
+          <Icon name="plus" size={18} color={c.a3} />
+          <Txt style={{ color: c.a3, fontWeight: '800' }}>Add a stop to this day</Txt>
+        </Pressable>
 
         {/* places */}
         {places.length ? (
@@ -372,20 +408,26 @@ export default function DayScreen() {
   );
 }
 
-function ActivityBlock({ a, itId, dayId }: { a: Activity; itId: string; dayId: string }) {
+function ActivityBlock({ a, itId, dayId, onRemove }: { a: Activity; itId: string; dayId: string; onRemove?: () => void }) {
   const { c, cardShadow } = useWayfare();
   const cat = catStyle(a.category, c);
   const open = () => go({ pathname: '/activity/[id]', params: { id: a.id, it: itId, day: dayId } });
   return (
     <Pressable
       onPress={open}
-      style={({ pressed }) => [styles.block, { backgroundColor: c.card }, cardShadow, pressed && { opacity: 0.9 }]}>
+      style={({ pressed }) => [
+        styles.block,
+        { backgroundColor: c.card },
+        a.added && { borderWidth: 1.5, borderColor: '#FF4667' },
+        cardShadow,
+        pressed && { opacity: 0.9 },
+      ]}>
       <View style={styles.blockTime}>
         <Txt variant="mono" faint style={{ textAlign: 'right' }}>
           {a.time}
         </Txt>
       </View>
-      <View style={[styles.blockDot, { backgroundColor: cat.color }]}>
+      <View style={[styles.blockDot, { backgroundColor: a.added ? '#FF4667' : cat.color }]}>
         <Icon name={cat.icon} size={13} color="#fff" />
       </View>
       <View style={{ flex: 1 }}>
@@ -393,7 +435,12 @@ function ActivityBlock({ a, itId, dayId }: { a: Activity; itId: string; dayId: s
           <Txt style={{ fontWeight: '800', flex: 1 }} numberOfLines={2}>
             {a.activity}
           </Txt>
-          {a.optional ? <Chip label="Optional" small /> : null}
+          {a.added ? (
+            <View style={{ backgroundColor: 'rgba(255,70,103,0.22)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 }}>
+              <Txt style={{ color: '#ff9fb0', fontSize: 9, fontWeight: '800' }}>ADDED</Txt>
+            </View>
+          ) : null}
+          {a.optional && !a.added ? <Chip label="Optional" small /> : null}
         </View>
         <Txt variant="small" muted style={{ marginTop: 1 }} numberOfLines={1}>
           {a.where}
@@ -438,9 +485,15 @@ function ActivityBlock({ a, itId, dayId }: { a: Activity; itId: string; dayId: s
           </Txt>
         ) : null}
       </View>
-      <View style={{ justifyContent: 'center' }}>
-        <Icon name="chevR" size={15} color={c.ter} />
-      </View>
+      {onRemove ? (
+        <Pressable onPress={onRemove} hitSlop={8} style={({ pressed }) => [{ justifyContent: 'center', padding: 4 }, pressed && { opacity: 0.5 }]}>
+          <Icon name="close" size={17} color="#FF4667" />
+        </Pressable>
+      ) : (
+        <View style={{ justifyContent: 'center' }}>
+          <Icon name="chevR" size={15} color={c.ter} />
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -477,6 +530,17 @@ const styles = StyleSheet.create({
   toggle: { flexDirection: 'row', borderRadius: 999, padding: 3, gap: 2 },
   toggleBtn: { paddingHorizontal: 14, height: 28, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   swipeCard: { width: 172, borderRadius: 16, padding: 12, borderWidth: 2 },
+  addStop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: Space.l,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderRadius: 16,
+    paddingVertical: 15,
+  },
   block: { flexDirection: 'row', gap: 10, borderRadius: 18, padding: 13, alignItems: 'flex-start' },
   blockTime: { width: 58, paddingTop: 2 },
   blockDot: { width: 26, height: 26, borderRadius: 9, alignItems: 'center', justifyContent: 'center', marginTop: 1 },

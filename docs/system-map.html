@@ -1,0 +1,411 @@
+<title>Wayfare System Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #E9E7E2;
+    --panel: #FDFCFA;
+    --panel-2: #F4F2ED;
+    --ink: #1B1A18;
+    --sec: #6C665C;
+    --faint: #9C958A;
+    --line: #E0DCD3;
+    --line-2: #D2CCC0;
+    --accent: #F26B2A;   /* Wayfare coral */
+    --live: #2FA36B;     /* connected / pass */
+    --live-bg: #E4F3EA;
+    --warn: #C98A18;     /* partial / static-mock */
+    --warn-bg: #F6ECD6;
+    --blue: #3E7BD1;
+    --violet: #7C6BE0;
+    --mono: 'DM Mono', ui-monospace, Menlo, monospace;
+    --disp: 'Bricolage Grotesque', 'Plus Jakarta Sans', system-ui, sans-serif;
+    --body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131110;
+      --panel: #1E1B18;
+      --panel-2: #262220;
+      --ink: #F3EDE3;
+      --sec: #A99C8C;
+      --faint: #7E7264;
+      --line: #2E2A25;
+      --line-2: #3A342E;
+      --accent: #FF7A45;
+      --live: #46C489;
+      --live-bg: #163527;
+      --warn: #E0AC4A;
+      --warn-bg: #3A2F17;
+      --blue: #6FA6FF;
+      --violet: #A996FF;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131110;
+    --panel: #1E1B18;
+    --panel-2: #262220;
+    --ink: #F3EDE3;
+    --sec: #A99C8C;
+    --faint: #7E7264;
+    --line: #2E2A25;
+    --line-2: #3A342E;
+    --accent: #FF7A45;
+    --live: #46C489;
+    --live-bg: #163527;
+    --warn: #E0AC4A;
+    --warn-bg: #3A2F17;
+    --blue: #6FA6FF;
+    --violet: #A996FF;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: clamp(28px, 5vw, 64px) clamp(18px, 4vw, 40px) 96px; }
+
+  /* ---- header ---- */
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--disp); font-weight: 800; font-size: clamp(34px, 6vw, 58px); line-height: 1.02; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  .lede { font-size: clamp(16px, 2vw, 19px); color: var(--sec); max-width: 62ch; margin: 18px 0 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 22px; }
+  .tag { font-family: var(--mono); font-size: 12px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--sec); background: var(--panel); }
+
+  /* ---- verdict banner ---- */
+  .verdict { margin-top: 30px; border: 1px solid var(--line); border-left: 4px solid var(--live); background: var(--panel); border-radius: 14px; padding: 20px 22px; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+  .verdict .big { font-family: var(--disp); font-weight: 800; font-size: 30px; color: var(--live); font-variant-numeric: tabular-nums; line-height: 1; }
+  .verdict p { margin: 0; color: var(--sec); font-size: 14.5px; }
+  .verdict strong { color: var(--ink); }
+
+  /* ---- sections ---- */
+  section { margin-top: 56px; }
+  h2 { font-family: var(--disp); font-weight: 700; font-size: clamp(22px, 3vw, 28px); letter-spacing: -0.01em; margin: 0 0 6px; }
+  .sub { color: var(--sec); font-size: 14.5px; margin: 0 0 22px; max-width: 64ch; }
+  h3 { font-family: var(--disp); font-weight: 700; font-size: 16px; margin: 26px 0 10px; }
+
+  /* ---- figure ---- */
+  figure { margin: 0; border: 1px solid var(--line); background: var(--panel); border-radius: 16px; padding: 22px; overflow-x: auto; }
+  figure svg { width: 100%; height: auto; min-width: 640px; display: block; }
+  figcaption { margin-top: 14px; font-size: 13px; color: var(--faint); font-family: var(--mono); }
+  .node { fill: var(--panel-2); stroke: var(--line-2); }
+  .node-new { fill: var(--live-bg); stroke: var(--live); }
+  .nlabel { fill: var(--ink); font-family: var(--body); font-weight: 700; font-size: 13px; }
+  .nsub { fill: var(--sec); font-family: var(--mono); font-size: 10.5px; }
+  .flow { stroke: var(--line-2); stroke-width: 1.6; fill: none; }
+  .flow-live { stroke: var(--live); stroke-width: 2.4; fill: none; }
+  .alabel { fill: var(--sec); font-family: var(--mono); font-size: 10.5px; }
+  .alabel-live { fill: var(--live); font-family: var(--mono); font-weight: 500; font-size: 10.5px; }
+  .boundary { stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 4 4; }
+  .btext { fill: var(--accent); font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; }
+
+  /* ---- cards grid ---- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .card { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 16px 18px; }
+  .card h4 { margin: 0 0 6px; font-size: 14px; font-family: var(--disp); font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .card p { margin: 0; font-size: 13px; color: var(--sec); }
+  .card code { font-family: var(--mono); font-size: 12px; color: var(--ink); background: var(--panel-2); padding: 1px 5px; border-radius: 5px; }
+
+  /* ---- tables ---- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
+  thead th { text-align: left; font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); padding: 13px 16px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+  tbody td { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--sec); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td:first-child { color: var(--ink); font-weight: 600; }
+  td code, .path { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+
+  /* ---- status chips ---- */
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.02em; }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+  .chip.live { background: var(--live-bg); color: var(--live); }
+  .chip.live::before { background: var(--live); }
+  .chip.warn { background: var(--warn-bg); color: var(--warn); }
+  .chip.warn::before { background: var(--warn); }
+  .chip.pass { background: var(--live-bg); color: var(--live); }
+  .chip.pass::before { content: "✓"; width: auto; height: auto; font-size: 10px; }
+
+  /* ---- E2E list ---- */
+  .tests { display: grid; gap: 8px; }
+  .test { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; border: 1px solid var(--line); background: var(--panel); border-radius: 11px; padding: 11px 15px; }
+  .test .name { font-size: 13.5px; color: var(--ink); }
+  .test .file { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+  /* ---- gaps ---- */
+  .gap { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+  .gap:last-child { border-bottom: none; }
+  .gap .n { font-family: var(--mono); font-size: 12px; color: var(--faint); padding-top: 2px; }
+  .gap h4 { margin: 0 0 3px; font-size: 14.5px; }
+  .gap p { margin: 0; font-size: 13px; color: var(--sec); }
+
+  footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--faint); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Wayfare · System Map &amp; E2E QA</p>
+    <h1>The itinerary app, end to end</h1>
+    <p class="lede">A map of every moving part — from the Family itinerary spreadsheet through the seed pipeline, the Fastify API, and into the Expo web screens — and the connectivity QA that proves the pieces actually talk to each other.</p>
+    <div class="meta">
+      <span class="tag">One Expo codebase → web + mobile</span>
+      <span class="tag">Fastify API · port 4100</span>
+      <span class="tag">JSON storage (Firestore-shaped)</span>
+      <span class="tag">Aug 29, 2026</span>
+    </div>
+  </header>
+
+  <div class="verdict">
+    <div class="big">8&nbsp;/&nbsp;8</div>
+    <p><strong>App ↔ server is now genuinely wired.</strong> The offline data client was replaced with live HTTP; the Family spreadsheet is modeled at block granularity and served by the API; every read-path screen renders live server data. All 8 end-to-end tests (4 API contract + 4 browser) pass.</p>
+  </div>
+
+  <!-- ============ WHAT CHANGED ============ -->
+  <section>
+    <h2>What changed this session</h2>
+    <p class="sub">Four layers moved together so the Family file could flow all the way to the screen.</p>
+    <div class="grid">
+      <div class="card">
+        <h4>🧬 Schema evolved</h4>
+        <p>Added <code>Activity</code>, <code>DiningEntry</code>, <code>GroceryRun</code>; <code>Day.activities[]</code>; and <code>Itinerary.kind / diningGuide / groceryPlan</code> — additive, so the existing BGC couple data stays valid. Mirrored into the app types.</p>
+      </div>
+      <div class="card">
+        <h4>📊 Family trip seeded</h4>
+        <p><code>extract-family.py</code> reads the xlsx into <code>family.itinerary.json</code>; <code>seed.mjs</code> merges it. <strong>130 blocks · 10 days · 9 places · 8 dining · 3 grocery.</strong></p>
+      </div>
+      <div class="card">
+        <h4>🔌 Live connection</h4>
+        <p><code>api.ts</code> went from <code>offline://bundled</code> to real <code>fetch()</code> — localhost on web, LAN IP on device. <strong>No offline fallback</strong>, so a broken link fails loudly.</p>
+      </div>
+      <div class="card">
+        <h4>🖥 Screens render the model</h4>
+        <p>Trips lists both trips; the day view shows the block timeline with per-person <strong>Mom / Dad</strong> status; the trip view adds Dining &amp; Grocery sections.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DATA FLOW ============ -->
+  <section>
+    <h2>How data reaches the screen</h2>
+    <p class="sub">One spine, source to pixel. The green hop is the one that changed: the app now crosses the network to the server instead of reading a bundled copy of the data.</p>
+    <figure>
+      <svg viewBox="0 0 1065 250" role="img" aria-label="Data flows from the Family xlsx through the Python extractor and Node seed into itineraries.json, which the Fastify server reads and the app fetches over HTTP into its screens.">
+        <defs>
+          <marker id="arw" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="var(--line-2)"></polygon>
+          </marker>
+          <marker id="arwL" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="var(--live)"></polygon>
+          </marker>
+        </defs>
+
+        <!-- nodes -->
+        <g>
+          <rect class="node" x="10" y="96" width="150" height="58" rx="11"></rect>
+          <text class="nlabel" x="85" y="120" text-anchor="middle">Family xlsx</text>
+          <text class="nsub" x="85" y="138" text-anchor="middle">docs/…Sep10-19</text>
+        </g>
+        <g>
+          <rect class="node-new" x="197" y="96" width="152" height="58" rx="11"></rect>
+          <text class="nlabel" x="273" y="120" text-anchor="middle">family.itinerary</text>
+          <text class="nsub" x="273" y="138" text-anchor="middle">.json (extracted)</text>
+        </g>
+        <g>
+          <rect class="node" x="386" y="96" width="152" height="58" rx="11"></rect>
+          <text class="nlabel" x="462" y="120" text-anchor="middle">itineraries.json</text>
+          <text class="nsub" x="462" y="138" text-anchor="middle">2 docs · seed.mjs</text>
+        </g>
+        <g>
+          <rect class="node" x="575" y="96" width="162" height="58" rx="11"></rect>
+          <text class="nlabel" x="656" y="120" text-anchor="middle">Fastify · GET</text>
+          <text class="nsub" x="656" y="138" text-anchor="middle">jsonRepo · :4100</text>
+        </g>
+        <g>
+          <rect class="node-new" x="785" y="96" width="120" height="58" rx="11"></rect>
+          <text class="nlabel" x="845" y="120" text-anchor="middle">api.ts</text>
+          <text class="nsub" x="845" y="138" text-anchor="middle">fetch()</text>
+        </g>
+        <g>
+          <rect class="node" x="943" y="96" width="112" height="58" rx="11"></rect>
+          <text class="nlabel" x="999" y="120" text-anchor="middle">Screens</text>
+          <text class="nsub" x="999" y="138" text-anchor="middle">useAsync</text>
+        </g>
+
+        <!-- arrows -->
+        <path class="flow" d="M160 125 H193" marker-end="url(#arw)"></path>
+        <text class="alabel" x="176" y="112" text-anchor="middle">extract</text>
+        <path class="flow" d="M349 125 H382" marker-end="url(#arw)"></path>
+        <text class="alabel" x="365" y="112" text-anchor="middle">seed</text>
+        <path class="flow" d="M538 125 H571" marker-end="url(#arw)"></path>
+        <text class="alabel" x="554" y="112" text-anchor="middle">read/req</text>
+
+        <!-- network boundary + live hop -->
+        <line class="boundary" x1="761" y1="40" x2="761" y2="210"></line>
+        <text class="btext" x="761" y="34" text-anchor="middle">NETWORK</text>
+        <path class="flow-live" d="M737 125 H781" marker-end="url(#arwL)"></path>
+        <text class="alabel-live" x="759" y="112" text-anchor="middle">fetch</text>
+
+        <path class="flow" d="M905 125 H939" marker-end="url(#arw)"></path>
+
+        <!-- app bundle drop -->
+        <path class="flow" d="M462 154 V186" marker-end="url(#arw)"></path>
+        <text class="alabel" x="472" y="176" text-anchor="start">also mirrored → app bundle (pre-server copy)</text>
+
+        <text class="alabel-live" x="759" y="176" text-anchor="middle">was offline://bundled</text>
+      </svg>
+      <figcaption>The extractor + seed are build-time; jsonRepo re-reads the file per request, so reseeding updates a running server with no restart.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ DATA MODEL ============ -->
+  <section>
+    <h2>The data model</h2>
+    <p class="sub">Documents nest so a Firestore migration stays 1:1. Green boxes are new this session — the block-level detail the Family file needs.</p>
+    <figure>
+      <svg viewBox="0 0 1000 430" role="img" aria-label="An Itinerary contains Proposals, which contain Days, which contain Activities. The Itinerary also directly holds Places, DiningEntries and GroceryRuns. Activity, DiningEntry and GroceryRun are new.">
+        <defs>
+          <marker id="mk" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="var(--line-2)"></polygon>
+          </marker>
+        </defs>
+
+        <!-- Itinerary -->
+        <rect class="node" x="24" y="168" width="176" height="94" rx="12"></rect>
+        <text class="nlabel" x="112" y="196" text-anchor="middle" style="font-size:15px">Itinerary</text>
+        <text class="nsub" x="112" y="216" text-anchor="middle">id · title · currency</text>
+        <text class="nsub" x="112" y="232" text-anchor="middle">homeBase · partySize</text>
+        <text class="nsub" x="112" y="248" text-anchor="middle">kind: couple | family</text>
+
+        <!-- chain: Proposal -> Day -> Activity -->
+        <rect class="node" x="300" y="24" width="150" height="70" rx="11"></rect>
+        <text class="nlabel" x="375" y="52" text-anchor="middle">Proposal</text>
+        <text class="nsub" x="375" y="72" text-anchor="middle">name · estTotal</text>
+
+        <rect class="node" x="520" y="24" width="150" height="70" rx="11"></rect>
+        <text class="nlabel" x="595" y="52" text-anchor="middle">Day</text>
+        <text class="nsub" x="595" y="72" text-anchor="middle">date · theme · cost</text>
+
+        <rect class="node-new" x="740" y="12" width="238" height="118" rx="11"></rect>
+        <text class="nlabel" x="859" y="38" text-anchor="middle">Activity <tspan style="fill:var(--live);font-family:var(--mono);font-size:10px"> NEW</tspan></text>
+        <text class="nsub" x="859" y="58" text-anchor="middle">time · activity · where · category</text>
+        <text class="nsub" x="859" y="74" text-anchor="middle">participants · cost · optional</text>
+        <text class="nsub" x="859" y="90" text-anchor="middle" style="fill:var(--violet)">momStatus · dadStatus</text>
+        <text class="nsub" x="859" y="106" text-anchor="middle">mealSuggestion · restNap</text>
+        <text class="nsub" x="859" y="122" text-anchor="middle">reasoning · lat · lng · mapsUrl</text>
+
+        <!-- direct children -->
+        <rect class="node" x="300" y="200" width="150" height="52" rx="11"></rect>
+        <text class="nlabel" x="375" y="223" text-anchor="middle">Place</text>
+        <text class="nsub" x="375" y="240" text-anchor="middle">catalog · coords</text>
+
+        <rect class="node-new" x="300" y="284" width="150" height="52" rx="11"></rect>
+        <text class="nlabel" x="375" y="307" text-anchor="middle">DiningEntry <tspan style="fill:var(--live);font-family:var(--mono);font-size:9px">NEW</tspan></text>
+        <text class="nsub" x="375" y="324" text-anchor="middle">restaurant · budget</text>
+
+        <rect class="node-new" x="300" y="368" width="150" height="52" rx="11"></rect>
+        <text class="nlabel" x="375" y="391" text-anchor="middle">GroceryRun <tspan style="fill:var(--live);font-family:var(--mono);font-size:9px">NEW</tspan></text>
+        <text class="nsub" x="375" y="408" text-anchor="middle">store · basket · when</text>
+
+        <!-- arrows with cardinality -->
+        <path class="flow" d="M200 200 C 250 150, 260 80, 298 66" marker-end="url(#mk)"></path>
+        <text class="alabel" x="243" y="120" text-anchor="middle">1 → N</text>
+        <path class="flow" d="M450 59 H516" marker-end="url(#mk)"></path>
+        <text class="alabel" x="483" y="49" text-anchor="middle">1 → N</text>
+        <path class="flow" d="M670 59 H736" marker-end="url(#mk)"></path>
+        <text class="alabel" x="703" y="49" text-anchor="middle">1 → N</text>
+
+        <path class="flow" d="M200 224 H296" marker-end="url(#mk)"></path>
+        <text class="alabel" x="248" y="216" text-anchor="middle">1 → N</text>
+        <path class="flow" d="M200 240 C 245 270, 250 300, 296 308" marker-end="url(#mk)"></path>
+        <text class="alabel" x="243" y="300" text-anchor="middle">1 → N</text>
+        <path class="flow" d="M200 252 C 240 330, 245 385, 296 392" marker-end="url(#mk)"></path>
+        <text class="alabel" x="240" y="372" text-anchor="middle">1 → N</text>
+      </svg>
+      <figcaption>The BGC couple trip uses Proposal → Day only (no activities); the Family trip fills Day → Activity plus the dining &amp; grocery guides.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ SCREEN INVENTORY ============ -->
+  <section>
+    <h2>Screen inventory &amp; connectivity</h2>
+    <p class="sub">Every route, its data source, and whether it renders live server data or is still a static mockup. <span class="chip live">live</span> fetches the server · <span class="chip warn">static</span> is hardcoded / placeholder.</p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Route</th><th>Screen</th><th>Data source</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="path">/trips</span></td><td>All trips</td><td>listItineraries() — both trips</td><td><span class="chip live">live</span></td></tr>
+          <tr><td><span class="path">/trip/[id]</span></td><td>Trip overview</td><td>getItinerary() + dining/grocery</td><td><span class="chip live">live</span></td></tr>
+          <tr><td><span class="path">/day/[id]</span></td><td>Day timeline</td><td>getItinerary() — block schedule</td><td><span class="chip live">live</span></td></tr>
+          <tr><td><span class="path">/place/[name]</span></td><td>Place detail</td><td>getItinerary() — place lookup</td><td><span class="chip live">live</span></td></tr>
+          <tr><td><span class="path">/proposal/[id]</span></td><td>Proposals</td><td>getItinerary()</td><td><span class="chip live">live</span></td></tr>
+          <tr><td><span class="path">/map</span></td><td>Route map</td><td>getItinerary() (stylized SVG map)</td><td><span class="chip live">live</span></td></tr>
+          <tr><td><span class="path">/(tabs)</span></td><td>Home</td><td>getItinerary() + hardcoded overlays</td><td><span class="chip warn">partial</span></td></tr>
+          <tr><td><span class="path">/(auth)/*</span></td><td>Login · Register · Forgot</td><td>none — fake auth (replace → tabs)</td><td><span class="chip warn">static</span></td></tr>
+          <tr><td><span class="path">/create/*</span></td><td>Create wizard (6 steps)</td><td>none — mock; generating fakes it</td><td><span class="chip warn">static</span></td></tr>
+          <tr><td><span class="path">/alerts · /profile</span></td><td>Alerts · Profile</td><td>none — hardcoded</td><td><span class="chip warn">static</span></td></tr>
+          <tr><td><span class="path">/calendar · /availability</span></td><td>Calendar · Commitments</td><td>none — local demo state</td><td><span class="chip warn">static</span></td></tr>
+          <tr><td><span class="path">/ · /onboarding</span></td><td>Splash · Onboarding</td><td>none — redirect / slides</td><td><span class="chip warn">static</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>API surface</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Returns</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td><span class="path">/health</span></td><td>service liveness</td><td><span class="chip live">wired</span></td></tr>
+          <tr><td>GET</td><td><span class="path">/api/itineraries</span></td><td>summaries (both trips)</td><td><span class="chip live">wired</span></td></tr>
+          <tr><td>GET</td><td><span class="path">/api/itineraries/:id</span></td><td>full document</td><td><span class="chip live">wired</span></td></tr>
+          <tr><td>GET</td><td><span class="path">/api/itineraries/:id/proposals/:pid</span></td><td>single proposal</td><td><span class="chip live">wired</span></td></tr>
+          <tr><td>—</td><td><span class="path">create / update / import / generate</span></td><td>write path</td><td><span class="chip warn">repo-only, no route</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ E2E ============ -->
+  <section>
+    <h2>End-to-end QA</h2>
+    <p class="sub">Playwright suite in <span class="path">e2e/</span>. The API specs prove the server contract; the browser specs drive the real Expo web app with no offline fallback, so a green run means app and server truly connect.</p>
+    <div class="tests">
+      <div class="test"><span class="chip pass"></span><div><div class="name">Health check responds</div><div class="file">api.spec.ts</div></div><span class="path">/health</span></div>
+      <div class="test"><span class="chip pass"></span><div><div class="name">Lists both itineraries as summaries</div><div class="file">api.spec.ts</div></div><span class="path">/api/itineraries</span></div>
+      <div class="test"><span class="chip pass"></span><div><div class="name">Family itinerary has the full block schema (130 blocks, dining, grocery, Mom/Dad status)</div><div class="file">api.spec.ts</div></div><span class="path">contract</span></div>
+      <div class="test"><span class="chip pass"></span><div><div class="name">Unknown itinerary returns 404</div><div class="file">api.spec.ts</div></div><span class="path">error path</span></div>
+      <div class="test"><span class="chip pass"></span><div><div class="name">Splash redirects into the app shell</div><div class="file">viewer.spec.ts</div></div><span class="path">/</span></div>
+      <div class="test"><span class="chip pass"></span><div><div class="name">Trips tab lists both itineraries from the server</div><div class="file">viewer.spec.ts</div></div><span class="path">/trips</span></div>
+      <div class="test"><span class="chip pass"></span><div><div class="name">Family trip overview renders days + dining + grocery</div><div class="file">viewer.spec.ts</div></div><span class="path">/trip/[id]</span></div>
+      <div class="test"><span class="chip pass"></span><div><div class="name">Family day renders block schedule with per-person status</div><div class="file">viewer.spec.ts</div></div><span class="path">/day/[id]</span></div>
+    </div>
+  </section>
+
+  <!-- ============ GAPS ============ -->
+  <section>
+    <h2>Known gaps &amp; next steps</h2>
+    <p class="sub">Reported honestly — these are out of scope for the "wire the viewer first" pass, not oversights.</p>
+    <div class="gaps">
+      <div class="gap"><div class="n">01</div><div><h4>Home tab still overlays hardcoded strings</h4><p>It fetches <span class="path">list[0]</span> but paints "BGC + Manila", a fixed current-day, and a fake second trip row. Should render the live active trip like Trips does.</p></div></div>
+      <div class="gap"><div class="n">02</div><div><h4>Auth is a facade</h4><p>Login / Register / Google all just <span class="path">replace → /(tabs)</span>. No real identity, no <span class="path">ownerId</span> filtering yet (Firebase Auth is the intended target).</p></div></div>
+      <div class="gap"><div class="n">03</div><div><h4>Create / import / generate is mock-only</h4><p>The 6-step wizard collects nothing real; the repo has <span class="path">create/update/delete</span> but no routes expose them. Phase 2 = POST endpoints + xlsx/csv import + AI generate.</p></div></div>
+      <div class="gap"><div class="n">04</div><div><h4>No offline fallback by design</h4><p>The app now requires the server running (<span class="path">npm run server</span>). This is deliberate so a broken link is visible — worth a friendly offline state later.</p></div></div>
+      <div class="gap"><div class="n">05</div><div><h4>"graphify" tool still unspecified</h4><p>This map was hand-built. If graphify is a real CLI you want in the pipeline, name the install/invoke command and it can regenerate this from the code.</p></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Wayfare · Itinerary monorepo</span>
+    <span>app/ · server/ · packages/shared · e2e/</span>
+    <span>Run: npm run server · npm run web · (cd e2e &amp;&amp; npx playwright test)</span>
+  </footer>
+</div>

@@ -1,0 +1,347 @@
+<title>Wayfare Gaps &amp; Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #E9E7E2; --panel: #FDFCFA; --panel-2: #F4F2ED;
+    --ink: #1B1A18; --sec: #6C665C; --faint: #9C958A;
+    --line: #E0DCD3; --line-2: #D2CCC0;
+    --accent: #F26B2A; --accent-bg: #FBE7DA;
+    --live: #2FA36B; --live-bg: #E4F3EA;
+    --warn: #C98A18; --warn-bg: #F6ECD6;
+    --miss: #CF4B32; --miss-bg: #F7E1DB;
+    --blue: #3E7BD1; --violet: #7C6BE0;
+    --mono: 'DM Mono', ui-monospace, Menlo, monospace;
+    --disp: 'Bricolage Grotesque', 'Plus Jakarta Sans', system-ui, sans-serif;
+    --body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131110; --panel: #1E1B18; --panel-2: #262220;
+      --ink: #F3EDE3; --sec: #A99C8C; --faint: #7E7264;
+      --line: #2E2A25; --line-2: #3A342E;
+      --accent: #FF7A45; --accent-bg: #3A2213;
+      --live: #46C489; --live-bg: #163527;
+      --warn: #E0AC4A; --warn-bg: #3A2F17;
+      --miss: #F0705A; --miss-bg: #3A1E18;
+      --blue: #6FA6FF; --violet: #A996FF;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131110; --panel: #1E1B18; --panel-2: #262220;
+    --ink: #F3EDE3; --sec: #A99C8C; --faint: #7E7264;
+    --line: #2E2A25; --line-2: #3A342E;
+    --accent: #FF7A45; --accent-bg: #3A2213;
+    --live: #46C489; --live-bg: #163527;
+    --warn: #E0AC4A; --warn-bg: #3A2F17;
+    --miss: #F0705A; --miss-bg: #3A1E18;
+    --blue: #6FA6FF; --violet: #A996FF;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: clamp(28px,5vw,60px) clamp(18px,4vw,40px) 96px; }
+
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--disp); font-weight: 800; font-size: clamp(32px,5.5vw,54px); line-height: 1.03; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+  .lede { font-size: clamp(16px,2vw,19px); color: var(--sec); max-width: 60ch; margin: 18px 0 0; }
+
+  .thesis { margin-top: 30px; border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--panel); border-radius: 14px; padding: 22px 24px; }
+  .thesis .k { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .thesis p { margin: 8px 0 0; font-size: 16px; color: var(--ink); }
+  .thesis strong { color: var(--accent); }
+
+  section { margin-top: 58px; }
+  h2 { font-family: var(--disp); font-weight: 700; font-size: clamp(22px,3vw,29px); letter-spacing: -.01em; margin: 0 0 6px; }
+  .sub { color: var(--sec); font-size: 14.5px; margin: 0 0 22px; max-width: 66ch; }
+
+  /* verdict cards */
+  .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 14px; }
+  .ans { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 18px 20px; }
+  .ans .q { font-family: var(--disp); font-weight: 700; font-size: 15px; margin: 0 0 4px; }
+  .ans p { margin: 8px 0 0; font-size: 13px; color: var(--sec); }
+  .ans code { font-family: var(--mono); font-size: 11.5px; background: var(--panel-2); padding: 1px 5px; border-radius: 5px; color: var(--ink); }
+
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+  .chip.done { background: var(--live-bg); color: var(--live); } .chip.done::before { background: var(--live); }
+  .chip.partial { background: var(--warn-bg); color: var(--warn); } .chip.partial::before { background: var(--warn); }
+  .chip.missing { background: var(--miss-bg); color: var(--miss); } .chip.missing::before { background: var(--miss); }
+
+  figure { margin: 0; border: 1px solid var(--line); background: var(--panel); border-radius: 16px; padding: 22px; overflow-x: auto; }
+  figure svg { width: 100%; height: auto; min-width: 660px; display: block; }
+  figcaption { margin-top: 14px; font-size: 13px; color: var(--faint); font-family: var(--mono); }
+  .box { fill: var(--panel-2); stroke: var(--line-2); }
+  .box-live { fill: var(--live-bg); stroke: var(--live); }
+  .box-miss { fill: var(--miss-bg); stroke: var(--miss); stroke-dasharray: 5 4; }
+  .lbl { fill: var(--ink); font-family: var(--body); font-weight: 700; font-size: 13px; }
+  .lbl-s { fill: var(--sec); font-family: var(--mono); font-size: 10.5px; }
+  .lbl-miss { fill: var(--miss); font-family: var(--mono); font-size: 10px; font-weight: 500; }
+  .lbl-live { fill: var(--live); font-family: var(--mono); font-size: 10px; }
+  .fl { stroke: var(--line-2); stroke-width: 1.6; fill: none; }
+  .fl-miss { stroke: var(--miss); stroke-width: 2; fill: none; stroke-dasharray: 5 4; }
+  .al { fill: var(--sec); font-family: var(--mono); font-size: 10px; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 640px; }
+  thead th { text-align: left; font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--faint); padding: 13px 16px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+  tbody td { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--sec); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td:first-child { color: var(--ink); font-weight: 600; }
+  .path { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 14px; }
+  .card { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 17px 19px; }
+  .card h4 { margin: 0 0 6px; font-size: 14.5px; font-family: var(--disp); font-weight: 700; }
+  .card p { margin: 0; font-size: 13px; color: var(--sec); }
+  .card .rec { display: inline-block; margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--accent); }
+
+  /* roadmap phases */
+  .phase { display: grid; grid-template-columns: auto 1fr; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .phase:last-child { border-bottom: none; }
+  .phase .num { font-family: var(--disp); font-weight: 800; font-size: 26px; color: var(--accent); line-height: 1; width: 42px; font-variant-numeric: tabular-nums; }
+  .phase h4 { margin: 0 0 4px; font-size: 16.5px; font-family: var(--disp); font-weight: 700; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .phase .why { margin: 0 0 8px; font-size: 13px; color: var(--sec); }
+  .phase ul { margin: 0; padding-left: 18px; }
+  .phase li { font-size: 13px; color: var(--sec); margin: 3px 0; }
+  .phase li code, .phase .why code { font-family: var(--mono); font-size: 11.5px; background: var(--panel-2); padding: 1px 5px; border-radius: 5px; color: var(--ink); }
+  .tagsm { font-family: var(--mono); font-size: 10.5px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); }
+
+  footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--faint); display: grid; gap: 6px; }
+  a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Wayfare · Gaps &amp; Roadmap</p>
+    <h1>What we've built, and the one thing we haven't</h1>
+    <p class="lede">The read path is solid and connected. But the app's whole reason to exist — an AI that <em>generates</em> guided itinerary proposals from what you ask for — isn't built yet. Here's the honest map of the gap, and the order I'd close it in.</p>
+  </header>
+
+  <div class="thesis">
+    <span class="k">The reframe</span>
+    <p>Today Wayfare is an excellent <strong>viewer</strong> of itineraries we hand-seed. Its purpose is to be a <strong>generator</strong>: ask for a trip → Claude proposes three, you shape them, it writes the block-by-block schedule. Everything we've done is the destination the generator should produce — we just haven't built the generator.</p>
+  </div>
+
+  <!-- ============ DIRECT ANSWERS ============ -->
+  <section>
+    <h2>Your four questions, answered straight</h2>
+    <p class="sub">I verified each of these against the actual code, not the design mockups.</p>
+    <div class="answers">
+      <div class="ans">
+        <span class="chip done">yes — complete</span>
+        <p class="q">Did we follow the xlsx on everything?</p>
+        <p>All 14 columns are captured per activity (time, where, reasoning, participants, category, <code>momStatus</code>/<code>dadStatus</code>, meal, rest/nap, cost, optional, coords) plus the Dining Guide (8) and Grocery Plan (3). 130 blocks, nothing dropped. The day screen renders them all.</p>
+      </div>
+      <div class="ans">
+        <span class="chip missing">no — cosmetic only</span>
+        <p class="q">Is the alarm working?</p>
+        <p>No. "1 hour and 15 min before" is just <em>label text</em> in Profile &amp; onboarding. There's no <code>expo-notifications</code>, no scheduling — nothing fires. The 15/5-min reminders, and the skip-to-extend button, need to be built.</p>
+      </div>
+      <div class="ans">
+        <span class="chip missing">no — not implemented</span>
+        <p class="q">Real-time distance/ETA to the next place?</p>
+        <p>No. There's no <code>expo-location</code>; the map screen is a hand-drawn SVG, and "1.4 km · 6 min from you" is hardcoded. Live "how far am I" needs device GPS + a distance/ETA calc that updates as you move.</p>
+      </div>
+      <div class="ans">
+        <span class="chip partial">partial — L3 missing</span>
+        <p class="q">The 3rd layer (per-activity detail)?</p>
+        <p>Layers 1 (Day list) and 2 (whole-day timeline) exist. Tapping a block opens Maps, but there's no dedicated <strong>detail screen</strong> with the full write-up + embedded map + "Open in Google Maps". That's a clean, quick build.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE SPINE (core purpose) ============ -->
+  <section>
+    <h2>The app's real spine — and where it's cut</h2>
+    <p class="sub">This is the flow the whole product is about. Green is built; the dashed coral hops are the missing core — the AI that makes proposals and writes the schedule.</p>
+    <figure>
+      <svg viewBox="0 0 1040 200" role="img" aria-label="Generation flow: a request goes to an AI that proposes three itineraries, the user customizes and confirms, the AI writes the block timeline, it is saved, and the viewer renders it. The AI-propose, AI-write and save steps are missing; the viewer is built.">
+        <defs>
+          <marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="var(--line-2)"></polygon></marker>
+          <marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="var(--miss)"></polygon></marker>
+        </defs>
+        <!-- 1 request -->
+        <rect class="box" x="8" y="70" width="140" height="60" rx="11"></rect>
+        <text class="lbl" x="78" y="94" text-anchor="middle">Ask</text>
+        <text class="lbl-s" x="78" y="112" text-anchor="middle">purpose · dates · pace</text>
+        <!-- 2 AI propose (missing) -->
+        <rect class="box-miss" x="188" y="66" width="168" height="68" rx="11"></rect>
+        <text class="lbl" x="272" y="90" text-anchor="middle">AI proposes 3</text>
+        <text class="lbl-miss" x="272" y="108" text-anchor="middle">Claude · missing</text>
+        <text class="lbl-s" x="272" y="123" text-anchor="middle">server-side</text>
+        <!-- 3 customize -->
+        <rect class="box" x="396" y="70" width="140" height="60" rx="11"></rect>
+        <text class="lbl" x="466" y="94" text-anchor="middle">Customize</text>
+        <text class="lbl-s" x="466" y="112" text-anchor="middle">swap activities</text>
+        <!-- 4 AI write timeline (missing) -->
+        <rect class="box-miss" x="576" y="66" width="168" height="68" rx="11"></rect>
+        <text class="lbl" x="660" y="90" text-anchor="middle">AI writes days</text>
+        <text class="lbl-miss" x="660" y="108" text-anchor="middle">block timeline · missing</text>
+        <text class="lbl-s" x="660" y="123" text-anchor="middle">xlsx-shaped</text>
+        <!-- 5 save (missing) -->
+        <rect class="box-miss" x="784" y="70" width="104" height="60" rx="11"></rect>
+        <text class="lbl" x="836" y="94" text-anchor="middle">Save</text>
+        <text class="lbl-miss" x="836" y="112" text-anchor="middle">POST · missing</text>
+        <!-- 6 viewer (built) -->
+        <rect class="box-live" x="920" y="70" width="112" height="60" rx="11"></rect>
+        <text class="lbl" x="976" y="94" text-anchor="middle">Viewer</text>
+        <text class="lbl-live" x="976" y="112" text-anchor="middle">✓ built</text>
+        <!-- arrows -->
+        <path class="fl" d="M148 100 H184" marker-end="url(#a1)"></path>
+        <path class="fl-miss" d="M356 100 H392" marker-end="url(#a2)"></path>
+        <path class="fl" d="M536 100 H572" marker-end="url(#a1)"></path>
+        <path class="fl-miss" d="M744 100 H780" marker-end="url(#a2)"></path>
+        <path class="fl-miss" d="M888 100 H916" marker-end="url(#a2)"></path>
+      </svg>
+      <figcaption>We built the last box first. The generator (boxes 2, 4, 5) is the product — one Claude call server-side turns a request into proposals, a second writes the schedule we already know how to render.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ 3 LAYERS ============ -->
+  <section>
+    <h2>The three-layer navigation you asked for</h2>
+    <p class="sub">Layers 1–2 exist. Layer 3 is a new route — the deep detail of a single block, with a real map and a jump to Google Maps.</p>
+    <figure>
+      <svg viewBox="0 0 900 250" role="img" aria-label="Layer 1 is the day list, layer 2 is the whole-day activity timeline, layer 3 is the new per-activity detail screen with an embedded map and an Open in Google Maps button.">
+        <defs><marker id="b1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="var(--line-2)"></polygon></marker></defs>
+        <rect class="box-live" x="20" y="60" width="200" height="130" rx="13"></rect>
+        <text class="lbl" x="120" y="88" text-anchor="middle">Layer 1 — Day list</text>
+        <text class="lbl-live" x="120" y="106" text-anchor="middle">✓ trip/[id]</text>
+        <text class="lbl-s" x="120" y="128" text-anchor="middle">Day 1 · Arrival Night</text>
+        <text class="lbl-s" x="120" y="144" text-anchor="middle">Day 2 · Mom WFH</text>
+        <text class="lbl-s" x="120" y="160" text-anchor="middle">Day 3 · Mind Museum</text>
+
+        <rect class="box-live" x="350" y="60" width="200" height="130" rx="13"></rect>
+        <text class="lbl" x="450" y="88" text-anchor="middle">Layer 2 — Day timeline</text>
+        <text class="lbl-live" x="450" y="106" text-anchor="middle">✓ day/[id]</text>
+        <text class="lbl-s" x="450" y="128" text-anchor="middle">7:15 · Family breakfast</text>
+        <text class="lbl-s" x="450" y="144" text-anchor="middle">3:00 · The Mind Museum</text>
+        <text class="lbl-s" x="450" y="160" text-anchor="middle">6:15 · Manam dinner</text>
+
+        <rect class="box-miss" x="680" y="48" width="200" height="154" rx="13"></rect>
+        <text class="lbl" x="780" y="76" text-anchor="middle">Layer 3 — Activity</text>
+        <text class="lbl-miss" x="780" y="94" text-anchor="middle">NEW · activity/[id]</text>
+        <text class="lbl-s" x="780" y="116" text-anchor="middle">full write-up + why</text>
+        <text class="lbl-s" x="780" y="132" text-anchor="middle">Mom/Dad · cost · meal</text>
+        <text class="lbl-s" x="780" y="148" text-anchor="middle">▦ embedded map</text>
+        <text class="lbl-s" x="780" y="164" text-anchor="middle">↗ Open in Google Maps</text>
+        <text class="lbl-s" x="780" y="180" text-anchor="middle">⤿ Skip → extend now</text>
+
+        <path class="fl" d="M220 125 H346" marker-end="url(#b1)"></path>
+        <text class="al" x="283" y="116" text-anchor="middle">tap a day</text>
+        <path class="fl" d="M550 125 H676" marker-end="url(#b1)"></path>
+        <text class="al" x="613" y="116" text-anchor="middle">tap an activity</text>
+      </svg>
+      <figcaption>All the data L3 needs already ships in each activity — it's a rendering + one map embed + a deep link, no schema change.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ FEATURE GAP TABLE ============ -->
+  <section>
+    <h2>Everything we're missing, in one table</h2>
+    <p class="sub">Ranked by how close it sits to the app's purpose.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Capability</th><th>State</th><th>What it takes</th></tr></thead>
+        <tbody>
+          <tr><td>AI generates proposals</td><td><span class="chip missing">missing</span></td><td><span class="path">POST /api/generate</span> → Claude (server-side key) returns 3 Itineraries in our schema</td></tr>
+          <tr><td>AI writes the day timeline</td><td><span class="chip missing">missing</span></td><td>2nd Claude call expands a chosen proposal into block-level <code>Activity[]</code></td></tr>
+          <tr><td>Save / persist a generated trip</td><td><span class="chip missing">missing</span></td><td>expose repo's <span class="path">create/update/delete</span> as routes; wire the wizard's Save</td></tr>
+          <tr><td>Import existing xlsx / csv</td><td><span class="chip missing">missing</span></td><td>reuse the extractor as <span class="path">POST /api/import</span> (multipart)</td></tr>
+          <tr><td>Per-activity detail (Layer 3)</td><td><span class="chip missing">missing</span></td><td>new <span class="path">activity/[id]</span> route + map embed + deep link</td></tr>
+          <tr><td>Live location &amp; ETA</td><td><span class="chip missing">missing</span></td><td><code>expo-location</code> + haversine/Directions ETA, refresh on move</td></tr>
+          <tr><td>Reminders / alarms</td><td><span class="chip missing">missing</span></td><td><code>expo-notifications</code> scheduling from settings (1h/15m/5m)</td></tr>
+          <tr><td>Skip → extend current block</td><td><span class="chip missing">missing</span></td><td>recompute remaining timeline from "now + where you are"</td></tr>
+          <tr><td>Real auth + ownerId</td><td><span class="chip missing">missing</span></td><td>Firebase Auth; filter itineraries by owner</td></tr>
+          <tr><td>Home tab shows live trip</td><td><span class="chip partial">partial</span></td><td>drop hardcoded "BGC + Manila" / fake rows, render from server</td></tr>
+          <tr><td>Real map (not stylized SVG)</td><td><span class="chip partial">partial</span></td><td>Google Maps Embed (web) / react-native-maps (native)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ ANIMATIONS ============ -->
+  <section>
+    <h2>Animation, kept lightweight</h2>
+    <p class="sub">You already ship <code style="font-family:var(--mono);font-size:12px">react-native-reanimated</code> — that carries most of it for free. Add exactly one vector-animation library for the few "hero" moments (like a traveler who actually walks). My pick order:</p>
+    <div class="cards">
+      <div class="card">
+        <h4>Micro-interactions → Reanimated</h4>
+        <p>Already installed, GPU-driven, ~0 added weight. Use for: screen transitions, staggered day reveals, the skip→extend morph, progress fill on the live "up next" card, button springs.</p>
+        <span class="rec">→ use everywhere, no new dep</span>
+      </div>
+      <div class="card">
+        <h4>The walking traveler → Rive</h4>
+        <p>Modern successor to Lottie: tiny runtime, real-time <em>state machines</em> so the walker can speed up as your ETA shrinks. Web + native renderers. Best "latest tech, still light".</p>
+        <span class="rec">→ recommended for hero moments</span>
+      </div>
+      <div class="card">
+        <h4>Fast path → Lottie</h4>
+        <p>If Rive's a bigger lift than you want: <code style="font-family:var(--mono);font-size:11px">lottie-react-native</code> plays free JSON walk-cycles today. Mature, lightweight, but not interactive.</p>
+        <span class="rec">→ easiest, non-interactive</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROADMAP ============ -->
+  <section>
+    <h2>Recommended build order</h2>
+    <p class="sub">Purpose-first: make the app <em>do its job</em>, then make the day-of experience live, then polish. Each phase ends in something demoable.</p>
+
+    <div class="phase">
+      <div class="num">1</div>
+      <div>
+        <h4>The generator <span class="tagsm">the whole point</span></h4>
+        <p class="why">Turn the mock wizard into the real thing: <code>POST /api/generate</code> calls Claude server-side (key never in the app), returns <strong>3 proposals</strong> in our schema; a 2nd call writes the block timeline; Save persists via new write routes.</p>
+        <ul>
+          <li>Server: <code>/api/generate</code>, <code>/api/itineraries</code> (POST/PATCH), Claude client</li>
+          <li>App: wire <code>create/*</code> steps to real state → generate → review → save</li>
+          <li>Guardrail: proposals stay coherent/connected (like the seeded trips), work-blocks &amp; nap windows respected</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="num">2</div>
+      <div>
+        <h4>Layer 3 + real map <span class="tagsm">quick win</span></h4>
+        <p class="why">New <code>activity/[id]</code> detail screen with the full write-up, per-person status, meal &amp; cost, an embedded map, and "Open in Google Maps". Swap the stylized map for a real embed.</p>
+        <ul><li>No schema change — the data's already there</li><li>Deep link via the existing <code>openMaps()</code></li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="num">3</div>
+      <div>
+        <h4>Live day <span class="tagsm">day-of magic</span></h4>
+        <p class="why">Device GPS → "how far to the next place" that updates as you move; the "up next" card goes live.</p>
+        <ul><li><code>expo-location</code> + distance/ETA, throttled updates</li><li>The walking traveler animates toward the next stop (Reanimated/Rive)</li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="num">4</div>
+      <div>
+        <h4>Reminders + skip/extend <span class="tagsm">the alarm</span></h4>
+        <p class="why">Real notifications 1h / 15m / 5m before each block (editable in Reminder Settings), and a <strong>Skip</strong> that extends your current block and reflows the rest from where you are now.</p>
+        <ul><li><code>expo-notifications</code> scheduling tied to activity times + travel buffer</li><li>Reflow logic recomputes downstream blocks live</li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="num">5</div>
+      <div>
+        <h4>Import, auth &amp; polish <span class="tagsm">completeness</span></h4>
+        <p class="why">Bring existing plans in (<code>POST /api/import</code> reusing the extractor), Firebase auth + <code>ownerId</code>, fix the Home tab to render live, and the animation pass across the app.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Mapped with graphify — 695 nodes · 1376 edges · 60 communities. God nodes: useWayfare (79), go() (27), Txt, useAsync.</span>
+    <span>Companion: the System Map artifact covers what exists &amp; how it connects.</span>
+    <span>Open: graphify-out/graph.html · Run: graphify explain "X" · graphify path "A" "B"</span>
+  </footer>
+</div>

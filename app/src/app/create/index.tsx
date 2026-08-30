@@ -1,22 +1,40 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, View } from 'react-native';
+
+import { ReactNode } from 'react';
 
 import { Icon, IconName } from '@/components/wayfare/icon';
+import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
 import { useWayfare } from '@/components/wayfare/theme';
-import { AIOrb, AITip, Card, Header, Txt } from '@/components/wayfare/ui';
+import { AIOrb, AITip, Card, CategoryIcon, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
 import { back, go } from '@/lib/nav';
+import { wizard } from '@/lib/wizard';
+
+function Cat({ name, color }: { name: IconName; color: string }) {
+  return <CategoryIcon name={name} color={color} size={52} iconSize={24} />;
+}
 
 export default function StartMethod() {
   const { c } = useWayfare();
-  const insets = useSafeAreaInsets();
+  const start = () => {
+    wizard.reset();
+    go('/create/basics');
+  };
+  const header = (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+      <Pressable onPress={back}>
+        <MapIconButton>
+          <Icon name="back" size={22} color="#fff" />
+        </MapIconButton>
+      </Pressable>
+      <Txt variant="h1" style={{ color: '#fff', fontSize: 24 }}>
+        New trip
+      </Txt>
+    </View>
+  );
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: insets.top + Space.s, paddingHorizontal: Space.xl, paddingBottom: Space.xxl }}>
-        <Header title="New trip" onBack={back} />
-        <Txt variant="h1" style={{ marginTop: Space.l }}>
+    <MapFirst header={header} sheetTop={0.22}>
+        <Txt variant="h1">
           How do you want{'\n'}to start?
         </Txt>
         <Txt variant="sec" muted style={{ marginTop: 8 }}>
@@ -25,36 +43,31 @@ export default function StartMethod() {
 
         <View style={{ gap: Space.m, marginTop: Space.l }}>
           <Option
-            leading={<AIOrb size={34} />}
+            leading={<AIOrb size={44} />}
             title="Chat with Wayfare AI"
             sub="Answer a few questions, get 3 plans"
             badge="Fastest"
-            onPress={() => go('/create/basics')}
+            onPress={() => go('/create/chat')}
           />
-          <Option icon="wand" tint="#EDEBFF" title="Build it yourself" sub="Set the basics — we fill the details" onPress={() => go('/create/basics')} />
-          <Option icon="file" tint="#E7F1FB" title="Import a spreadsheet" sub="Bring a CSV or Excel plan (web)" onPress={() => go('/create/basics')} />
+          <Option leading={<Cat name="wand" color={c.a3} />} title="Build it yourself" sub="Set the basics — we fill the details" onPress={start} />
+          <Option leading={<Cat name="upload" color={c.a2} />} title="Import a spreadsheet" sub="Bring a CSV or Excel plan (web)" onPress={() => go('/create/import')} />
         </View>
 
         <View style={{ marginTop: Space.l }}>
           <AITip>However you start, AI adds timings, costs, routes &amp; map pins at the end.</AITip>
         </View>
-      </ScrollView>
-    </View>
+    </MapFirst>
   );
 }
 
 function Option({
-  icon,
   leading,
-  tint,
   title,
   sub,
   badge,
   onPress,
 }: {
-  icon?: IconName;
-  leading?: React.ReactNode;
-  tint?: string;
+  leading: ReactNode;
   title: string;
   sub: string;
   badge?: string;
@@ -63,15 +76,13 @@ function Option({
   const { c } = useWayfare();
   return (
     <Card onPress={onPress} style={styles.opt}>
-      <View style={[styles.optIcon, { backgroundColor: tint ?? c.bg }]}>
-        {leading ?? (icon ? <Icon name={icon} size={24} color={c.ink} /> : null)}
-      </View>
+      {leading}
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Txt style={{ fontWeight: '800', fontSize: 16 }}>{title}</Txt>
           {badge ? (
-            <View style={{ backgroundColor: '#E7F6EE', borderRadius: 999, paddingHorizontal: 7, paddingVertical: 2 }}>
-              <Txt style={{ color: '#1E8A50', fontSize: 9, fontWeight: '800' }}>{badge}</Txt>
+            <View style={{ backgroundColor: 'rgba(47,217,138,0.24)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 3 }}>
+              <Txt style={{ color: '#8DEBBE', fontSize: 9, fontWeight: '800' }}>{badge}</Txt>
             </View>
           ) : null}
         </View>
@@ -86,5 +97,4 @@ function Option({
 
 const styles = StyleSheet.create({
   opt: { flexDirection: 'row', alignItems: 'center', gap: Space.m },
-  optIcon: { width: 52, height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
 });

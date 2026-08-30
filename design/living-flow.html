@@ -1,0 +1,545 @@
+<title>Wayfare Living Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Fredoka:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --grape:#7C5CF6; --grape-deep:#6746DE; --grape-hi:#9E86FF; --grape-ink:#2C2550;
+    --marigold:#FFA828; --coral:#FF4667; --mint:#2FD98A; --sky:#46B4F0; --pink:#FF74B1;
+    --studio:#E7E1FF; --panel:#EFEAFF;
+    --bg:#ECE6FF; --card:#FFFFFF; --ink:#2C2550; --sec:#7C75A6; --ter:#B9AEE6; --line:#EFEAFF; --line2:#E4DCFB;
+    --night:#17123A; --night2:#221A55; --night-card:#2A2166; --night-ink:#EDE9FF; --night-sub:#A69FD6;
+    --glass:rgba(255,255,255,.66); --glass-line:rgba(255,255,255,.6);
+    --disp:'Anton',sans-serif; --body:'Fredoka',system-ui,sans-serif;
+    --shadow:0 16px 36px -22px rgba(56,38,120,.5);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --studio:#100C28; --panel:#161036;
+    --bg:#140F33; --card:#241C57; --ink:#EFEBFF; --sec:#A69FD6; --ter:#5F5599; --line:#2C2360; --line2:#3A2F72;
+    --glass:rgba(40,30,90,.55); --glass-line:rgba(255,255,255,.12);
+  }}
+  :root[data-theme="dark"]{
+    --studio:#100C28; --panel:#161036;
+    --bg:#140F33; --card:#241C57; --ink:#EFEBFF; --sec:#A69FD6; --ter:#5F5599; --line:#2C2360; --line2:#3A2F72;
+    --glass:rgba(40,30,90,.55); --glass-line:rgba(255,255,255,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--ink);font-family:var(--body);font-weight:400;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1200px 600px at 10% -6%,rgba(124,92,246,.30),transparent 60%),
+      radial-gradient(900px 500px at 100% 2%,rgba(255,168,40,.12),transparent 55%),
+      radial-gradient(900px 700px at 50% 120%,rgba(70,180,240,.14),transparent 60%),
+      var(--studio);}
+  .wrap{max-width:1320px;margin:0 auto;padding:34px clamp(16px,3vw,40px) 120px}
+  header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:10px}
+  .eyebrow{font-weight:600;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--grape);margin:0 0 10px}
+  h1{font-family:var(--disp);font-weight:400;text-transform:uppercase;font-size:clamp(34px,6vw,66px);line-height:.92;letter-spacing:.005em;margin:0}
+  h1 em{font-style:normal;background:linear-gradient(96deg,var(--coral),var(--marigold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{color:var(--sec);max-width:66ch;margin:16px 0 0;font-size:15px;font-weight:500}
+  .toggle{font-weight:600;font-size:12.5px;border:1px solid var(--line2);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 15px;cursor:pointer}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:22px}
+  .tag{font-weight:600;font-size:11.5px;padding:6px 12px;border-radius:999px;border:1px solid var(--line2);background:var(--card);color:var(--sec);display:inline-flex;gap:7px;align-items:center}
+  .tag b{color:var(--ink);font-weight:700}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .d-app{background:var(--mint)} .d-build{background:var(--marigold)} .d-orphan{background:var(--coral)} .d-3d{background:var(--grape)}
+
+  .lane{margin-top:46px}
+  .lane-h{display:flex;align-items:center;gap:12px;margin:0 0 16px}
+  .lane-n{font-family:var(--disp);font-size:15px;color:#fff;background:linear-gradient(150deg,var(--grape),var(--grape-hi));width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 16px -8px var(--grape)}
+  .lane-h h2{font-family:var(--disp);font-weight:400;text-transform:uppercase;font-size:24px;margin:0;letter-spacing:.01em}
+  .lane-h .sub{color:var(--sec);font-size:12.5px;font-weight:600;margin-left:auto}
+  .row{display:flex;gap:14px;align-items:center;overflow-x:auto;padding:6px 2px 16px;scrollbar-width:thin}
+  .arrow{flex:0 0 auto;width:28px;height:2px;background:var(--ter);position:relative;opacity:.9}
+  .arrow::after{content:"";position:absolute;right:-1px;top:-3px;border-left:7px solid var(--ter);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .arrow .lbl{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;color:var(--sec);white-space:nowrap}
+  .split{flex:0 0 auto;width:22px;color:var(--ter);text-align:center;font-size:16px}
+  .branch{flex:0 0 auto;width:132px;font-size:10.5px;font-weight:500;color:var(--sec);line-height:1.7}
+  .branch b{color:var(--grape);font-weight:700}
+
+  .frame{flex:0 0 auto;width:212px}
+  .cap{font-size:10px;font-weight:600;color:var(--sec);margin:0 0 7px;display:flex;align-items:center;gap:6px}
+  .cap .pip{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+  .st{margin-left:auto;font-size:8px;font-weight:700;padding:2px 6px;border-radius:999px;letter-spacing:.04em}
+  .st.app{background:color-mix(in srgb,var(--mint) 22%,transparent);color:#149a5f}
+  .st.build{background:color-mix(in srgb,var(--marigold) 26%,transparent);color:#c47800}
+  .st.orphan{background:color-mix(in srgb,var(--coral) 20%,transparent);color:var(--coral)}
+  .phone{width:212px;height:428px;border-radius:30px;background:var(--card);border:1px solid var(--line2);box-shadow:var(--shadow);overflow:hidden;position:relative}
+  .phone.build{border:1px dashed var(--marigold)}
+  .screen{position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:56px;height:5px;border-radius:3px;background:rgba(140,120,220,.35);z-index:6}
+  .pad{padding:22px 13px 12px}
+  .sbar{height:14px}
+
+  .t-eyebrow{font-weight:600;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--grape)}
+  .t-h{font-family:var(--disp);font-weight:400;text-transform:uppercase;font-size:19px;letter-spacing:.01em;line-height:.96;color:var(--grape-ink)}
+  .t-h.sm{font-size:16px}
+  .muted{color:var(--sec);font-size:9.5px;font-weight:500}
+  .card{background:var(--card);border:1px solid var(--line2);border-radius:15px;padding:10px}
+  .pill{height:33px;border-radius:999px;background:linear-gradient(150deg,var(--grape),var(--grape-hi));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;position:relative;box-shadow:0 8px 16px -9px var(--grape)}
+  .pill.g2{background:linear-gradient(150deg,var(--mint),#8DEBBE);box-shadow:none}
+  .pill.coral{background:linear-gradient(150deg,var(--coral),#ff7a6e);box-shadow:none}
+  .pill.gh{background:transparent;border:1px solid var(--line2);color:var(--ink);box-shadow:none}
+  .pill .knob{position:absolute;right:5px;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--grape);display:flex;align-items:center;justify-content:center;font-size:11px}
+  .chip{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;padding:4px 9px;border-radius:999px;background:var(--bg);color:var(--grape-ink)}
+  .chip.on{background:linear-gradient(150deg,var(--grape),var(--grape-hi));color:#fff}
+  .chip.g{background:rgba(47,217,138,.18);color:#149a5f}
+  .chip.b{background:rgba(70,180,240,.18);color:#1f7fc4}
+  .chip.o{background:rgba(255,168,40,.2);color:#c47800}
+  .chip.p{background:rgba(255,116,177,.2);color:#d61f7a}
+  .row2{display:flex;gap:7px}.col{display:flex;flex-direction:column}.grow{flex:1}
+  .catdot{width:20px;height:20px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;flex:0 0 auto;box-shadow:inset 0 -3px 6px rgba(0,0,0,.14)}
+  .field{height:33px;border-radius:11px;background:var(--card);border:1px solid var(--line2);display:flex;align-items:center;gap:7px;padding:0 10px}
+  .tabbar{margin-top:auto;height:44px;margin:0 8px 8px;border-radius:18px;display:flex;align-items:center;justify-content:space-around;
+    background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-line);box-shadow:var(--shadow)}
+  .tabbar .tb{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:7px;font-weight:600;color:var(--ter)}
+  .tabbar .tb.on{color:#fff;background:linear-gradient(150deg,var(--grape),var(--grape-hi));padding:7px 12px;border-radius:999px;box-shadow:0 8px 14px -8px var(--grape)}
+  .tabbar .ic{width:14px;height:14px;border-radius:6px;background:currentColor;opacity:.55}
+  .tabbar .tb.on .ic{opacity:1}
+  .swap{width:23px;height:23px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--grape);font-size:11px}
+
+  /* mascot ( replaces the old green orb ) */
+  .mascot{width:46px;height:46px;border-radius:50%;margin:6px auto;position:relative;
+    background:radial-gradient(circle at 34% 30%,#ffe1a6,#ff9f1c 58%,#d97e00);
+    box-shadow:0 14px 26px -12px rgba(255,140,0,.6),inset 0 -8px 16px rgba(160,90,0,.4);animation:breathe 2.4s ease-in-out infinite}
+  .mascot::after{content:"";position:absolute;inset:-8px;border-radius:50%;background:rgba(255,168,40,.22);animation:pulse 2.4s ease-in-out infinite;z-index:-1}
+  .mascot .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:5px;top:-3px}
+  .mascot .eye{width:5px;height:7px;border-radius:50%;background:#3a2410}
+
+  @keyframes rise{0%{opacity:0;transform:translateY(9px)}100%{opacity:1;transform:none}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:0;transform:scale(1.5)}}
+  @keyframes livedot{0%,100%{opacity:.35}50%{opacity:1}}
+  @keyframes fill{0%{width:18%}100%{width:64%}}
+  @keyframes dashmove{to{background-position:14px 0}}
+  @keyframes stroll{0%{left:2px}100%{left:calc(100% - 30px)}}
+  @keyframes legA{0%,100%{transform:rotate(24deg)}50%{transform:rotate(-24deg)}}
+  @keyframes legB{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
+  @keyframes shimmer{0%{background-position:-120px 0}100%{background-position:220px 0}}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  @keyframes typing{0%,60%,100%{opacity:.3}30%{opacity:1}}
+  @keyframes pawin{0%{opacity:0}60%{opacity:.95}100%{opacity:.5}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .stagger>*{animation:rise .6s both}
+  .stagger>*:nth-child(1){animation-delay:.05s}.stagger>*:nth-child(2){animation-delay:.16s}
+  .stagger>*:nth-child(3){animation-delay:.27s}.stagger>*:nth-child(4){animation-delay:.38s}.stagger>*:nth-child(5){animation-delay:.49s}
+  .float{animation:floaty 4s ease-in-out infinite}
+  .typing span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--sec);margin-right:2px;animation:typing 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+
+  .walker{position:relative;width:20px;height:28px;color:#fff}
+  .walker .hd{position:absolute;top:0;left:6px;width:7px;height:7px;border-radius:50%;background:currentColor}
+  .walker .bd{position:absolute;top:7px;left:8px;width:4px;height:11px;border-radius:2px;background:currentColor}
+  .walker .lg{position:absolute;top:16px;left:8px;width:3px;height:11px;border-radius:2px;background:currentColor;transform-origin:top center}
+  .walker .lg.a{animation:legA .5s infinite}.walker .lg.b{animation:legB .5s infinite}
+  .walker .am{position:absolute;top:8px;left:8px;width:3px;height:8px;border-radius:2px;background:currentColor;opacity:.8;transform-origin:top center}
+  .walker .am.a{animation:legB .5s infinite}.walker .am.b{animation:legA .5s infinite}
+  .rte{position:relative;height:30px;margin-top:7px}
+  .rte .path{position:absolute;left:2px;right:14px;top:23px;height:3px;background-image:linear-gradient(90deg,var(--marigold) 45%,transparent 45%);background-size:12px 3px;border-radius:3px;animation:dashmove .6s linear infinite}
+  .rte .pin{position:absolute;right:2px;top:12px;width:12px;height:12px;border-radius:50% 50% 50% 0;background:var(--mint);transform:rotate(45deg)}
+  .rte .mv{position:absolute;bottom:0;animation:stroll 3.6s ease-in-out infinite}
+
+  /* logo mark: 3d place + walking persona */
+  .placemark{width:120px;height:120px;position:relative;margin:2px auto}
+  .placemark .plat{position:absolute;left:50%;bottom:14px;transform:translateX(-50%) rotateX(58deg);width:92px;height:92px;border-radius:20px;
+    background:linear-gradient(150deg,var(--grape-hi),var(--grape-deep));box-shadow:0 22px 30px -16px rgba(60,40,140,.7)}
+  .placemark .bld{position:absolute;bottom:34px;border-radius:6px 6px 2px 2px}
+  .placemark .b1{left:36px;width:16px;height:34px;background:linear-gradient(160deg,#ffd98a,#ff9f1c)}
+  .placemark .b2{left:56px;width:14px;height:48px;background:linear-gradient(160deg,#8DEBBE,#2FD98A)}
+  .placemark .b3{left:72px;width:12px;height:26px;background:linear-gradient(160deg,#7FD0FF,#46B4F0)}
+  .placemark .pin{position:absolute;left:44px;top:6px;width:20px;height:20px;border-radius:50% 50% 50% 0;background:var(--coral);transform:rotate(45deg);box-shadow:0 8px 14px -6px var(--coral);animation:bob 2.6s ease-in-out infinite}
+  .placemark .walkp{position:absolute;left:60px;bottom:44px;color:#fff;animation:bob 2.2s ease-in-out infinite .3s}
+
+  /* night map screens */
+  .nightscreen{background:var(--night)}
+  .mapgrid{position:absolute;inset:0}
+  .bubble{position:absolute;font-weight:600;font-size:8.5px;color:#3a2e5c;background:var(--marigold);padding:5px 8px;border-radius:9px 9px 9px 2px;box-shadow:var(--shadow);z-index:4}
+  .bubble.dk{background:var(--night-card);color:#fff;border-radius:9px 9px 2px 9px}
+  .gpsrow{display:flex;gap:6px;justify-content:center;margin-top:8px}
+  .gpsrow .g{background:var(--night-card);border-radius:13px;padding:8px 9px;text-align:center;flex:1}
+  .gpsrow .g b{font-family:var(--disp);font-size:16px;color:#fff;display:block;line-height:1}
+  .gpsrow .g span{font-weight:500;font-size:7.5px;color:var(--night-sub)}
+  .remind{background:var(--night-card);border-radius:14px;padding:9px;display:flex;align-items:center;gap:7px;color:#fff}
+  .remind .bell{width:26px;height:26px;border-radius:9px;flex:none;background:rgba(255,168,40,.22);display:grid;place-items:center;font-size:12px}
+  .remind .skip{margin-left:auto;font-weight:600;font-size:8.5px;background:var(--coral);color:#fff;padding:5px 9px;border-radius:999px}
+
+  /* proposal color worlds */
+  .pcard{border-radius:16px;padding:10px 11px;position:relative;overflow:hidden;min-height:82px}
+  .pcard .num{font-family:var(--disp);font-size:30px;line-height:1;opacity:.92}
+  .pcard h4{font-family:var(--disp);text-transform:uppercase;font-size:16px;line-height:.9;margin:1px 0 0}
+  .pcard .desc{font-weight:500;font-size:8.5px;margin-top:3px;max-width:74%}
+  .pcard .st2{display:flex;gap:8px;margin-top:5px;font-weight:600;font-size:8px}
+  .pcard .view{position:absolute;right:9px;bottom:9px;font-weight:600;font-size:8px;background:#fff;color:#2c2550;padding:5px 9px;border-radius:999px;box-shadow:var(--shadow)}
+  .pcard .corb{position:absolute;right:-6px;top:-6px;width:52px;height:52px;border-radius:50%}
+  .pc1{background:linear-gradient(150deg,#FFD36B,#FFA828);color:#5a3d00}
+  .pc1 .corb{background:radial-gradient(circle at 34% 30%,#fff2cf,#ff9f1c 62%,#d97e00)}
+  .pc2{background:linear-gradient(150deg,#7FD0FF,#46B4F0);color:#053a5c}
+  .pc2 .corb{background:radial-gradient(circle at 34% 30%,#e6f5ff,#46b4f0 62%,#1f7fc4)}
+  .pc3{background:linear-gradient(150deg,#8DEBBE,#2FD98A);color:#064a30}
+  .pc3 .corb{background:radial-gradient(circle at 34% 30%,#e3fff2,#2fd98a 62%,#12a768)}
+
+  .daystrip{display:flex;gap:4px;margin-top:8px}
+  .daystrip .d{flex:1;text-align:center}.daystrip .d .wd{font-size:7px;font-weight:600;color:var(--sec)}
+  .daystrip .d .n{margin-top:2px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:12px;color:var(--grape-ink);background:var(--bg)}
+  .daystrip .d.on .n{background:linear-gradient(150deg,var(--grape),var(--grape-hi));color:#fff;box-shadow:0 8px 14px -8px var(--grape)}
+  .agenda{position:relative;margin-top:8px;height:120px;border-left:2px solid var(--line2);padding-left:5px}
+  .ev{position:absolute;left:7px;right:3px;border-radius:9px;padding:5px 7px;font-size:8px;font-weight:600;color:#fff}
+  .map{height:84px;border-radius:13px;position:relative;overflow:hidden;background:var(--night)}
+  .map .pin{position:absolute;left:50%;top:44%;width:13px;height:13px;border-radius:50% 50% 50% 0;background:var(--marigold);transform:translate(-50%,-50%) rotate(45deg);z-index:2}
+  .map .ring{position:absolute;left:50%;top:44%;width:28px;height:28px;border-radius:50%;background:var(--grape);opacity:.5;transform:translate(-50%,-50%);animation:pulse 2.2s ease-in-out infinite}
+  .listrow{display:flex;gap:7px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:9px}
+  .toggles{width:30px;height:18px;border-radius:9px;background:var(--mint);position:relative;flex:0 0 auto}
+  .toggles::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff}
+  .toggles.off{background:var(--ter)}.toggles.off::after{left:2px;right:auto}
+  .steps .s{display:flex;align-items:center;gap:6px;font-size:9px;font-weight:500;color:var(--sec);margin-top:7px;animation:rise .5s both}
+  .steps .s .ck{width:14px;height:14px;border-radius:50%;background:var(--mint);color:#fff;display:flex;align-items:center;justify-content:center;font-size:7px}
+  .steps .s:nth-child(1){animation-delay:.2s}.steps .s:nth-child(2){animation-delay:.6s}.steps .s:nth-child(3){animation-delay:1s}
+  .bub{max-width:82%;padding:7px 9px;border-radius:13px;font-size:9px;font-weight:500;line-height:1.4;margin-top:7px}
+  .bub.ai{background:var(--bg);color:var(--ink);border-bottom-left-radius:3px}
+  .bub.me{background:linear-gradient(150deg,var(--grape),var(--grape-hi));color:#fff;margin-left:auto;border-bottom-right-radius:3px}
+  .drop{border:2px dashed var(--grape-hi);border-radius:15px;height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--sec);margin-top:14px;background:rgba(124,92,246,.05)}
+  .maprow{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line);font-size:9px}
+  .upnext{background:var(--night-card);border-radius:15px;padding:10px;color:#fff}
+  .upnext .n{font-weight:700;font-size:8px;letter-spacing:.1em;color:var(--mint)}
+  .upnext .go{height:28px;border-radius:999px;background:linear-gradient(150deg,var(--mint),#8DEBBE);color:#083;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:9.5px;margin-top:7px}
+
+  .stage3d{flex:0 0 auto;width:270px}
+  .glass{width:270px;height:270px;border-radius:24px;border:1px solid var(--night2);background:radial-gradient(120% 90% at 50% 12%,var(--night2),var(--night));position:relative;overflow:hidden;box-shadow:var(--shadow)}
+  .glass canvas{width:100%;height:100%;display:block}
+  .glass .badge{position:absolute;left:10px;bottom:10px;font-weight:600;font-size:9px;color:#fff;background:rgba(124,92,246,.35);border:1px solid var(--glass-line);padding:5px 9px;border-radius:999px}
+  .note3d{color:var(--sec);font-size:12.5px;font-weight:500;margin-top:10px;line-height:1.6}.note3d b{color:var(--ink);font-weight:700}
+
+  .cover{margin-top:54px;border:1px solid var(--line2);background:var(--panel);border-radius:22px;padding:24px}
+  .cover h3{font-family:var(--disp);text-transform:uppercase;font-weight:400;margin:0 0 4px;font-size:24px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:16px}
+  .cell{font-size:10.5px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:11px;padding:9px 11px;display:flex;align-items:center;gap:7px}
+  .cell .k{width:7px;height:7px;border-radius:50%;background:var(--mint);flex:0 0 auto}
+  .cell.build .k{background:var(--marigold)} .cell.build{border-color:color-mix(in srgb,var(--marigold) 40%,var(--line2))}
+  .cell.orphan .k{background:var(--coral)} .cell.orphan{border-color:color-mix(in srgb,var(--coral) 40%,var(--line2))}
+  .improve{margin-top:18px;border:1px solid var(--grape-hi);background:rgba(124,92,246,.08);border-radius:16px;padding:16px 18px}
+  .improve h4{font-family:var(--disp);text-transform:uppercase;font-weight:400;font-size:17px;margin:0 0 4px;color:var(--grape)}
+  .improve ul{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:8px}
+  .improve li{font-size:12.5px;font-weight:500;color:var(--sec);display:grid;grid-template-columns:auto 1fr;gap:9px}
+  .improve li b{color:var(--ink);font-weight:700}
+  .improve .n{width:20px;height:20px;border-radius:7px;background:linear-gradient(150deg,var(--grape),var(--grape-hi));color:#fff;font-family:var(--disp);font-size:11px;display:flex;align-items:center;justify-content:center;flex:none}
+  .disc{margin-top:16px;display:grid;gap:8px}
+  .disc .d{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:12.5px;font-weight:500;color:var(--sec);background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--mint);border-radius:12px;padding:11px 13px}
+  .disc .d.warn{border-left-color:var(--marigold)}
+  .disc .d b{color:var(--ink);font-weight:700} .disc .d .path{font-weight:600;font-size:11px;color:var(--mint)} .disc .d.warn .path{color:var(--marigold)}
+
+  footer{margin-top:54px;padding-top:22px;border-top:1px solid var(--line2);font-size:12.5px;font-weight:500;color:var(--sec);display:grid;gap:6px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Wayfare &middot; Living Flow &middot; Direction 03</p>
+      <h1>The complete flow,<br><em>in motion</em>.</h1>
+      <p class="lede">Every screen the app should have &mdash; real navigation structure, wearing the locked <b style="color:var(--grape-ink)">Playful Adventure</b> skin. Mint&nbsp;=&nbsp;in the app; marigold&nbsp;=&nbsp;designed, not built yet; coral&nbsp;=&nbsp;disconnected. Structural improvements are called out at the bottom.</p>
+    </div>
+    <button class="toggle" id="tt">&#9680; theme</button>
+  </header>
+  <div class="legend">
+    <span class="tag"><span class="dot d-app"></span><b>In app</b> built &amp; wired</span>
+    <span class="tag"><span class="dot d-build"></span><b>To build</b> designed, not built</span>
+    <span class="tag"><span class="dot d-orphan"></span><b>Disconnected</b> unreachable</span>
+    <span class="tag"><span class="dot d-3d"></span><b>3D</b> three.js</span>
+  </div>
+
+  <!-- LANE 1 : ENTER / AUTH -->
+  <section class="lane">
+    <div class="lane-h"><span class="lane-n">1</span><h2>Enter &amp; sign in</h2><span class="sub">index &middot; onboarding &middot; (auth)/*</span></div>
+    <div class="row">
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--grape)"></span>Splash<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen" style="align-items:center;justify-content:center;background:linear-gradient(180deg,#8B79F2,#EDE7FF 62%)">
+          <div class="placemark"><div class="plat"></div><span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span><span class="pin"></span>
+            <span class="walkp"><span class="walker" style="color:#fff;transform:scale(.8)"><span class="hd"></span><span class="bd"></span><span class="am a"></span><span class="am b"></span><span class="lg a"></span><span class="lg b"></span></span></span></div>
+          <div class="t-h" style="font-size:24px;margin-top:2px;color:var(--grape-ink)">Wayfare</div><div class="muted" style="color:var(--grape-deep)">Plans that feel human.</div>
+          <div style="position:absolute;left:13px;right:13px;bottom:14px" class="pill">Get started<span class="knob">&rarr;</span></div></div></div></div>
+      <div class="arrow"></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Onboarding<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div>
+          <div class="card float" style="height:118px;display:flex;align-items:center;justify-content:center;background:var(--night);border:none"><div class="rte" style="width:80%;height:50px"><div class="path"></div><div class="pin"></div><div class="mv"><div class="walker" style="color:#fff"><span class="hd"></span><span class="bd"></span><span class="am a"></span><span class="am b"></span><span class="lg a"></span><span class="lg b"></span></div></div></div></div>
+          <div class="t-h" style="margin-top:12px">Plan any trip,<br>door to door.</div><div class="muted" style="margin-top:6px">AI builds the schedule; you just go.</div>
+          <div style="display:flex;gap:4px;margin-top:12px"><span style="width:16px;height:5px;border-radius:3px;background:var(--grape)"></span><span style="width:5px;height:5px;border-radius:3px;background:var(--ter)"></span><span style="width:5px;height:5px;border-radius:3px;background:var(--ter)"></span></div>
+          <div class="pill" style="margin-top:auto">Continue<span class="knob">&rarr;</span></div></div></div></div>
+      <div class="split">&#8600;</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--ter)"></span>Login<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div style="height:96px;background:linear-gradient(150deg,var(--grape),var(--grape-deep));position:relative"><div style="position:absolute;left:13px;bottom:11px;color:#fff;font-family:var(--disp);text-transform:uppercase;font-size:18px">Welcome<br>back</div></div>
+          <div class="pad"><div class="stagger col" style="gap:7px">
+            <div class="field"><span class="muted">you@email.com</span></div><div class="field"><span class="muted">&bull;&bull;&bull;&bull;&bull;&bull;</span></div>
+            <div class="muted" style="text-align:right">Forgot password?</div><div class="pill">Log in<span class="knob">&rarr;</span></div></div>
+            <div class="muted" style="margin-top:10px;text-align:center">New here? <b style="color:var(--grape)">Create account</b></div></div></div></div></div>
+      <div class="split">&#8645;</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--ter)"></span>Register<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div style="height:96px;background:linear-gradient(150deg,var(--mint),#12a768);position:relative"><div style="position:absolute;left:13px;bottom:11px;color:#fff;font-family:var(--disp);text-transform:uppercase;font-size:18px">Create<br>account</div></div>
+          <div class="pad"><div class="stagger col" style="gap:7px"><div class="field"><span class="muted">Kline Lozada</span></div><div class="field"><span class="muted">you@email.com</span></div><div class="field"><span class="muted">At least 6 characters</span></div><div class="pill">Create account<span class="knob">&rarr;</span></div></div></div></div></div></div>
+      <div class="split">&#8592;</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--ter)"></span>Forgot<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h">Reset your<br>password</div><div class="muted" style="margin-top:7px">We&rsquo;ll email you a link.</div><div class="field" style="margin-top:14px"><span class="muted">you@email.com</span></div><div class="pill" style="margin-top:9px">Send reset link<span class="knob">&rarr;</span></div><div class="card float" style="margin-top:11px;display:flex;gap:7px;align-items:center;border-color:var(--mint)"><span class="catdot" style="background:var(--mint)">&#10003;</span><span class="muted">Check your inbox.</span></div></div></div></div>
+    </div>
+  </section>
+
+  <!-- LANE 2 : HOME TABS -->
+  <section class="lane">
+    <div class="lane-h"><span class="lane-n">2</span><h2>The four tabs</h2><span class="sub">home &middot; trips &middot; alerts &middot; profile</span></div>
+    <div class="row">
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Home<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen" style="background:linear-gradient(180deg,#8B79F2,#7C5CF6 34%,var(--bg) 34%)"><div class="pad" style="padding-bottom:0;flex:1;display:flex;flex-direction:column"><div class="sbar"></div>
+          <div style="color:#fff"><div class="t-eyebrow" style="color:rgba(255,255,255,.85)">GOOD MORNING</div><div class="t-h" style="color:#fff;font-size:26px">Kline</div></div>
+          <div class="card float" style="margin-top:10px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-line)"><div class="row2" style="justify-content:space-between;align-items:center"><span class="chip g" style="animation:livedot 1.4s infinite">&#9679; LIVE &middot; DAY 4</span><span class="chip o">AI PLAN</span></div><div style="font-weight:700;font-size:12px;margin-top:7px">BGC + Manila</div><div style="height:7px;border-radius:999px;background:#EAE3FF;margin-top:7px;overflow:hidden"><div style="height:100%;border-radius:999px;background:linear-gradient(90deg,var(--marigold),var(--coral));animation:fill 3s ease-in-out infinite alternate"></div></div></div>
+          <div class="pill" style="margin-top:10px">Plan a new trip<span class="knob">&#10022;</span></div>
+          <div class="card" style="margin-top:9px;display:flex;gap:7px;align-items:center"><span class="catdot" style="background:var(--sky)"></span><div class="grow"><div style="font-weight:700;font-size:9.5px">Family BGC</div><div class="muted">Sep 10&ndash;19</div></div><span class="chip">&rsaquo;</span></div>
+          <div class="tabbar"><div class="tb on"><span class="ic"></span>Home</div><div class="tb"><span class="ic"></span>Trips</div><div class="tb"><span class="ic"></span>Alerts</div><div class="tb"><span class="ic"></span>Profile</div></div></div></div></div></div>
+      <div class="arrow"></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Trips<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad" style="padding-bottom:0"><div class="sbar"></div><div class="t-h">Your trips</div><div class="muted">2 trips on your account</div>
+          <div class="stagger col" style="gap:9px;margin-top:11px"><div class="card float" style="height:78px;background:linear-gradient(150deg,var(--grape),var(--grape-hi));color:#fff;border:none;display:flex;flex-direction:column;justify-content:flex-end"><span class="chip" style="align-self:flex-start;background:rgba(255,255,255,.25);color:#fff">3 PLANS &middot; 2 PAX</span><b style="font-size:11px;margin-top:5px;font-family:var(--disp);text-transform:uppercase">Couple&rsquo;s BGC</b></div><div class="card" style="height:78px;background:linear-gradient(150deg,var(--sky),#1f7fc4);color:#fff;border:none;display:flex;flex-direction:column;justify-content:flex-end"><span class="chip" style="align-self:flex-start;background:rgba(255,255,255,.25);color:#fff">1 PLAN &middot; 6 PAX</span><b style="font-size:11px;margin-top:5px;font-family:var(--disp);text-transform:uppercase">Family BGC</b></div></div>
+          <div class="tabbar"><div class="tb"><span class="ic"></span>Home</div><div class="tb on"><span class="ic"></span>Trips</div><div class="tb"><span class="ic"></span>Alerts</div><div class="tb"><span class="ic"></span>Profile</div></div></div></div></div>
+      <div class="arrow"></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Alerts<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad" style="padding-bottom:0"><div class="sbar"></div><div class="t-h">Alerts</div><div class="t-eyebrow" style="margin-top:11px">TODAY</div>
+          <div class="stagger col" style="gap:7px;margin-top:6px"><div class="card" style="display:flex;gap:7px;align-items:center"><span class="catdot" style="background:var(--marigold)">&#128205;</span><div class="grow"><b style="font-size:9px">Leave in 1 hour</b><div class="muted">Manila Cathedral</div></div><span style="width:7px;height:7px;border-radius:50%;background:var(--coral);animation:livedot 1.4s infinite"></span></div><div class="card" style="display:flex;gap:7px;align-items:center"><span class="catdot" style="background:var(--sky)">&#9728;</span><div class="grow"><b style="font-size:9px">Weather looks clear</b><div class="muted">Great day for the walk</div></div></div></div>
+          <div class="t-eyebrow" style="margin-top:11px">EARLIER</div><div class="card" style="margin-top:6px;display:flex;gap:7px;align-items:center"><span class="catdot" style="background:var(--mint)">&#10003;</span><div class="grow"><b style="font-size:9px">Trip generated</b><div class="muted">3 proposals ready</div></div></div>
+          <div class="tabbar"><div class="tb"><span class="ic"></span>Home</div><div class="tb"><span class="ic"></span>Trips</div><div class="tb on"><span class="ic"></span>Alerts</div><div class="tb"><span class="ic"></span>Profile</div></div></div></div></div>
+      <div class="arrow"></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Profile<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad" style="padding-bottom:0"><div class="sbar"></div><div class="card float" style="align-items:center;text-align:center;display:flex;flex-direction:column;padding:14px;background:linear-gradient(160deg,#F1ECFF,#fff)"><div style="width:46px;height:46px;border-radius:15px;background:linear-gradient(150deg,var(--grape),var(--grape-hi));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:18px">KL</div><b style="margin-top:8px;font-size:12px">Kline Lozada</b><div class="muted">kline@wayfare.dev</div><div class="row2" style="margin-top:8px"><span class="chip o">&#128293; 417</span><span class="chip g">&#11088; 9 trips</span></div></div>
+          <div class="t-eyebrow" style="margin-top:11px">PREFERENCES</div><div class="card" style="margin-top:6px;padding:2px 10px"><div class="listrow"><span class="grow" style="font-weight:600">Currency</span><span class="muted">&rsaquo;</span></div><div class="listrow"><span class="grow" style="font-weight:600">Reminders</span><span class="muted">&rsaquo;</span></div><div class="listrow" style="border:none"><span class="grow" style="font-weight:600;color:var(--coral)">Sign out</span></div></div>
+          <div class="tabbar"><div class="tb"><span class="ic"></span>Home</div><div class="tb"><span class="ic"></span>Trips</div><div class="tb"><span class="ic"></span>Alerts</div><div class="tb on"><span class="ic"></span>Profile</div></div></div></div></div>
+    </div>
+  </section>
+
+  <!-- LANE 3 : CREATE - THREE WAYS IN -->
+  <section class="lane">
+    <div class="lane-h"><span class="lane-n">3</span><h2>Create a trip &mdash; three ways in</h2><span class="sub">start &rarr; chat | build | import</span></div>
+    <div class="row">
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Start method<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h sm">How do you want<br>to start?</div>
+          <div class="stagger col" style="gap:8px;margin-top:12px"><div class="card" style="display:flex;gap:8px;align-items:center;border-color:var(--grape-hi)"><span class="mascot" style="width:26px;height:26px;margin:0"></span><div class="grow"><div style="font-weight:700;font-size:10px">Chat with Wayfare AI</div><div class="muted">Fastest</div></div></div><div class="card" style="display:flex;gap:8px;align-items:center"><span class="catdot" style="background:var(--pink)">&#9998;</span><div style="font-weight:700;font-size:10px">Build it yourself</div></div><div class="card" style="display:flex;gap:8px;align-items:center"><span class="catdot" style="background:var(--sky)">&#8681;</span><div style="font-weight:700;font-size:10px">Import a spreadsheet</div></div></div></div></div></div>
+      <div class="branch">splits into<br><b>A. Chat</b> (AI)<br><b>B. Build</b> (4 steps)<br><b>C. Import</b> (CSV/XLSX)<br>&darr; all reach<br><b>Proposals</b> (lane 4)</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>A &middot; Chat with AI<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="row2" style="align-items:center;gap:7px"><span class="mascot" style="width:24px;height:24px;margin:0"></span><b style="font-size:11px">Wayfare AI</b></div>
+          <div class="col" style="margin-top:8px">
+            <div class="bub ai">Where are you coming from, and where to?</div>
+            <div class="bub me">BGC &rarr; Manila, family of 6, Sep 20&ndash;23</div>
+            <div class="bub ai">Love it. Any must-dos or a work schedule I should plan around?</div>
+            <div class="bub me">Intramuros. Mom works 8&ndash;11am.</div>
+            <div class="bub ai typing"><span></span><span></span><span></span></div></div>
+          <div class="field" style="margin-top:auto"><span class="muted grow">Message&hellip;</span><span class="catdot" style="width:18px;height:18px;background:var(--grape)">&uarr;</span></div></div></div></div>
+      <div class="split">&#8595;</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>B &middot; Build 1&ndash;4<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-eyebrow">STEP 1 / 4 &middot; BASICS</div><div class="t-h sm">Where to?</div>
+          <div class="col" style="gap:6px;margin-top:9px"><div class="t-eyebrow">FROM</div><div class="field"><span class="muted">Avida Verte, BGC</span></div><div class="t-eyebrow">TO</div><div class="field"><span class="muted">Manila &amp; Makati</span></div><div class="t-eyebrow">WHEN</div><div class="field"><span class="muted">Sep 20 &ndash; 23</span></div>
+            <div class="t-eyebrow" style="margin-top:2px">VIBE &middot; step 2</div><div style="display:flex;gap:4px"><span class="chip on">Family</span><span class="chip">Couple</span><span class="chip">Foodie</span></div>
+            <div class="t-eyebrow" style="margin-top:2px">INTERESTS &middot; step 3</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="chip on">Heritage</span><span class="chip on">Food</span><span class="chip">Views</span></div></div>
+          <div class="pill" style="margin-top:auto">Review &amp; generate<span class="knob">&rarr;</span></div></div></div></div>
+      <div class="split">&#8595;</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>C &middot; Import upload<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h sm">Import your plan</div><div class="muted" style="margin-top:5px">Bring a CSV or Excel file.</div>
+          <div class="drop float"><span style="font-size:24px">&#8681;</span><b style="font-size:10px;color:var(--grape-ink)">Drop your file here</b><span class="muted">.csv &middot; .xlsx</span></div>
+          <div class="pill gh" style="margin-top:12px">Choose a file</div></div></div></div>
+      <div class="arrow"><span class="lbl">map cols</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>C &middot; Column mapping<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-eyebrow">WE MATCHED YOUR COLUMNS</div><div class="t-h sm">Import your plan</div>
+          <div class="card" style="margin-top:10px;padding:4px 10px">
+            <div class="maprow"><span class="grow" style="font-weight:600">Date</span><span style="color:var(--ter)">&rarr;</span><span class="chip g">date</span></div>
+            <div class="maprow"><span class="grow" style="font-weight:600">Time</span><span style="color:var(--ter)">&rarr;</span><span class="chip g">time</span></div>
+            <div class="maprow"><span class="grow" style="font-weight:600">Where</span><span style="color:var(--ter)">&rarr;</span><span class="chip g">where</span></div>
+            <div class="maprow" style="border:none"><span class="grow" style="font-weight:600">Est. Cost</span><span style="color:var(--ter)">&rarr;</span><span class="chip o">cost?</span></div></div>
+          <div class="pill" style="margin-top:auto">Import 130 rows<span class="knob">&rarr;</span></div></div></div></div>
+    </div>
+  </section>
+
+  <!-- LANE 4 : CREATE - PROPOSE, EDIT, CONFIRM -->
+  <section class="lane">
+    <div class="lane-h"><span class="lane-n">4</span><h2>Create a trip &mdash; propose, edit, confirm</h2><span class="sub">generating &rarr; 3 proposals &rarr; customize &rarr; confirm</span></div>
+    <div class="row">
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Generating<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad" style="align-items:center"><div class="sbar"></div><div class="mascot" style="margin-top:26px;width:56px;height:56px"></div><div class="t-h sm" style="text-align:center;margin-top:14px">Building your<br>Manila trip</div><div class="steps" style="align-self:stretch;margin-top:8px"><div class="s"><span class="ck">&#10003;</span>Reading your must-dos</div><div class="s"><span class="ck">&#10003;</span>Routing the days</div><div class="s"><span class="ck">&#10003;</span>Balancing 3 proposals</div></div></div></div></div>
+      <div class="arrow"><span class="lbl">3 plans</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Pick a proposal<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-eyebrow">WAYFARE PICKED 3</div><div class="t-h sm" style="margin-top:2px">Choose your<br>adventure</div>
+          <div class="stagger col" style="gap:8px;margin-top:9px">
+            <div class="pcard pc1"><span class="corb"></span><div class="num">1</div><h4>Easy<br>Explorer</h4><div class="desc">Late starts, short hops.</div><div class="st2"><span>&#128293; 6 stops</span><span>&#128694; 1.2 km</span></div><span class="view">View plan</span></div>
+            <div class="pcard pc2"><span class="corb"></span><div class="num">2</div><h4>Full Send</h4><div class="desc">Dawn to dusk, all in.</div><div class="st2"><span>&#128293; 11 stops</span><span>&#128694; 4.4 km</span></div><span class="view">View plan</span></div>
+            <div class="pcard pc3"><span class="corb"></span><div class="num">3</div><h4>Slow &amp; Local</h4><div class="st2"><span>&#128293; 5 stops</span><span>&#128694; 0.8 km</span></div><span class="view">View plan</span></div></div></div></div></div>
+      <div class="arrow"><span class="lbl">edit</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Customize activities<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h sm">Keep it, or swap</div><div class="muted" style="margin-top:4px">Day 2 &middot; reorder or replace</div>
+          <div class="stagger col" style="gap:7px;margin-top:10px">
+            <div class="card" style="display:flex;gap:7px;align-items:center"><span class="catdot" style="background:var(--marigold)">&#127869;</span><div class="grow"><b style="font-size:9px">Family breakfast</b><div class="muted">Fat Seed &middot; 7:15</div></div><span class="swap">&#8646;</span></div>
+            <div class="card" style="display:flex;gap:7px;align-items:center"><span class="catdot" style="background:var(--sky)">&#9636;</span><div class="grow"><b style="font-size:9px">The Mind Museum</b><div class="muted">3:00 PM</div></div><span class="swap">&#8646;</span></div>
+            <div class="card" style="display:flex;gap:7px;align-items:center;opacity:.7;border-style:dashed"><span class="swap">+</span><div class="grow"><b style="font-size:9px">Add a stop</b></div></div></div>
+          <div class="row2" style="margin-top:auto;gap:7px"><div class="pill gh grow">Swap</div><div class="pill grow">Use all<span class="knob">&rarr;</span></div></div></div></div></div>
+      <div class="arrow"><span class="lbl">places</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Recommended places<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-eyebrow">WE PICKED</div><div class="t-h sm">Your places</div>
+          <div class="stagger col" style="gap:7px;margin-top:9px">
+            <div class="card"><div class="row2" style="justify-content:space-between"><b style="font-size:9.5px">Manam High Street</b><span class="chip o">CHANGE</span></div><div class="muted" style="margin-top:3px">&#9733; 4.6 &middot; 3 min walk &middot; Filipino sharing</div></div>
+            <div class="card"><div class="row2" style="justify-content:space-between"><b style="font-size:9.5px">Fat Seed Cafe</b><span class="chip o">CHANGE</span></div><div class="muted" style="margin-top:3px">&#9733; 4.5 &middot; opens early &middot; breakfast</div></div>
+            <div class="card"><div class="row2" style="justify-content:space-between"><b style="font-size:9.5px">The Mind Museum</b><span class="chip o">CHANGE</span></div><div class="muted" style="margin-top:3px">&#9733; 4.7 &middot; kids love it</div></div></div>
+          <div class="pill" style="margin-top:auto">Confirm all places<span class="knob">&rarr;</span></div></div></div></div>
+      <div class="split">&#8631;</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Swap a place<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h sm">Pick your dinner</div><div class="muted" style="margin-top:4px">3 options near your route</div>
+          <div class="stagger col" style="gap:7px;margin-top:10px">
+            <div class="card" style="border-color:var(--grape);border-width:2px"><div class="row2" style="justify-content:space-between"><b style="font-size:9.5px">Manam</b><span class="chip on">PICKED</span></div><div class="muted" style="margin-top:3px">3 min &middot; sharing plates</div></div>
+            <div class="card"><div class="row2" style="justify-content:space-between"><b style="font-size:9.5px">Italianni&rsquo;s</b><span class="muted">tap</span></div><div class="muted" style="margin-top:3px">5 min &middot; familiar for kids</div></div>
+            <div class="card"><div class="row2" style="justify-content:space-between"><b style="font-size:9.5px">Wildflour</b><span class="muted">tap</span></div><div class="muted" style="margin-top:3px">6 min &middot; bakery-cafe</div></div></div>
+          <div class="pill" style="margin-top:auto">Use Manam<span class="knob">&#10003;</span></div></div></div></div>
+      <div class="arrow"><span class="lbl">confirm</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Confirm timeline<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h sm">Your day,<br>in order.</div>
+          <div class="col" style="gap:0;margin-top:11px;border-left:2px solid var(--line2);padding-left:10px">
+            <div style="margin-bottom:10px"><b style="font-size:9.5px">7:15 &middot; Family breakfast</b><div class="muted">Fat Seed &middot; &#8369;900</div></div>
+            <div style="margin-bottom:10px"><b style="font-size:9.5px">3:00 &middot; The Mind Museum</b><div class="muted">&#8369;3,525</div></div>
+            <div><b style="font-size:9.5px">6:15 &middot; Dinner at Manam</b><div class="muted">&#8369;3,000</div></div></div>
+          <div class="pill" style="margin-top:auto">Generate the timeline<span class="knob">&#10022;</span></div></div></div></div>
+    </div>
+  </section>
+
+  <!-- LANE 5 : TRIP + LIVE -->
+  <section class="lane">
+    <div class="lane-h"><span class="lane-n">5</span><h2>Your trip, live</h2><span class="sub">trip &middot; day &middot; live &middot; activity &middot; place &middot; route</span></div>
+    <div class="row">
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Trip Overview<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen">
+          <div style="height:110px;background:linear-gradient(150deg,var(--grape),var(--grape-deep));position:relative"><div style="position:absolute;left:13px;bottom:11px;color:#fff"><div class="t-eyebrow" style="color:rgba(255,255,255,.85)">FAMILY PLAN</div><div style="font-family:var(--disp);text-transform:uppercase;font-size:20px">Family BGC</div></div></div>
+          <div class="pad" style="padding-top:0"><div class="card" style="margin-top:-14px;display:flex;justify-content:space-between"><div><b style="font-family:var(--disp);font-size:16px">10</b><div class="muted">days</div></div><div><b style="font-family:var(--disp);font-size:16px">Sep 10&ndash;19</b><div class="muted">dates</div></div><div><b style="font-family:var(--disp);font-size:16px">&#8369;72k</b><div class="muted">est</div></div></div>
+            <div class="t-h sm" style="margin-top:11px">Day by day</div><div class="stagger col" style="gap:6px;margin-top:7px"><div class="card" style="display:flex;gap:6px;align-items:center"><span class="catdot" style="background:var(--marigold)"></span><div class="grow"><div class="muted">DAY 1</div><b style="font-size:9.5px">Arrival Night</b></div><span class="chip g">TODAY</span></div><div class="card" style="display:flex;gap:6px;align-items:center"><span class="catdot" style="background:var(--sky)"></span><div class="grow"><div class="muted">DAY 3</div><b style="font-size:9.5px">Mind Museum</b></div></div></div></div></div></div></div>
+      <div class="arrow"><span class="lbl">a day</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Itinerary &middot; day<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-eyebrow">SAT &middot; SEP 12</div><div class="t-h sm">BGC Walk + Museum</div>
+          <div class="upnext" style="margin-top:8px"><div class="row2" style="justify-content:space-between"><span class="n">&#9679; UP NEXT</span><span style="font-size:7px;opacity:.6">3:00 PM</span></div><div style="font-weight:700;font-size:11px;margin-top:4px">The Mind Museum</div><div class="rte"><div class="path"></div><div class="pin"></div><div class="mv"><div class="walker"><span class="hd"></span><span class="bd"></span><span class="am a"></span><span class="am b"></span><span class="lg a"></span><span class="lg b"></span></div></div></div><div style="font-size:8px;color:#fff;margin-top:3px">&#128205; 1.4 km &middot; ~6 min from you</div><div class="go">Open live route</div></div>
+          <div class="stagger col" style="gap:5px;margin-top:8px"><div class="card" style="display:flex;gap:6px;align-items:center;padding:7px"><span class="catdot" style="background:var(--marigold)">&#127869;</span><div class="grow"><b style="font-size:8.5px">Family breakfast</b><div class="muted">7:15</div></div></div><div class="card" style="display:flex;gap:6px;align-items:center;padding:7px"><span class="catdot" style="background:var(--sky)">&#9636;</span><div class="grow"><b style="font-size:8.5px">The Mind Museum</b><div class="muted">3:00</div></div></div></div></div></div></div>
+      <div class="arrow"><span class="lbl">go live</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Live day &middot; next stop<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen nightscreen" style="background:radial-gradient(120% 80% at 50% 0%,#2A2166,#17123A)">
+          <div class="pad" style="text-align:center;flex:1;display:flex;flex-direction:column"><div class="sbar"></div>
+            <div class="t-eyebrow" style="color:var(--grape-hi)">NEXT STOP</div><div class="t-h sm" style="color:#fff;margin-top:2px">Grace Park Cafe</div>
+            <div class="mascot" style="width:64px;height:64px;margin:14px auto 8px;animation:bob 3.2s ease-in-out infinite"></div>
+            <div class="gpsrow"><div class="g"><b>0.4</b><span>km away</span></div><div class="g"><b>6</b><span>min walk</span></div><div class="g"><b>11:15</b><span>arrive</span></div></div>
+            <div class="remind" style="margin-top:10px"><div class="bell">&#128276;</div><div style="text-align:left"><b style="font-size:9px">Leave in 15 min</b><div style="font-size:7.5px;color:var(--night-sub)">Editable in settings</div></div><span class="skip">Skip</span></div>
+            <div style="margin-top:9px;background:rgba(255,255,255,.08);border-radius:14px;padding:9px;color:#fff;text-align:left"><b style="font-size:8.5px">&#127869; What to order</b><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><span class="chip o">Ube latte</span><span class="chip g">Bibingka</span></div></div></div></div></div></div>
+      <div class="arrow"><span class="lbl">a stop</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Activity detail<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-eyebrow">SAT &middot; 6:15 PM</div><div class="t-h sm">Family dinner</div><div class="muted" style="margin-top:2px">Manam &middot; Meal</div>
+          <div class="map" style="margin-top:8px"><div class="ring"></div><div class="pin"></div></div><div class="pill" style="margin-top:8px;height:29px">Open in Google Maps<span class="knob" style="width:20px;height:20px">&#8599;</span></div>
+          <div class="card" style="margin-top:8px"><div style="font-weight:700;font-size:8.5px;color:var(--marigold)">&#127869; What to order at Manam</div><div class="col" style="gap:5px;margin-top:6px"><div style="display:flex;gap:5px;align-items:center"><span class="catdot" style="width:14px;height:14px;background:var(--marigold)">1</span><span class="muted" style="color:var(--ink)">Crispy Sisig</span></div><div style="display:flex;gap:5px;align-items:center"><span class="catdot" style="width:14px;height:14px;background:var(--marigold)">2</span><span class="muted" style="color:var(--ink)">Sinigang na Baka</span></div></div></div></div></div></div>
+      <div class="split">&#8631;</div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--mint)"></span>Place detail<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen"><div class="map" style="height:118px;border-radius:0"><div class="ring"></div><div class="pin"></div></div>
+          <div class="pad" style="padding-top:10px"><div class="t-h sm">The Mind Museum</div><div class="muted">BGC &middot; Museum</div><div class="row2" style="margin-top:8px"><div class="card grow" style="padding:7px"><div class="t-eyebrow">HOURS</div><b style="font-size:9px">9&ndash;6</b></div><div class="card grow" style="padding:7px"><div class="t-eyebrow">ENTRY</div><b style="font-size:9px">&#8369;750</b></div></div><div class="card float" style="margin-top:8px;display:flex;gap:7px;align-items:center"><span class="mascot" style="width:20px;height:20px;margin:0"></span><span class="muted">Great for the older girls.</span></div><div class="pill g2" style="margin-top:9px">I&rsquo;m here &middot; check in<span class="knob" style="color:#0a7">&#10003;</span></div></div></div></div></div>
+      <div class="arrow"><span class="lbl">route</span></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--marigold)"></span>Route Map &middot; cinematic<span class="st build">TO BUILD</span></p>
+        <div class="phone build"><div class="notch"></div><div class="screen nightscreen">
+          <svg class="mapgrid" viewBox="0 0 212 428" preserveAspectRatio="xMidYMid slice">
+            <rect width="212" height="428" fill="#17123A"/>
+            <g stroke="#241A55" stroke-width="8"><line x1="-6" y1="130" x2="220" y2="110"/><line x1="-6" y1="250" x2="220" y2="232"/><line x1="-6" y1="360" x2="220" y2="344"/><line x1="52" y1="80" x2="30" y2="440"/><line x1="130" y1="80" x2="108" y2="440"/><line x1="196" y1="80" x2="176" y2="440"/></g>
+            <path d="M100 388 C 78 330,138 300,120 244 S 80 180,120 132" fill="none" stroke="#FFA828" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round"/>
+            <g fill="#FF74B1"><ellipse cx="100" cy="356" rx="4" ry="5" style="animation:pawin 2.4s .1s infinite"/><ellipse cx="114" cy="318" rx="4" ry="5" style="animation:pawin 2.4s .5s infinite"/><ellipse cx="122" cy="276" rx="4" ry="5" style="animation:pawin 2.4s .9s infinite"/><ellipse cx="112" cy="228" rx="4" ry="5" style="animation:pawin 2.4s 1.3s infinite"/></g>
+            <circle cx="100" cy="388" r="22" fill="#7C5CF6" opacity=".45" style="transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-out infinite"/>
+            <circle cx="100" cy="388" r="14" fill="#7C5CF6"/><path d="M94 388 l12 -6 -3 6 3 6 z" fill="#FFA828"/></svg>
+          <div style="position:absolute;top:14px;left:12px;right:12px;z-index:5;background:linear-gradient(150deg,var(--grape),var(--grape-deep));border-radius:15px;padding:10px 12px;color:#fff;display:flex;gap:8px;align-items:center;box-shadow:var(--shadow)"><span class="mascot" style="width:30px;height:30px;margin:0"></span><div><b style="font-family:var(--disp);text-transform:uppercase;font-size:14px;display:block;line-height:.95">Day 3</b><span style="font-size:8px;opacity:.9">High Street loop</span></div><div style="margin-left:auto;text-align:right"><b style="font-family:var(--disp);font-size:16px;display:block;line-height:1">79%</b><span style="font-size:7px;opacity:.9">done</span></div></div>
+          <div class="bubble" style="right:22px;top:150px">Grace Park</div>
+          <div class="bubble dk" style="left:18px;top:270px">Lunch &#10004;</div>
+          <div class="card" style="position:absolute;left:10px;right:10px;bottom:12px;z-index:5;border-radius:15px;background:var(--night-card);border:none;color:#fff"><div class="row2" style="justify-content:space-between"><div><b style="font-size:9.5px">Next: Grace Park</b><div style="font-size:8px;color:var(--night-sub)">0.4 km &middot; 6 min</div></div><span class="chip g">GO</span></div><div class="pill g2" style="margin-top:7px;height:28px">Start navigation<span class="knob" style="color:#0a7">&rarr;</span></div></div></div></div></div>
+    </div>
+  </section>
+
+  <!-- LANE 6 : SCHEDULE + SETTINGS -->
+  <section class="lane">
+    <div class="lane-h"><span class="lane-n">6</span><h2>Schedule &amp; settings</h2><span class="sub">calendar &middot; availability &middot; reminders</span></div>
+    <div class="row">
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--sky)"></span>Calendar<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="row2" style="justify-content:space-between;align-items:center"><div class="t-h sm">Schedule</div><div style="display:flex;background:var(--bg);border-radius:999px;padding:3px"><span class="chip on" style="font-size:7px">Day</span><span class="chip" style="font-size:7px;background:transparent">Week</span></div></div><div class="daystrip"><div class="d"><div class="wd">WED</div><div class="n">10</div></div><div class="d on"><div class="wd">THU</div><div class="n">11</div></div><div class="d"><div class="wd">FRI</div><div class="n">12</div></div><div class="d"><div class="wd">SAT</div><div class="n">13</div></div><div class="d"><div class="wd">SUN</div><div class="n">14</div></div></div><div class="agenda"><div class="ev" style="top:4px;height:42px;background:linear-gradient(150deg,#9a92c0,#7C75A6)">Work &middot; blocked</div><div class="ev" style="top:52px;height:22px;background:linear-gradient(150deg,var(--marigold),#ff9f1c)">Grab home</div><div class="ev float" style="top:80px;height:30px;background:linear-gradient(150deg,var(--sky),#1f7fc4)">High St dinner</div></div></div></div></div>
+      <div class="arrow"></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--sky)"></span>Commitments<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h sm">Availability &amp;<br>work blocks</div><div class="t-eyebrow" style="margin-top:12px">RECURRING</div><div class="card" style="margin-top:6px"><b style="font-size:9.5px">Work hours</b><div style="display:flex;gap:4px;margin-top:7px"><span class="chip on">M</span><span class="chip on">T</span><span class="chip on">W</span><span class="chip on">T</span><span class="chip on">F</span><span class="chip">S</span><span class="chip">S</span></div><div class="muted" style="margin-top:7px">7:00 AM &ndash; 4:00 PM</div></div><div class="listrow" style="margin-top:7px"><span class="grow" style="font-weight:600">Stay up late</span><span class="toggles off"></span></div><div class="pill" style="margin-top:auto">Save<span class="knob">&#10003;</span></div></div></div></div>
+      <div class="arrow"></div>
+      <div class="frame"><p class="cap"><span class="pip" style="background:var(--sky)"></span>Reminders<span class="st app">IN APP</span></p>
+        <div class="phone"><div class="notch"></div><div class="screen pad"><div class="sbar"></div><div class="t-h sm">Nudge me before<br>each stop</div><div class="card" style="margin-top:12px;padding:2px 10px"><div class="listrow"><div class="grow"><b style="font-size:9px">1 hour before</b><div class="muted">Wrap up</div></div><span class="toggles"></span></div><div class="listrow"><div class="grow"><b style="font-size:9px">15 min before</b><div class="muted">Get ready</div></div><span class="toggles"></span></div><div class="listrow" style="border:none"><div class="grow"><b style="font-size:9px">5 min before</b><div class="muted">Final call</div></div><span class="toggles off"></span></div></div><div class="card" style="margin-top:8px;padding:2px 10px"><div class="listrow" style="border:none"><div class="grow"><b style="font-size:9px;color:var(--coral)">Skip or extend a stop</b><div class="muted">Push the day back</div></div><span class="chip o">+15m</span></div></div><div class="card float" style="margin-top:8px;display:flex;gap:7px;align-items:center"><span class="mascot" style="width:20px;height:20px;margin:0"></span><span class="muted">Accounts for travel time.</span></div></div></div></div>
+    </div>
+  </section>
+
+  <!-- LANE 7 : 3D LAYER -->
+  <section class="lane">
+    <div class="lane-h"><span class="lane-n">7</span><h2>The 3D layer</h2><span class="sub">three.js &middot; place + persona &middot; live route</span></div>
+    <div class="row" style="align-items:flex-start">
+      <div class="stage3d"><p class="cap"><span class="pip" style="background:var(--grape)"></span>Logo &mdash; 3D place + walking persona</p>
+        <div class="glass" style="display:flex;align-items:center;justify-content:center"><div class="placemark" style="width:180px;height:180px;transform:scale(1.4)"><div class="plat"></div><span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span><span class="pin"></span><span class="walkp"><span class="walker" style="color:#fff"><span class="hd"></span><span class="bd"></span><span class="am a"></span><span class="am b"></span><span class="lg a"></span><span class="lg b"></span></span></span></div><span class="badge">three.js &middot; portrayed with CSS here</span></div></div>
+      <div class="arrow" style="margin-top:130px"><span class="lbl">enter</span></div>
+      <div class="stage3d"><p class="cap"><span class="pip" style="background:var(--grape)"></span>3D route &mdash; 4 real pins</p><div class="glass"><canvas class="route3d"></canvas><span class="badge">Track 30th &rarr; Terra 28th &rarr; High St &rarr; Mind Museum</span></div></div>
+      <div style="flex:1;min-width:200px"><p class="note3d">The logo is now a <b>3D place with a walking persona</b> (no more globe). The old green orb is gone &mdash; replaced everywhere by the <b>amber companion</b> who bobs, walks the route, and drops footprints. The 3D layer draws a <b>real route</b> from actual map pins (here: 4 BGC stops) on the cinematic night ground. Portrayed with Canvas/CSS; the app drives it with real <b>three.js</b> + the rigged walking model from <code style="font-weight:600">character.html</code>.</p></div>
+    </div>
+  </section>
+
+  <!-- COVERAGE -->
+  <section class="cover">
+    <h3>Coverage &mdash; the complete create-to-live flow</h3>
+    <div class="muted" style="font-size:13px;font-weight:500;color:var(--sec)">Mint = in the app today. Marigold = designed &amp; specced, not built yet. Coral = disconnected.</div>
+    <div class="grid">
+      <div class="cell"><span class="k"></span>Splash</div><div class="cell"><span class="k"></span>Onboarding</div><div class="cell"><span class="k"></span>Login</div><div class="cell"><span class="k"></span>Register</div><div class="cell"><span class="k"></span>Forgot</div>
+      <div class="cell"><span class="k"></span>Home</div><div class="cell"><span class="k"></span>Trips</div><div class="cell"><span class="k"></span>Alerts</div><div class="cell"><span class="k"></span>Profile</div>
+      <div class="cell"><span class="k"></span>Create &middot; start</div>
+      <div class="cell build"><span class="k"></span>Chat with AI</div>
+      <div class="cell"><span class="k"></span>Build &middot; basics</div><div class="cell"><span class="k"></span>Build &middot; vibe</div><div class="cell"><span class="k"></span>Build &middot; interests</div><div class="cell"><span class="k"></span>Build &middot; review</div>
+      <div class="cell build"><span class="k"></span>Import &middot; upload</div><div class="cell build"><span class="k"></span>Import &middot; mapping</div>
+      <div class="cell"><span class="k"></span>Generating</div><div class="cell"><span class="k"></span>Proposals (pick)</div>
+      <div class="cell build"><span class="k"></span>Customize activities</div><div class="cell build"><span class="k"></span>Recommended places</div><div class="cell build"><span class="k"></span>Swap a place</div><div class="cell build"><span class="k"></span>Confirm timeline</div>
+      <div class="cell"><span class="k"></span>Trip Overview</div><div class="cell"><span class="k"></span>Itinerary / day</div>
+      <div class="cell build"><span class="k"></span>Live day &middot; next stop</div>
+      <div class="cell"><span class="k"></span>Activity detail</div><div class="cell"><span class="k"></span>Place detail</div>
+      <div class="cell build"><span class="k"></span>Route Map &middot; now wired</div>
+      <div class="cell"><span class="k"></span>Calendar</div><div class="cell"><span class="k"></span>Commitments</div><div class="cell"><span class="k"></span>Reminders</div>
+    </div>
+
+    <div class="improve">
+      <h4>What I changed in the structure</h4>
+      <ul>
+        <li><span class="n">1</span><div><b>Logo is a 3D place + walking persona</b>, not a globe. Splash and the 3D layer both use it, so the brand mark and the hero match.</div></li>
+        <li><span class="n">2</span><div><b>Proposals upgraded to the app-ref-1 &ldquo;color worlds&rdquo;</b> &mdash; each of the 3 is its own gradient card with giant type + &ldquo;View plan.&rdquo; This is the &ldquo;see 3 proposals and edit them&rdquo; moment, now impossible to miss.</div></li>
+        <li><span class="n">3</span><div><b>New screen: Live day &middot; next stop</b> (cinematic night). Splits the boring day list into a heads-up companion view with GPS distance/ETA and a reminder Skip control.</div></li>
+        <li><span class="n">4</span><div><b>Route Map is no longer an orphan.</b> It&rsquo;s now the cinematic night map (footprints + glowing marker) and is reached from the day view&rsquo;s &ldquo;Open live route&rdquo; button &mdash; a real entry point.</div></li>
+        <li><span class="n">5</span><div><b>The green orb is retired.</b> One amber companion mascot now carries chat, generating, tips, and reminders &mdash; a single recurring character instead of a stray blob.</div></li>
+        <li><span class="n">6</span><div><b>Reminders gained a Skip / extend row</b> (+15m), matching your &ldquo;skip this part and extend the time&rdquo; request.</div></li>
+      </ul>
+      <div class="muted" style="font-size:12px;margin-top:12px;font-weight:500">Navigation structure is unchanged &mdash; same 4 tabs, same create &rarr; propose &rarr; live spine. Every change is additive or a reskin.</div>
+    </div>
+
+    <div class="disc">
+      <div class="d"><span class="path">route map</span><div><b>Resolved.</b> Was orphaned; now wired into the day view as &ldquo;Open live route&rdquo; and folded together with the 3D route. Still marked <b>to build</b> in code.</div></div>
+      <div class="d warn"><span class="path">create flow</span><div><b>Still to build.</b> Chat with AI, Import (upload + mapping), Customize activities, Recommended places, Swap a place, Confirm timeline, and Live day. Designed here &mdash; next we build them.</div></div>
+      <div class="d"><span class="path">proposal/[id]</span><div><b>Repurposed.</b> Instead of deleting, it becomes a saved trip&rsquo;s read-only &ldquo;view this proposal&rdquo; opened from the color-world cards.</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Wayfare &middot; Living Flow &mdash; complete create-to-live structure, every screen in the Playful Adventure skin, in motion.</span>
+    <span>In app: 25 screens &middot; To build: Chat, Import (2), Customize, Recommended, Swap, Confirm, Live day, Route Map &middot; Palette &amp; type: grape violet + Anton / Fredoka, uniform throughout.</span>
+    <span>Next: apply to the real app screens and build the missing create + live screens.</span>
+  </footer>
+</div>
+
+<script>
+  (function(){var r=document.documentElement,k='wayfare-flow-theme';try{var s=localStorage.getItem(k);if(s)r.setAttribute('data-theme',s);}catch(e){}
+    document.getElementById('tt').onclick=function(){var c=r.getAttribute('data-theme');var n=c==='dark'?'light':(c==='light'?'dark':(matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark'));r.setAttribute('data-theme',n);try{localStorage.setItem(k,n);}catch(e){}};})();
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function fit(cv){var d=Math.max(1,window.devicePixelRatio||1);var r=cv.getBoundingClientRect();cv.width=r.width*d;cv.height=r.height*d;return d;}
+  function drawRoute(cv){var ctx=cv.getContext('2d');var d=fit(cv);var t=0;var stops=[[0.5,0.9],[0.30,0.66],[0.64,0.5],[0.42,0.32],[0.6,0.14]];
+    function proj(p){var w=cv.width,h=cv.height;var persp=0.5+p[1]*0.5;return [w*0.5+(p[0]-0.5)*w*persp,h*(0.08+p[1]*0.84)];}
+    function frame(){var w=cv.width,h=cv.height;ctx.clearRect(0,0,w,h);
+      ctx.strokeStyle='rgba(124,92,246,.35)';ctx.lineWidth=1*d;
+      for(var i=0;i<=6;i++){var yy=i/6,a=proj([0,yy]),b=proj([1,yy]);ctx.globalAlpha=0.3+yy*0.4;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+      for(var j=0;j<=6;j++){var xx=j/6,a2=proj([xx,0]),b2=proj([xx,1]);ctx.globalAlpha=0.22;ctx.beginPath();ctx.moveTo(a2[0],a2[1]);ctx.lineTo(b2[0],b2[1]);ctx.stroke();}ctx.globalAlpha=1;
+      ctx.strokeStyle='#FFA828';ctx.lineWidth=2.6*d;ctx.setLineDash([2*d,7*d]);ctx.lineCap='round';ctx.beginPath();for(var k=0;k<stops.length;k++){var sp=proj(stops[k]);if(k===0)ctx.moveTo(sp[0],sp[1]);else ctx.lineTo(sp[0],sp[1]);}ctx.stroke();ctx.setLineDash([]);
+      for(var m=0;m<stops.length;m++){var s2=proj(stops[m]);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s2[0],s2[1],3.6*d,0,7);ctx.fill();ctx.strokeStyle='#7C5CF6';ctx.lineWidth=1.6*d;ctx.stroke();}
+      t+=0.0045;var tt=(t%1)*(stops.length-1),idx=Math.floor(tt),fr=tt-idx,A=stops[idx],B=stops[Math.min(idx+1,stops.length-1)],mp=proj([A[0]+(B[0]-A[0])*fr,A[1]+(B[1]-A[1])*fr]),pl=0.5+Math.sin(t*20)*0.5;
+      ctx.fillStyle='#7C5CF6';ctx.globalAlpha=0.3;ctx.beginPath();ctx.arc(mp[0],mp[1],(10+pl*6)*d,0,7);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle='#FFA828';ctx.beginPath();ctx.arc(mp[0],mp[1],(4.5+pl*1.5)*d,0,7);ctx.fill();
+      if(!reduce)requestAnimationFrame(frame);}
+    frame();}
+  window.addEventListener('load',function(){document.querySelectorAll('.route3d').forEach(function(c){drawRoute(c);});});
+</script>

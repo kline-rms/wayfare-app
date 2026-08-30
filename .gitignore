@@ -29,3 +29,18 @@ yarn-debug.*
 /design/scratchpad/
 
 # keep release APKs under /releases (not ignored)
+
+# graphify knowledge graph output
+graphify-out/
+
+# firebase service account
+serviceAccount.json
+server/serviceAccount.json
+
+# test artifacts (e2e screenshots)
+design/_shots/
+
+# MapLibre worker chunks — derived from node_modules by scripts/copy-maplibre-worker.mjs
+app/public/maplibre-gl-worker.mjs
+app/public/maplibre-gl-shared.mjs
+app/e2e/_shots/

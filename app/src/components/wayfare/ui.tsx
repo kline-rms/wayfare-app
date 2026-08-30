@@ -11,24 +11,31 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Defs, LinearGradient as SvgLinear, Stop, Rect, Circle, Path } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Radius, Space } from '@/constants/wayfare';
+import { Radius, Space, Gradients } from '@/constants/wayfare';
+import { Fonts } from '@/constants/theme';
 import { Icon, IconName } from './icon';
 import { useWayfare } from './theme';
+
+// Playful faces: Anton (giant condensed display) for the big headings, Fredoka
+// (rounded) for everything else. Web loads them via global.css; native falls
+// back until @expo-google-fonts/{anton,fredoka} are loaded in _layout.
+const FF = (Fonts ?? {}) as { rounded?: string; heading?: string; mono?: string };
 
 /* ---------- Typography ---------- */
 type TxtVariant = 'h1' | 'h2' | 'title' | 'body' | 'sec' | 'small' | 'label' | 'mono';
 const TXT: Record<TxtVariant, object> = {
-  h1: { fontSize: 28, lineHeight: 33, fontWeight: '800', letterSpacing: -0.5 },
-  h2: { fontSize: 22, lineHeight: 28, fontWeight: '800', letterSpacing: -0.3 },
-  title: { fontSize: 17, lineHeight: 22, fontWeight: '800' },
-  body: { fontSize: 15, lineHeight: 21, fontWeight: '500' },
-  sec: { fontSize: 13.5, lineHeight: 19, fontWeight: '500' },
-  small: { fontSize: 12, lineHeight: 16, fontWeight: '600' },
-  label: { fontSize: 12, lineHeight: 16, fontWeight: '800', letterSpacing: 0.5 },
-  mono: { fontSize: 12, lineHeight: 16, fontWeight: '600', fontVariant: ['tabular-nums'] },
+  h1: { fontSize: 30, lineHeight: 31, fontWeight: '400', letterSpacing: 0.3, fontFamily: FF.heading, textTransform: 'uppercase' },
+  h2: { fontSize: 23, lineHeight: 25, fontWeight: '400', letterSpacing: 0.3, fontFamily: FF.heading, textTransform: 'uppercase' },
+  title: { fontSize: 17, lineHeight: 22, fontWeight: '700', fontFamily: FF.rounded },
+  body: { fontSize: 15, lineHeight: 21, fontWeight: '500', fontFamily: FF.rounded },
+  sec: { fontSize: 13.5, lineHeight: 19, fontWeight: '500', fontFamily: FF.rounded },
+  small: { fontSize: 12, lineHeight: 16, fontWeight: '600', fontFamily: FF.rounded },
+  label: { fontSize: 12, lineHeight: 16, fontWeight: '700', letterSpacing: 0.8, fontFamily: FF.rounded },
+  mono: { fontSize: 12, lineHeight: 16, fontWeight: '600', fontVariant: ['tabular-nums'], fontFamily: FF.mono },
 };
 
 export function Txt({
@@ -104,7 +111,9 @@ export function Card({
   };
   if (onPress) {
     return (
-      <Pressable onPress={onPress} style={({ pressed }) => [base, pressed && { opacity: 0.85 }, style]}>
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [base, pressed && { opacity: 0.9, transform: [{ scale: 0.985 }] }, style]}>
         {children}
       </Pressable>
     );
@@ -131,32 +140,29 @@ export function PillButton({
   style?: ViewStyle;
 }) {
   const { c, ctaShadow } = useWayfare();
-  const bg =
-    variant === 'primary'
-      ? c.primary
-      : variant === 'danger'
-        ? c.danger
-        : variant === 'secondary'
-          ? c.card
-          : 'transparent';
-  const fg = variant === 'primary' || variant === 'danger' ? c.onPrimary : c.ink;
   const isElevated = variant === 'primary' || variant === 'danger';
+  const grad = variant === 'danger' ? Gradients.marigold : Gradients.grape;
+  const fg = isElevated ? (variant === 'danger' ? '#5A3D00' : c.onPrimary) : c.ink;
+  const flatBg = variant === 'secondary' ? c.card : 'transparent';
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.pill,
-        { backgroundColor: bg, alignSelf: full ? 'stretch' : 'flex-start' },
+        { alignSelf: full ? 'stretch' : 'flex-start', overflow: 'hidden', backgroundColor: isElevated ? undefined : flatBg },
         variant === 'secondary' && { borderWidth: 1, borderColor: c.line },
         isElevated && ctaShadow,
-        pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+        pressed && { opacity: 0.95, transform: [{ scale: 0.99 }] },
         style,
       ]}>
+      {isElevated ? (
+        <LinearGradient colors={[...grad]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+      ) : null}
       {icon && !knob ? <Icon name={icon} size={18} color={fg} /> : null}
       <Text style={[styles.pillLabel, { color: fg }]}>{label}</Text>
       {knob ? (
-        <View style={[styles.knob, { backgroundColor: variant === 'primary' ? c.onPrimary : c.primary }]}>
-          <Icon name={icon ?? 'arrow'} size={16} color={variant === 'primary' ? c.primary : c.onPrimary} />
+        <View style={[styles.knob, { backgroundColor: '#fff' }]}>
+          <Icon name={icon ?? 'arrow'} size={16} color={variant === 'danger' ? '#C47800' : c.primary} />
         </View>
       ) : null}
     </Pressable>
@@ -243,9 +249,9 @@ export function Chip({
   filled?: boolean;
   small?: boolean;
 }) {
-  const { c } = useWayfare();
-  const bg = filled ? (color ?? c.primary) : c.fieldBg;
-  const fg = filled ? '#fff' : c.ink;
+  // Filled = solid brand colour; otherwise a translucent "night" chip (design).
+  const bg = filled ? (color ?? '#7C5CF6') : 'rgba(255,255,255,0.12)';
+  const fg = filled ? '#fff' : '#fff';
   return (
     <View style={[styles.chip, { backgroundColor: bg, paddingVertical: small ? 4 : 6 }]}>
       <Text style={{ color: fg, fontSize: small ? 11 : 12.5, fontWeight: '700' }}>{label}</Text>
@@ -253,14 +259,13 @@ export function Chip({
   );
 }
 
-/* ---------- Status pill (ACTIVE / TODAY / DONE) ---------- */
+/* ---------- Status pill (ACTIVE / TODAY / DONE) — night styling ---------- */
 export function StatusPill({ label, tone = 'neutral' }: { label: string; tone?: 'active' | 'done' | 'neutral' | 'accent' }) {
-  const { c } = useWayfare();
   const map = {
-    active: { bg: '#E7F6EE', fg: '#1E8A50' },
-    done: { bg: '#E7F6EE', fg: '#1E8A50' },
-    accent: { bg: c.a3 + '22', fg: c.a3 },
-    neutral: { bg: c.fieldBg, fg: c.sec },
+    active: { bg: 'rgba(47,217,138,0.24)', fg: '#8DEBBE' }, // mint
+    done: { bg: 'rgba(47,217,138,0.24)', fg: '#8DEBBE' },
+    accent: { bg: 'rgba(158,134,255,0.24)', fg: '#DCD0FF' }, // grape
+    neutral: { bg: 'rgba(255,255,255,0.12)', fg: '#EDE9FF' },
   } as const;
   const t = map[tone];
   return (
@@ -284,21 +289,20 @@ export function Divider() {
   return <View style={{ height: 1, backgroundColor: c.line }} />;
 }
 
-/* ---------- The green AI orb ---------- */
+/* ---------- Companion avatar (the recurring character — replaces the orb) ---------- */
 export function AIOrb({ size = 26 }: { size?: number }) {
-  const r = size / 2;
   return (
     <Svg width={size} height={size} viewBox="0 0 26 26">
       <Defs>
-        <RadialGradient id="orb" cx="34%" cy="28%" r="80%">
-          <Stop offset="0%" stopColor="#CFF8D8" />
-          <Stop offset="36%" stopColor="#63DB8D" />
-          <Stop offset="70%" stopColor="#2BB161" />
-          <Stop offset="100%" stopColor="#159A4F" />
-        </RadialGradient>
+        <SvgLinear id="wf-av" x1="0" y1="0" x2="1" y2="1">
+          <Stop offset="0" stopColor="#9E86FF" />
+          <Stop offset="1" stopColor="#6746DE" />
+        </SvgLinear>
       </Defs>
-      <Circle cx={r} cy={r} r={r} fill="url(#orb)" />
-      <Circle cx={r * 0.72} cy={r * 0.6} r={2.4} fill="rgba(255,255,255,0.85)" />
+      <Rect x="0" y="0" width="26" height="26" rx="8" fill="url(#wf-av)" />
+      <Circle cx="13" cy="10" r="3.6" fill="#fff" />
+      <Path d="M6 21 c0-3.9 3.1-7 7-7 s7 3.1 7 7" stroke="#fff" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+      <Circle cx="19.6" cy="7.4" r="2.1" fill="#FFB74D" />
     </Svg>
   );
 }

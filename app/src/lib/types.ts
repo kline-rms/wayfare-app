@@ -18,6 +18,7 @@ export interface DayLocation {
 export interface Place {
   name: string;
   area: string;
+  placeId?: string;
   lat: number;
   lng: number;
   coordinates: string;
@@ -25,6 +26,26 @@ export interface Place {
   why: string;
   imageUrl?: string;
   coordinateSource?: string;
+}
+
+export interface Activity {
+  id: string;
+  time: string;
+  activity: string;
+  where: string;
+  reasoning?: string;
+  mapsUrl?: string;
+  placeId?: string;
+  lat?: number;
+  lng?: number;
+  participants?: string;
+  category?: string;
+  mealSuggestion?: string;
+  momStatus?: string;
+  dadStatus?: string;
+  restNap?: string;
+  cost?: number;
+  optional?: boolean;
 }
 
 export interface Day {
@@ -40,6 +61,28 @@ export interface Day {
   cost: CostEstimate;
   notes: string;
   location?: DayLocation;
+  activities?: Activity[];
+}
+
+export interface DiningEntry {
+  restaurant: string;
+  whenWho?: string;
+  recommendedOrder?: string;
+  budget?: string;
+  why?: string;
+  mapsUrl?: string;
+  menuSource?: string;
+  notes?: string;
+}
+
+export interface GroceryRun {
+  when?: string;
+  store?: string;
+  who?: string;
+  purpose?: string;
+  basket?: string;
+  budget?: string;
+  why?: string;
 }
 
 export interface MoneyRange {
@@ -72,9 +115,35 @@ export interface Itinerary {
   disclaimer: string;
   proposals: Proposal[];
   places: Place[];
+  kind?: "couple" | "family";
+  diningGuide?: DiningEntry[];
+  groceryPlan?: GroceryRun[];
   ownerId?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  displayName?: string;
+  createdAt: string;
+}
+
+export interface GenerateRequest {
+  origin: string;
+  destination: string;
+  startDate: string;
+  endDate: string;
+  partySize: number;
+  purpose?: string;
+  pace?: "relaxed" | "balanced" | "packed";
+  budget?: "shoestring" | "moderate" | "comfortable" | "luxury";
+  currency?: string;
+  homeBase?: string;
+  interests?: string[];
+  mustDos?: string[];
+  constraints?: string;
 }
 
 export interface ItinerarySummary {
@@ -85,4 +154,31 @@ export interface ItinerarySummary {
   partySize: number;
   currency: string;
   proposalCount: number;
+}
+
+// Places enrichment (see docs/places-caching-design.md). Cards carry cached
+// facts + live photo URLs; reviews are fetched on demand and never stored.
+export interface PlaceCard {
+  placeId: string;
+  name: string;
+  address: string;
+  location: { lat: number; lng: number };
+  googleMapsUrl: string;
+  types: string[];
+  rating?: number;
+  ratingCount?: number;
+  priceLevel?: number;
+  hours?: string[];
+  phone?: string;
+  website?: string;
+  photoUrls: string[];
+  ownedImageUrl?: string;
+  fresh: boolean;
+}
+
+export interface PlaceReview {
+  author?: string;
+  rating?: number;
+  text?: string;
+  relativeTime?: string;
 }

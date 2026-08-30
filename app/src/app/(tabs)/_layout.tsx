@@ -1,9 +1,12 @@
-import { Tabs } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Redirect, Tabs } from 'expo-router';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, IconName } from '@/components/wayfare/icon';
 import { useWayfare } from '@/components/wayfare/theme';
+import { Gradients } from '@/constants/wayfare';
+import { useAuth } from '@/lib/auth';
 
 const TABS: { name: string; label: string; icon: IconName }[] = [
   { name: 'index', label: 'Home', icon: 'home' },
@@ -21,30 +24,40 @@ interface TabBarProps {
   };
 }
 
+// Circular floating dock (app-ref-1 style): outlined circle buttons, the active
+// one filled with the grape gradient. No background bar — the circles float.
 function WayfareTabBar({ state, navigation }: TabBarProps) {
-  const { c } = useWayfare();
+  const { ctaShadow } = useWayfare();
   const insets = useSafeAreaInsets();
   return (
-    <View
-      style={[
-        styles.bar,
-        { backgroundColor: c.card, borderTopColor: c.line, paddingBottom: insets.bottom + 8 },
-      ]}>
+    <View style={[styles.bar, { paddingBottom: insets.bottom + 10 }]}>
       {state.routes.map((route, i) => {
         const tab = TABS.find((t) => t.name === route.name);
         if (!tab) return null;
         const focused = state.index === i;
-        const color = focused ? c.ink : c.ter;
         return (
           <Pressable
             key={route.key}
-            style={styles.item}
+            style={({ pressed }) => pressed && { opacity: 0.85, transform: [{ scale: 0.94 }] }}
             onPress={() => {
               const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
               if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
             }}>
-            <Icon name={tab.icon} size={24} color={color} />
-            <Text style={[styles.label, { color, fontWeight: focused ? '800' : '600' }]}>{tab.label}</Text>
+            {focused ? (
+              <View style={[styles.circleOn, ctaShadow]}>
+                <LinearGradient
+                  colors={[...Gradients.grape]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={StyleSheet.absoluteFill}
+                />
+                <Icon name={tab.icon} size={22} color="#fff" />
+              </View>
+            ) : (
+              <View style={[styles.circle, { borderColor: 'rgba(255,255,255,0.5)' }]}>
+                <Icon name={tab.icon} size={20} color="#fff" />
+              </View>
+            )}
           </Pressable>
         );
       })}
@@ -53,6 +66,8 @@ function WayfareTabBar({ state, navigation }: TabBarProps) {
 }
 
 export default function TabsLayout() {
+  const { isAuthed } = useAuth();
+  if (!isAuthed) return <Redirect href="/(auth)/login" />;
   return (
     <Tabs
       screenOptions={{ headerShown: false }}
@@ -68,10 +83,27 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
-    borderTopWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
     paddingTop: 8,
-    paddingHorizontal: 8,
+    backgroundColor: 'transparent',
   },
-  item: { flex: 1, alignItems: 'center', gap: 4 },
-  label: { fontSize: 10.5 },
+  circle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  circleOn: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

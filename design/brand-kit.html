@@ -1,0 +1,340 @@
+<title>Wayfare Brand Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Fredoka:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --night:#17123A; --night2:#211A50; --card:#2A2166; --card2:#332B77;
+    --ink:#EDE9FF; --sub:#B4ADE0; --faint:#8479B8; --line:rgba(255,255,255,.09);
+    --grape:#7C5CF6; --grape-hi:#9E86FF; --grape-deep:#6746DE;
+    --marigold:#FFA828; --mint:#2FD98A; --coral:#FF4667; --sky:#46B4F0;
+    --disp:'Anton',sans-serif; --body:'Fredoka',system-ui,sans-serif; --mono:'DM Mono',ui-monospace,monospace;
+    --wrap:1080px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--night);color:var(--ink);font-family:var(--body);
+    font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+  h1,h2,h3,.disp{font-family:var(--disp);font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.98;margin:0}
+  p{margin:0 0 1em}
+  a{color:var(--grape-hi)}
+  .eyb{font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--grape-hi)}
+  .sub{color:var(--sub)}
+  .mono{font-family:var(--mono);font-size:13px;letter-spacing:.02em}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:96px 0 64px;overflow:hidden}
+  .grid{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background:
+      repeating-linear-gradient(94deg,transparent 0 46px,rgba(124,92,246,.11) 46px 47px),
+      repeating-linear-gradient(4deg,transparent 0 52px,rgba(124,92,246,.08) 52px 53px)}
+  .hero .glow{position:absolute;z-index:0;width:720px;height:720px;left:50%;top:-260px;transform:translateX(-50%);
+    background:radial-gradient(circle,rgba(124,92,246,.35),transparent 62%);filter:blur(10px)}
+  .hero .inner{position:relative;z-index:2}
+  .lockup{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .wordmark{font-family:var(--disp);font-size:clamp(64px,13vw,150px);line-height:.82;
+    background:linear-gradient(150deg,#fff,var(--grape-hi));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tagline{font-size:clamp(18px,2.6vw,26px);color:var(--sub);margin-top:22px;max-width:36ch}
+  .heropills{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+
+  section{padding:64px 0;border-top:1px solid var(--line)}
+  .lead{font-size:clamp(28px,4.4vw,46px);max-width:20ch}
+  .kicker{margin-bottom:26px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .prose{max-width:62ch;font-size:17px}
+  .prose .big{font-size:20px;color:var(--ink)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px}
+  .card h3{font-size:22px;margin-bottom:10px}
+  .mvv{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .mvv .card{border-top:3px solid var(--grape)}
+  .mvv .card:nth-child(2){border-top-color:var(--marigold)}
+  .mvv .card:nth-child(3){border-top-color:var(--mint)}
+
+  /* ---------- values ---------- */
+  .values{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .val{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .val .n{font-family:var(--disp);font-size:30px;color:var(--grape-hi);line-height:1;flex:0 0 auto}
+  .val b{display:block;font-size:17px;font-weight:700;margin-bottom:3px}
+  .val p{margin:0;color:var(--sub);font-size:15px}
+
+  /* ---------- logo ---------- */
+  .logobox{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:stretch}
+  .logo-stage{display:flex;align-items:center;justify-content:center;background:
+      radial-gradient(circle at 50% 40%,var(--night2),var(--night));border:1px solid var(--line);border-radius:22px;padding:48px;min-height:280px}
+  .logo-mark{width:150px;height:150px;filter:drop-shadow(0 20px 40px rgba(124,92,246,.45))}
+  .clearspace{position:relative}
+  .dodont{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+  .dd{border-radius:14px;padding:14px;font-size:13px;font-weight:600}
+  .dd.do{background:rgba(47,217,138,.14);color:#8DEBBE;border:1px solid rgba(47,217,138,.3)}
+  .dd.no{background:rgba(255,70,103,.13);color:#ff9fb0;border:1px solid rgba(255,70,103,.3)}
+
+  /* ---------- color ---------- */
+  .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .sw{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+  .sw .chip{height:96px}
+  .sw .meta{padding:12px 14px}
+  .sw .meta b{font-size:14px;font-weight:700}
+  .sw .meta .hex{display:block;margin-top:3px;color:var(--sub)}
+  .sw .meta .use{display:block;margin-top:6px;font-size:12px;color:var(--faint)}
+  .surfaces{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+
+  /* ---------- type ---------- */
+  .specimen{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px}
+  .specimen .aa{font-family:var(--disp);font-size:clamp(60px,11vw,120px);line-height:.9;color:var(--ink)}
+  .scale > div{display:flex;align-items:baseline;gap:18px;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .scale .lbl{width:120px;flex:0 0 auto;color:var(--faint);font-size:12px;font-family:var(--mono)}
+  .glyphs{font-family:var(--body);font-size:22px;letter-spacing:.04em;color:var(--sub);word-spacing:2px}
+
+  /* ---------- voice ---------- */
+  .voice{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .vc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .vc .say{color:#8DEBBE;font-weight:600}.vc .not{color:#ff9fb0}
+  .vc .q{font-size:18px;margin:6px 0 2px}
+
+  /* ---------- ui kit ---------- */
+  .pill{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px 0 22px;border-radius:999px;
+    font-weight:600;font-size:14px;position:relative;border:none;color:#fff}
+  .pill.grape{background:linear-gradient(150deg,var(--grape),var(--grape-hi));box-shadow:0 10px 24px -12px var(--grape)}
+  .pill.mint{background:linear-gradient(150deg,var(--mint),#8DEBBE);color:#06432b}
+  .pill.coral{background:linear-gradient(150deg,#FF6A80,var(--coral))}
+  .pill.ghost{background:transparent;border:1.5px solid rgba(255,255,255,.25)}
+  .pill .k{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--grape);display:grid;place-items:center;font-weight:800}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .cchip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px}
+  .cchip.live{background:rgba(47,217,138,.24);color:#8DEBBE}
+  .cchip.ai{background:rgba(255,168,40,.26);color:#ffd98a}
+  .cchip.grape{background:rgba(158,134,255,.24);color:#DCD0FF}
+  .cchip.neutral{background:rgba(255,255,255,.12);color:#fff}
+  .cats{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .cat{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;color:#fff;
+    box-shadow:inset 0 -4px 8px rgba(0,0,0,.18)}
+  .cat.food{background:linear-gradient(150deg,#FFD36B,var(--marigold))}
+  .cat.sight{background:linear-gradient(150deg,#C3B4FF,var(--grape-hi))}
+  .cat.travel{background:linear-gradient(150deg,var(--grape-hi),var(--grape))}
+  .cat.ok{background:linear-gradient(150deg,#8DEBBE,var(--mint))}
+  .dock{display:inline-flex;gap:14px;align-items:center;padding:12px 18px;border-radius:999px;background:rgba(20,15,45,.5);border:1px solid var(--line)}
+  .d{width:42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,.5);display:grid;place-items:center;color:#fff}
+  .d.on{width:48px;height:48px;border:none;background:linear-gradient(150deg,var(--grape),var(--grape-hi));box-shadow:0 10px 18px -8px var(--grape)}
+  .pins{display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap}
+  .pin{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:grid;place-items:center;
+    color:#fff;font-size:10px;font-weight:700;box-shadow:0 8px 14px -4px rgba(0,0,0,.6)}
+  .pin span{transform:rotate(45deg)}
+  .uikit-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .demo{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .demo h4{margin:0 0 14px;font-family:var(--body);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+  footer{padding:56px 0 80px;border-top:1px solid var(--line);text-align:center}
+  .footlogo{width:56px;height:56px;margin:0 auto 16px;display:block}
+
+  @media(max-width:820px){
+    .two,.three,.mvv,.values,.swatches,.logobox,.voice,.uikit-grid,.surfaces{grid-template-columns:1fr}
+    .swatches{grid-template-columns:1fr 1fr}
+  }
+</style>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="grid"></div><div class="glow"></div>
+  <div class="wrap inner">
+    <div class="eyb">Brand Kit · v1.0 · 2026</div>
+    <div class="lockup" style="margin-top:20px">
+      <svg class="logo-mark" style="width:104px;height:104px" viewBox="0 0 64 64" fill="none" aria-label="Wayfare logo">
+        <rect x="4" y="4" width="56" height="56" rx="18" fill="#17123A" stroke="rgba(255,255,255,.1)"/>
+        <path d="M14 22 L22 44 L32 26 L42 44 L50 22" fill="none" stroke="#FFA828" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 7"/>
+        <circle cx="50" cy="22" r="4.5" fill="#FF4667"/>
+      </svg>
+      <div class="wordmark">Wayfare</div>
+    </div>
+    <p class="tagline">Every trip, on one map. The AI travel companion that plans your days door&#8209;to&#8209;door&nbsp;— and walks them with you.</p>
+    <div class="heropills">
+      <span class="cchip live">● PLAYFUL ADVENTURE</span>
+      <span class="cchip grape">MAP-FIRST</span>
+      <span class="cchip ai">AI-NATIVE</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== STORY ===================== -->
+<section id="story"><div class="wrap">
+  <div class="eyb kicker">01 · Our story</div>
+  <div class="two">
+    <h2 class="lead">Planning a trip shouldn't feel like work.</h2>
+    <div class="prose sub">
+      <p class="big" style="color:var(--ink)">Wayfare started with a very specific frustration: a family in BGC trying to plan a few days across Old Manila — juggling spreadsheets, group chats, twelve browser tabs, and a map app that never knew where the day actually started.</p>
+      <p>Every planner assumed you already knew the stops. None of them answered the real question: <em>from my door, in this city, with these people and this budget — what does a good day actually look like, in order?</em></p>
+      <p>So we built the opposite. You tell Wayfare where you start and who you're travelling with. It proposes real routes, honest peso ranges, and a reason behind every pick — then draws the whole day on one living map and nudges you from stop to stop. Born in Manila, built for anywhere.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ===================== MISSION / VISION / VALUES ===================== -->
+<section id="mvv"><div class="wrap">
+  <div class="eyb kicker">02 · What drives us</div>
+  <div class="mvv">
+    <div class="card">
+      <div class="eyb" style="color:var(--grape-hi)">Mission</div>
+      <h3 style="margin-top:8px">Turn any trip into a day you can just walk.</h3>
+      <p class="sub" style="margin:0">We take the planning weight off travellers — routing, timing, costing, and sequencing every day so people spend their attention on the trip, not the logistics.</p>
+    </div>
+    <div class="card">
+      <div class="eyb" style="color:var(--marigold)">Vision</div>
+      <h3 style="margin-top:8px">One map for every journey on earth.</h3>
+      <p class="sub" style="margin:0">A world where opening Wayfare means your whole trip is already spatial, live and door-to-door — as natural as glancing out a window to see where you're going.</p>
+    </div>
+    <div class="card">
+      <div class="eyb" style="color:var(--mint)">Promise</div>
+      <h3 style="margin-top:8px">Confident, never bossy.</h3>
+      <p class="sub" style="margin:0">Every plan is editable, every recommendation is explained, and nothing happens you didn't choose. Wayfare guides — you decide.</p>
+    </div>
+  </div>
+
+  <div class="eyb kicker" style="margin-top:44px">Our values</div>
+  <div class="values">
+    <div class="val"><div class="n">01</div><div><b>Spatial by default</b><p>If it can live on the map, it lives on the map. Place beats list.</p></div></div>
+    <div class="val"><div class="n">02</div><div><b>Honest by design</b><p>Real costs, real travel times, real trade-offs — including when the answer is "skip it."</p></div></div>
+    <div class="val"><div class="n">03</div><div><b>Playful, not precious</b><p>Travel is joy. The product should feel like an adventure, not a tax return.</p></div></div>
+    <div class="val"><div class="n">04</div><div><b>Door-to-door</b><p>Plans start where you actually are and account for the whole journey between stops.</p></div></div>
+  </div>
+</div></section>
+
+<!-- ===================== LOGO ===================== -->
+<section id="logo"><div class="wrap">
+  <div class="eyb kicker">03 · The mark</div>
+  <div class="logobox">
+    <div class="logo-stage">
+      <svg class="logo-mark" viewBox="0 0 64 64" fill="none" aria-label="Wayfare route-W mark">
+        <rect x="4" y="4" width="56" height="56" rx="18" fill="#211A50" stroke="rgba(255,255,255,.1)"/>
+        <path d="M14 22 L22 44 L32 26 L42 44 L50 22" fill="none" stroke="#FFA828" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 7"/>
+        <circle cx="50" cy="22" r="4.5" fill="#FF4667"/>
+      </svg>
+    </div>
+    <div>
+      <h3 style="font-size:24px">The route-W</h3>
+      <p class="sub">The mark is a <b style="color:var(--ink)">W drawn as a dashed walking route</b> — the same amber footpath that threads every Wayfare map — ending in a coral destination pin. It says the whole brand in one glyph: a journey, on foot, arriving somewhere worth it.</p>
+      <div class="dodont">
+        <div class="dd do">✓ Keep the coral dot at the final peak</div>
+        <div class="dd do">✓ Give it room — clearspace = the corner radius</div>
+        <div class="dd no">✕ Don't recolor the route off amber</div>
+        <div class="dd no">✕ Don't fill the dashes into a solid W</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ===================== COLOR ===================== -->
+<section id="color"><div class="wrap">
+  <div class="eyb kicker">04 · Color system</div>
+  <h2 class="lead" style="margin-bottom:26px">Grape leads. Night grounds. Accents guide the eye.</h2>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:linear-gradient(150deg,#7C5CF6,#9E86FF)"></div><div class="meta"><b>Grape</b><span class="hex mono">#7C5CF6 → #9E86FF</span><span class="use">Primary · CTAs · active state</span></div></div>
+    <div class="sw"><div class="chip" style="background:linear-gradient(150deg,#FFD36B,#FFA828)"></div><div class="meta"><b>Marigold</b><span class="hex mono">#FFA828</span><span class="use">The route · food · warmth</span></div></div>
+    <div class="sw"><div class="chip" style="background:linear-gradient(150deg,#8DEBBE,#2FD98A)"></div><div class="meta"><b>Mint</b><span class="hex mono">#2FD98A</span><span class="use">Live · done · success</span></div></div>
+    <div class="sw"><div class="chip" style="background:#FF4667"></div><div class="meta"><b>Coral</b><span class="hex mono">#FF4667</span><span class="use">Destination · alerts</span></div></div>
+    <div class="sw"><div class="chip" style="background:#46B4F0"></div><div class="meta"><b>Sky</b><span class="hex mono">#46B4F0</span><span class="use">Secondary routes · info</span></div></div>
+    <div class="sw"><div class="chip" style="background:#9E86FF"></div><div class="meta"><b>Grape Hi</b><span class="hex mono">#9E86FF</span><span class="use">Eyebrows · links on night</span></div></div>
+    <div class="sw"><div class="chip" style="background:#EDE9FF"></div><div class="meta"><b>Ink</b><span class="hex mono">#EDE9FF</span><span class="use">Primary text on night</span></div></div>
+    <div class="sw"><div class="chip" style="background:#B4ADE0"></div><div class="meta"><b>Night Sub</b><span class="hex mono">#B4ADE0</span><span class="use">Muted / secondary text</span></div></div>
+  </div>
+  <div class="eyb kicker" style="margin-top:34px">Night surfaces</div>
+  <div class="surfaces">
+    <div class="sw"><div class="chip" style="background:#17123A"></div><div class="meta"><b>Night</b><span class="hex mono">#17123A</span><span class="use">Map · app ground</span></div></div>
+    <div class="sw"><div class="chip" style="background:#2A2166"></div><div class="meta"><b>Night Card</b><span class="hex mono">#2A2166</span><span class="use">The glass sheet</span></div></div>
+    <div class="sw"><div class="chip" style="background:#332B77"></div><div class="meta"><b>Card Lift</b><span class="hex mono">#332B77</span><span class="use">Cards over the sheet</span></div></div>
+  </div>
+</div></section>
+
+<!-- ===================== TYPE ===================== -->
+<section id="type"><div class="wrap">
+  <div class="eyb kicker">05 · Typography</div>
+  <div class="two" style="align-items:stretch">
+    <div class="specimen">
+      <div class="eyb">Display · Anton</div>
+      <div class="aa">Aa</div>
+      <div class="glyphs">ABCDEFGHIJKLM<br>NOPQRSTUVWXYZ<br>0 1 2 3 4 5 6 7 8 9</div>
+      <p class="sub" style="margin-top:14px;font-size:14px">Condensed, all-caps, tight. Headlines &amp; titles only — it carries the adventure.</p>
+    </div>
+    <div class="specimen">
+      <div class="eyb" style="color:var(--marigold)">Body · Fredoka</div>
+      <div style="font-family:var(--body);font-weight:600;font-size:44px;line-height:1.1;margin:14px 0">The rounded, friendly voice of every screen.</div>
+      <div class="glyphs" style="font-weight:500">Regular · Medium · Semibold · Bold</div>
+      <p class="sub" style="margin-top:14px;font-size:14px">Warm and legible at every size. All body copy, labels, and UI text.</p>
+    </div>
+  </div>
+  <div class="specimen scale" style="margin-top:18px">
+    <div><span class="lbl">Display / 40</span><span class="disp" style="font-size:40px">Family BGC Itinerary</span></div>
+    <div><span class="lbl">Title / 22</span><span style="font-family:var(--body);font-weight:700;font-size:22px">Day by day</span></div>
+    <div><span class="lbl">Body / 16</span><span style="font-family:var(--body);font-size:16px">Tweak anything, then save — AI has timed, priced and routed it.</span></div>
+    <div><span class="lbl">Eyebrow / 12</span><span class="eyb">Good morning</span></div>
+  </div>
+</div></section>
+
+<!-- ===================== VOICE ===================== -->
+<section id="voice"><div class="wrap">
+  <div class="eyb kicker">06 · Voice &amp; tone</div>
+  <h2 class="lead" style="margin-bottom:24px">Talk like a friend who's been there.</h2>
+  <div class="voice">
+    <div class="vc"><div class="not">✕ Not</div><div class="q sub">"Itinerary generation complete. 3 proposals available."</div><div class="say">✓ "Your trip, in order — pick a plan."</div></div>
+    <div class="vc"><div class="not">✕ Not</div><div class="q sub">"Error: unable to route selected waypoints."</div><div class="say">✓ "Couldn't route that one — want to swap the last stop?"</div></div>
+    <div class="vc"><div class="not">✕ Not</div><div class="q sub">"Configure notification preferences."</div><div class="say">✓ "Nudge me before each stop."</div></div>
+    <div class="vc"><div class="not">✕ Not</div><div class="q sub">"Optimal departure: 14:00."</div><div class="say">✓ "Leave in 1 hour · 6 min walk · ☀ 31°."</div></div>
+  </div>
+  <div class="three" style="margin-top:20px">
+    <div class="card"><h3 style="font-size:18px">Warm</h3><p class="sub" style="margin:0;font-size:15px">Second person, active voice, everyday words. "You", not "the user."</p></div>
+    <div class="card"><h3 style="font-size:18px">Specific</h3><p class="sub" style="margin:0;font-size:15px">Real numbers, real places. Distance, time, and ₱ over vague promises.</p></div>
+    <div class="card"><h3 style="font-size:18px">Confident</h3><p class="sub" style="margin:0;font-size:15px">Recommend clearly, explain briefly, and always leave the choice with the traveller.</p></div>
+  </div>
+</div></section>
+
+<!-- ===================== UI LANGUAGE ===================== -->
+<section id="ui"><div class="wrap">
+  <div class="eyb kicker">07 · Interface language</div>
+  <h2 class="lead" style="margin-bottom:26px">The map is the app. Everything else is a glass sheet over it.</h2>
+  <div class="uikit-grid">
+    <div class="demo"><h4>Buttons</h4><div class="row">
+      <button class="pill grape">Plan a new trip <span class="k">✦</span></button>
+      <button class="pill mint">Navigate</button>
+      <button class="pill ghost">Swap</button>
+    </div></div>
+    <div class="demo"><h4>Status chips</h4><div class="row chips">
+      <span class="cchip live">● LIVE · DAY 4</span>
+      <span class="cchip ai">AI PLAN</span>
+      <span class="cchip grape">HERITAGE</span>
+      <span class="cchip neutral">10 DAYS</span>
+    </div></div>
+    <div class="demo"><h4>Category tiles</h4><div class="cats">
+      <div class="cat food">🍽</div><div class="cat sight">▦</div><div class="cat travel">🚗</div><div class="cat ok">✓</div>
+    </div></div>
+    <div class="demo"><h4>Map pins</h4><div class="pins" style="padding:10px 0 4px">
+      <div class="pin" style="background:#FFA828"><span>1</span></div>
+      <div class="pin" style="background:#7C5CF6"><span>3</span></div>
+      <div class="pin" style="background:#46B4F0"><span>7</span></div>
+      <div class="pin" style="background:#FF4667"><span>★</span></div>
+    </div></div>
+    <div class="demo"><h4>Floating dock</h4>
+      <div class="dock"><div class="d on">⌂</div><div class="d">◎</div><div class="d">◔</div><div class="d">◍</div></div>
+    </div>
+    <div class="demo"><h4>The route</h4>
+      <svg viewBox="0 0 300 90" width="100%" height="90" aria-label="Amber dashed walking route">
+        <path d="M12 78 C 70 60,120 66,150 40 S 230 18,288 12" fill="none" stroke="#7C5CF6" stroke-width="9" opacity=".25" stroke-linecap="round"/>
+        <path d="M12 78 C 70 60,120 66,150 40 S 230 18,288 12" fill="none" stroke="#FFA828" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round"/>
+        <circle cx="288" cy="12" r="6" fill="#FF4667"/>
+      </svg>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:22px;max-width:60ch">Surfaces are translucent night glass; the cinematic 3D map always shows behind. Motion is gentle and purposeful — sheets slide, the companion bobs, the route draws in. Nothing flashes for its own sake.</p>
+</div></section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer><div class="wrap">
+  <svg class="footlogo" viewBox="0 0 64 64" fill="none" aria-label="Wayfare">
+    <rect x="4" y="4" width="56" height="56" rx="18" fill="#211A50" stroke="rgba(255,255,255,.1)"/>
+    <path d="M14 22 L22 44 L32 26 L42 44 L50 22" fill="none" stroke="#FFA828" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 7"/>
+    <circle cx="50" cy="22" r="4.5" fill="#FF4667"/>
+  </svg>
+  <div class="disp" style="font-size:30px">Wayfare</div>
+  <p class="sub" style="margin-top:8px">Every trip, on one map.</p>
+  <p class="mono" style="color:var(--faint);margin-top:14px">Brand Kit v1.0 · Playful Adventure direction · Grape · Anton + Fredoka</p>
+</div></footer>

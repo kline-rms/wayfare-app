@@ -1,9 +1,18 @@
+/* Playful Adventure type — Anton (giant display headings) + Fredoka (rounded UI/body).
+   Loaded here for web (Expo web / react-native-web). Native loads these via
+   @expo-google-fonts/{anton,fredoka} in _layout (see Stage-1 follow-up note). */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Fredoka:wght@400;500;600;700&display=swap');
+
 :root {
+  /* Default UI / body face is now Fredoka (rounded, friendly, readable). */
   --font-display:
-    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    Fredoka, ui-rounded, 'SF Pro Rounded', system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
     Segoe UI Symbol, Noto Color Emoji;
+  --font-rounded:
+    Fredoka, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, sans-serif;
+  /* Reserved for the giant condensed headlines (opt in with fontFamily: Type.display). */
+  --font-heading: Anton, 'Arial Narrow', Impact, system-ui, sans-serif;
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
-  --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
 }

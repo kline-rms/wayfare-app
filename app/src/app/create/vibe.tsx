@@ -1,27 +1,32 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { MapFirst } from '@/components/wayfare/map-first';
 import { StepTop } from '@/components/wayfare/steps';
 import { useWayfare } from '@/components/wayfare/theme';
 import { PillButton, SectionLabel, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
 import { go } from '@/lib/nav';
+import { wizard } from '@/lib/wizard';
+import type { GenerateRequest } from '@/lib/types';
 
 const OCCASIONS = ['Couple', 'Business', 'Family', 'Solo', 'Foodie', 'Adventure'];
 const BUDGET = ['Shoestring', 'Comfortable', 'Luxe'];
+const BUDGET_VALUE: GenerateRequest['budget'][] = ['shoestring', 'comfortable', 'luxury'];
 
 export default function Vibe() {
   const { c, scheme, cardShadow } = useWayfare();
-  const insets = useSafeAreaInsets();
-  const [occ, setOcc] = useState('Couple');
-  const [budget, setBudget] = useState(1);
+  const d = wizard.get();
+  const [occ, setOcc] = useState(d.purpose ?? 'Couple');
+  const [budget, setBudget] = useState(Math.max(0, BUDGET_VALUE.indexOf(d.budget ?? 'comfortable')));
+
+  const cont = () => {
+    wizard.patch({ purpose: occ, budget: BUDGET_VALUE[budget] });
+    go('/create/interests');
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: insets.top + Space.s, paddingHorizontal: Space.xl, paddingBottom: Space.xxl }}>
+    <MapFirst sheetTop={0.16}>
         <StepTop title="Build it yourself" step={2} total={4} />
         <Txt variant="h1" style={{ marginTop: Space.xl }}>
           What&apos;s the vibe?
@@ -72,10 +77,9 @@ export default function Vibe() {
         </Txt>
 
         <View style={{ marginTop: Space.xl }}>
-          <PillButton label="Continue" icon="arrow" knob onPress={() => go('/create/interests')} />
+          <PillButton label="Continue" icon="arrow" knob onPress={cont} />
         </View>
-      </ScrollView>
-    </View>
+    </MapFirst>
   );
 }
 

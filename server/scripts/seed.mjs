@@ -6,13 +6,17 @@
 // The JSON it writes is shaped as documents (one itinerary doc containing
 // proposals + days) so migrating to Firebase/Firestore later is a direct map.
 
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = join(__dirname, "..", "data");
 const OUT_FILE = join(OUT_DIR, "itineraries.json");
+// The app bundles an identical copy (used before the server is reachable).
+const APP_FILE = join(__dirname, "..", "..", "app", "src", "lib", "data", "itineraries.json");
+// Family trip is extracted from the xlsx by extract-family.py (run that first).
+const FAMILY_FILE = join(__dirname, "family.itinerary.json");
 
 const HOME = "Avida Towers Verte, BGC, Taguig";
 const ILOILO = "Iloilo";
@@ -184,11 +188,27 @@ const itinerary = {
   updatedAt: "2026-08-23T00:00:00.000Z",
 };
 
-const db = { itineraries: [itinerary] };
+const itineraries = [itinerary];
+
+// Merge in the Family trip (block-level schema) if it has been extracted.
+if (existsSync(FAMILY_FILE)) {
+  const family = JSON.parse(readFileSync(FAMILY_FILE, "utf8"));
+  itineraries.push(family);
+  const acts = family.proposals[0].days.reduce((n, d) => n + (d.activities?.length ?? 0), 0);
+  console.log(`  + Family trip: ${family.proposals[0].days.length} days, ${acts} activity blocks`);
+} else {
+  console.warn(`  ! ${FAMILY_FILE} not found — run: python3 server/scripts/extract-family.py`);
+}
+
+// The bundled trips are shared samples visible to every signed-in user.
+for (const it of itineraries) it.ownerId = "sample";
+
+const db = { itineraries };
+const payload = JSON.stringify(db, null, 2) + "\n";
 
 mkdirSync(OUT_DIR, { recursive: true });
-writeFileSync(OUT_FILE, JSON.stringify(db, null, 2) + "\n", "utf8");
-console.log(`Seeded ${db.itineraries.length} itinerary → ${OUT_FILE}`);
-console.log(`  proposals: ${itinerary.proposals.map((p) => p.shortName).join(", ")}`);
-console.log(`  days per proposal: ${itinerary.proposals[0].days.length}`);
-console.log(`  places catalog: ${itinerary.places.length}`);
+writeFileSync(OUT_FILE, payload, "utf8");
+writeFileSync(APP_FILE, payload, "utf8"); // keep the app bundle in lockstep
+console.log(`Seeded ${db.itineraries.length} itineraries → ${OUT_FILE}`);
+console.log(`  also wrote app bundle → ${APP_FILE}`);
+console.log(`  itineraries: ${db.itineraries.map((it) => it.id).join(", ")}`);

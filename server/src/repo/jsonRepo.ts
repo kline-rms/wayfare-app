@@ -5,19 +5,23 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import type { Itinerary, ItinerarySummary, Proposal } from "../../../packages/shared/src/index.ts";
-import type { Repo } from "./types.ts";
+import type { CachedPlace, Itinerary, ItinerarySummary, Proposal } from "../../../packages/shared/src/index.ts";
+import type { Repo, StoredUser } from "./types.ts";
+import { SAMPLE_OWNER } from "./types.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_FILE = join(__dirname, "..", "..", "data", "itineraries.json");
 
 interface DbShape {
   itineraries: Itinerary[];
+  users?: StoredUser[];
+  places?: CachedPlace[];
 }
 
-async function load(): Promise<DbShape> {
+async function load(): Promise<Required<DbShape>> {
   const raw = await readFile(DATA_FILE, "utf8");
-  return JSON.parse(raw) as DbShape;
+  const db = JSON.parse(raw) as DbShape;
+  return { itineraries: db.itineraries ?? [], users: db.users ?? [], places: db.places ?? [] };
 }
 
 async function save(db: DbShape): Promise<void> {
@@ -38,9 +42,28 @@ function toSummary(it: Itinerary): ItinerarySummary {
 
 export function createJsonRepo(): Repo {
   return {
-    async listItineraries() {
+    async listItineraries(ownerId: string) {
       const db = await load();
-      return db.itineraries.map(toSummary);
+      return db.itineraries
+        .filter((it) => it.ownerId === SAMPLE_OWNER || it.ownerId === ownerId)
+        .map(toSummary);
+    },
+
+    async createUser(user) {
+      const db = await load();
+      db.users.push(user);
+      await save(db);
+      return user;
+    },
+
+    async getUserByEmail(email) {
+      const db = await load();
+      return db.users.find((u) => u.email.toLowerCase() === email.toLowerCase()) ?? null;
+    },
+
+    async getUser(id) {
+      const db = await load();
+      return db.users.find((u) => u.id === id) ?? null;
     },
 
     async getItinerary(id) {
@@ -84,6 +107,20 @@ export function createJsonRepo(): Repo {
       if (db.itineraries.length === before) return false;
       await save(db);
       return true;
+    },
+
+    async getCachedPlace(placeId) {
+      const db = await load();
+      return db.places.find((p) => p.placeId === placeId) ?? null;
+    },
+
+    async saveCachedPlace(place) {
+      const db = await load();
+      const idx = db.places.findIndex((p) => p.placeId === place.placeId);
+      if (idx === -1) db.places.push(place);
+      else db.places[idx] = place;
+      await save(db);
+      return place;
     },
   };
 }

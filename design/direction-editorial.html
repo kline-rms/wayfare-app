@@ -1,0 +1,278 @@
+<title>Wayfare Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+  :root{
+    --paper:#F4F2EC; --card:#FFFFFF; --ink:#141312; --sub:#6E6A62;
+    --hair:#141312; --soft:#D9D6CD; --cobalt:#1E33FF; --cobalt2:#0E1EE0;
+    --disp:'Archivo',system-ui,sans-serif; --body:'Newsreader',Georgia,serif; --label:'Archivo',sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --paper:#0D0D0B; --card:#15140F; --ink:#F1EFE8; --sub:#9A968B;
+    --hair:#F1EFE8; --soft:#282722; --cobalt:#5566FF; --cobalt2:#3B4CFF;
+  }}
+  :root[data-theme="dark"]{
+    --paper:#0D0D0B; --card:#15140F; --ink:#F1EFE8; --sub:#9A968B;
+    --hair:#F1EFE8; --soft:#282722; --cobalt:#5566FF; --cobalt2:#3B4CFF;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 120px}
+  .label{font-family:var(--label);font-weight:700;font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+  .rule{border:0;border-top:1.5px solid var(--hair);margin:0}
+
+  /* masthead */
+  header.mast{padding:26px 0 0}
+  .mastrow{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px}
+  .mastrow .wm{font-family:var(--disp);font-weight:900;font-size:19px;letter-spacing:-.02em}
+  .toggle{font-family:var(--label);font-size:11px;letter-spacing:.14em;text-transform:uppercase;border:1.5px solid var(--hair);background:transparent;color:inherit;padding:8px 14px;cursor:pointer}
+  .hero{padding:44px 0 30px}
+  .hero .idx{display:flex;justify-content:space-between;align-items:baseline}
+  .hero h1{font-family:var(--disp);font-weight:900;font-size:clamp(58px,13vw,168px);line-height:.86;letter-spacing:-.04em;margin:18px 0 0;text-transform:uppercase}
+  .hero h1 .thin{font-weight:400;font-style:italic;font-family:var(--body);text-transform:none;letter-spacing:-.01em;color:var(--cobalt)}
+  .hero .lede{font-size:clamp(17px,2.3vw,23px);line-height:1.4;max-width:44ch;margin:30px 0 0;color:var(--ink)}
+  .hero .lede b{color:var(--cobalt);font-weight:500;font-style:italic}
+  .metarow{display:flex;gap:40px;flex-wrap:wrap;margin-top:34px}
+  .metarow div .k{font-family:var(--label);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub)}
+  .metarow div .v{font-family:var(--disp);font-weight:700;font-size:15px;margin-top:4px}
+
+  section{padding:64px 0 0}
+  .sechead{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:baseline;padding-bottom:18px}
+  .sechead .no{font-family:var(--disp);font-weight:900;font-size:15px;color:var(--cobalt)}
+  .sechead h2{font-family:var(--disp);font-weight:900;font-size:clamp(26px,4vw,44px);letter-spacing:-.03em;margin:0;text-transform:uppercase}
+  .p{font-size:16px;line-height:1.55;max-width:60ch;color:var(--ink)}
+  .p .em{color:var(--cobalt);font-style:italic}
+
+  /* character as sculpture */
+  .plinth{margin-top:22px;border:1.5px solid var(--hair);background:var(--card);display:grid;grid-template-columns:1.1fr .9fr;min-height:420px}
+  @media(max-width:760px){.plinth{grid-template-columns:1fr}}
+  .plinth .fig{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 12%,color-mix(in srgb,var(--cobalt) 12%,var(--card)),var(--card) 70%);display:flex;align-items:flex-end;justify-content:center}
+  .plinth .fig .base{position:absolute;bottom:0;left:0;right:0;height:26px;background:var(--hair);opacity:.9}
+  .plinth .fig .glow{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);width:60%;height:10px;border-radius:50%;background:rgba(0,0,0,.18);filter:blur(6px)}
+  .plinth .fig canvas{display:block;height:360px;width:auto;margin-bottom:26px}
+  .plinth .txt{border-left:1.5px solid var(--hair);padding:28px}
+  .plinth .txt .big{font-family:var(--disp);font-weight:900;font-size:34px;line-height:.95;letter-spacing:-.02em;text-transform:uppercase;margin-top:10px}
+  .plinth .txt p{font-size:14.5px;line-height:1.55;color:var(--sub);margin:14px 0 0}
+  .plinth .txt .spec{margin-top:20px;display:grid;gap:0}
+  .plinth .txt .spec .r{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--soft);font-size:13px}
+  .plinth .txt .spec .r b{font-family:var(--disp);font-weight:700}
+
+  /* type */
+  .type{margin-top:22px}
+  .type .disp{font-family:var(--disp);font-weight:900;font-size:clamp(44px,8vw,100px);line-height:.9;letter-spacing:-.04em;text-transform:uppercase}
+  .type .disp .i{font-family:var(--body);font-style:italic;font-weight:400;text-transform:none;letter-spacing:-.01em;color:var(--cobalt)}
+  .type .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:30px;border-top:1.5px solid var(--hair)}
+  @media(max-width:700px){.type .grid3{grid-template-columns:1fr}}
+  .type .grid3 .c{padding:18px 18px 18px 0;border-right:1px solid var(--soft)}
+  .type .grid3 .c:last-child{border-right:0}
+  .type .grid3 .c .k{font-family:var(--label);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+  .type .body-s{font-family:var(--body);font-size:17px;line-height:1.55;max-width:56ch;margin-top:22px}
+  .type .body-s .i{font-style:italic;color:var(--cobalt)}
+
+  /* palette blocks */
+  .pal{display:grid;grid-template-columns:2fr 1fr 1fr;margin-top:22px;border:1.5px solid var(--hair)}
+  @media(max-width:700px){.pal{grid-template-columns:1fr 1fr}}
+  .pal .b{min-height:150px;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;border-right:1px solid var(--soft)}
+  .pal .b:last-child{border-right:0}
+  .pal .b .n{font-family:var(--disp);font-weight:900;font-size:15px;text-transform:uppercase}
+  .pal .b .h{font-family:var(--label);font-size:11px;letter-spacing:.1em;opacity:.8;margin-top:2px}
+
+  /* system motifs */
+  .sys{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:22px;border-top:1.5px solid var(--hair);border-left:1.5px solid var(--hair)}
+  @media(max-width:820px){.sys{grid-template-columns:repeat(2,1fr)}}
+  .sys .m{border-right:1.5px solid var(--hair);border-bottom:1.5px solid var(--hair);padding:18px;min-height:150px}
+  .sys .m .k{font-family:var(--label);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+  .sys .m h4{font-family:var(--disp);font-weight:900;font-size:17px;text-transform:uppercase;margin:4px 0 10px}
+  .btn-ed{display:inline-flex;align-items:center;gap:10px;font-family:var(--label);font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;background:var(--cobalt);color:#fff;padding:11px 16px}
+  .btn-ed.gh{background:transparent;color:var(--ink);border:1.5px solid var(--hair)}
+  .tick{font-family:var(--label);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--hair);padding:4px 8px;display:inline-block}
+  .tick.co{background:var(--cobalt);color:#fff;border-color:var(--cobalt)}
+
+  /* applied phones */
+  .apply{display:flex;gap:20px;overflow-x:auto;padding:20px 2px;scrollbar-width:thin}
+  .device{flex:0 0 auto;width:244px}
+  .device .cap{font-family:var(--label);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin:0 0 9px}
+  .ph{width:244px;height:500px;background:var(--card);border:1.5px solid var(--hair);overflow:hidden;position:relative}
+  .ph .sc{position:absolute;inset:0;display:flex;flex-direction:column}
+  .ph .pd{padding:22px 16px 16px}
+  .ph .sb{height:14px}
+  .eyebrow{font-family:var(--label);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub)}
+  .h-big{font-family:var(--disp);font-weight:900;letter-spacing:-.03em;text-transform:uppercase;line-height:.92}
+  .co{color:var(--cobalt)}
+  .hr{border-top:1px solid var(--soft);margin:10px 0}
+  .hr.k{border-top:1.5px solid var(--hair)}
+  .idxrow{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--soft);font-family:var(--body);font-size:12px}
+  .idxrow .n{font-family:var(--disp);font-weight:900;color:var(--cobalt);width:22px}
+  .imgframe{border:1.5px solid var(--hair);position:relative;overflow:hidden}
+  .imgframe .film{position:absolute;inset:0;background-size:cover}
+  .cta-ed{font-family:var(--label);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--cobalt);color:#fff;padding:13px;text-align:center}
+  .cta-ed.gh{background:transparent;color:var(--ink);border:1.5px solid var(--hair)}
+
+  @keyframes wipe{0%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 0 0 0)}}
+  @keyframes up{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes barw{0%{width:20%}100%{width:70%}}
+  .wipe{animation:wipe 1s .1s both cubic-bezier(.7,0,.2,1)}
+  .up{animation:up .8s both}.up2{animation:up .8s .18s both}.up3{animation:up .8s .34s both}
+
+  .lock{margin-top:60px;border:1.5px solid var(--cobalt);padding:26px 28px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .lock h3{font-family:var(--disp);font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:-.02em;margin:0}
+  .lock p{color:var(--sub);margin:6px 0 0;font-size:14px;max-width:56ch;font-family:var(--body)}
+  footer{margin-top:56px;padding-top:20px;border-top:1.5px solid var(--hair);font-family:var(--label);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);display:grid;gap:6px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="mastrow"><div class="wm">WAYFARE</div><button class="toggle" id="tt">Theme</button></div>
+    <hr class="rule">
+    <div class="hero">
+      <div class="idx"><span class="label">Visual Direction &mdash; Editorial</span><span class="label" style="color:var(--sub)">01 / 04 &middot; trying them one by one</span></div>
+      <h1>Go <span class="thin">everywhere</span><br>on the record.</h1>
+      <p class="lede">A gallery, not a dashboard. Bold grotesque headlines, a serif that reads like a magazine, one <b>cobalt</b> line of ink, and a great deal of white space. The plan becomes an <b>editorial object</b> &mdash; and the traveler stands in the room like a sculpture.</p>
+      <div class="metarow">
+        <div><div class="k">Type</div><div class="v">Archivo &times; Newsreader</div></div>
+        <div><div class="k">Ink</div><div class="v">Paper / Black / Cobalt</div></div>
+        <div><div class="k">Feel</div><div class="v">Confident &middot; spare &middot; slow</div></div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="sechead"><span class="no">01</span><h2>The traveler, on a plinth</h2></div>
+    <p class="p">The 3D character isn&rsquo;t a mascot bouncing in a corner &mdash; it&rsquo;s <span class="em">exhibited</span>. One dramatic light, a hard base, room to breathe. Real rigged model, real mocap walk (three.js + Mixamo), framed like a gallery piece.</p>
+    <div class="plinth">
+      <div class="fig"><canvas class="fig3d" width="440" height="720"></canvas><div class="glow"></div><div class="base"></div></div>
+      <div class="txt">
+        <span class="label" style="color:var(--sub)">Figure 01</span>
+        <div class="big">The<br>Traveler</div>
+        <p>Anatomically complete &mdash; fingers, joints, feet, neck. Recolours to the accent. Idle, walk and run are mocap clips, crossfaded live.</p>
+        <div class="spec">
+          <div class="r"><span>Rig</span><b>GLTF &middot; skinned</b></div>
+          <div class="r"><span>Motion</span><b>Mixamo mocap</b></div>
+          <div class="r"><span>Engine</span><b>three.js @0.185</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="no">02</span><h2>Type sets the tone</h2></div>
+    <div class="type">
+      <div class="disp">Old Manila, <span class="i">slowly</span> &mdash; a day in three acts.</div>
+      <div class="grid3">
+        <div class="c"><div class="k">Display / Archivo 900</div><div style="font-family:var(--disp);font-weight:900;font-size:32px;text-transform:uppercase;letter-spacing:-.02em">Aa Gg 24</div></div>
+        <div class="c"><div class="k">Body / Newsreader</div><div style="font-family:var(--body);font-size:30px">Aa Gg 24</div></div>
+        <div class="c"><div class="k">Label / Archivo caps</div><div style="font-family:var(--label);font-weight:700;font-size:19px;letter-spacing:.12em;text-transform:uppercase">Aa Gg 24</div></div>
+      </div>
+      <p class="body-s">Headlines shout in a heavy grotesque; the body speaks in a warm serif you could read for pages. Labels are set in tracked capitals. It reads like a <span class="i">travel journal</span> printed well &mdash; not an app.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="no">03</span><h2>Paper, black, one blue</h2></div>
+    <p class="p">Discipline is the point. A warm paper, a near-black ink, hairline rules, and a single <span class="em">cobalt</span> that only ever marks the live thing, the primary move, the link. Nothing else competes.</p>
+    <div class="pal">
+      <div class="b" style="background:var(--paper)"><div class="n">Paper</div><div class="h">#F4F2EC</div></div>
+      <div class="b" style="background:var(--ink);color:var(--paper)"><div class="n">Ink</div><div class="h">#141312</div></div>
+      <div class="b" style="background:var(--cobalt);color:#fff"><div class="n">Cobalt</div><div class="h">#1E33FF</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="no">04</span><h2>The system</h2></div>
+    <div class="sys">
+      <div class="m"><div class="k">01 / Rules</div><h4>Hairlines</h4><hr class="rule" style="margin:6px 0"><hr class="rule" style="margin:6px 0;opacity:.4"><div class="p" style="font-size:12px;color:var(--sub)">Structure by line, not by box.</div></div>
+      <div class="m"><div class="k">02 / Index</div><h4>Numbered</h4><div class="idxrow"><span class="n">01</span><span style="flex:1">Arrival night</span></div><div class="idxrow"><span class="n">02</span><span style="flex:1">Old Manila</span></div></div>
+      <div class="m"><div class="k">03 / Action</div><h4>Sharp CTA</h4><div style="margin-top:8px"><span class="btn-ed">Generate &rarr;</span></div><div style="margin-top:8px"><span class="btn-ed gh">Customise</span></div></div>
+      <div class="m"><div class="k">04 / Marks</div><h4>Tracked caps</h4><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="tick co">Live</span><span class="tick">Meal</span><span class="tick">3.2 km</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead"><span class="no">05</span><h2>On the glass</h2></div>
+    <div class="apply">
+      <!-- splash -->
+      <div class="device"><p class="cap">Splash</p>
+        <div class="ph"><div class="sc" style="justify-content:space-between">
+          <div class="pd"><div class="sb"></div><div class="eyebrow">Wayfare &middot; 14.55&deg;N</div></div>
+          <div class="pd" style="padding-bottom:0"><div class="h-big wipe" style="font-size:44px">Go<br><span class="co">every-<br>where.</span></div></div>
+          <div class="pd"><hr class="hr k"><div class="body-s" style="font-size:12px;margin-top:8px">Plans that read like a journal.</div><div class="cta-ed" style="margin-top:10px">Start &rarr;</div></div>
+        </div></div></div>
+      <!-- home -->
+      <div class="device"><p class="cap">Home</p>
+        <div class="ph"><div class="sc pd"><div class="sb"></div>
+          <div class="eyebrow up">Good morning &middot; Kline</div>
+          <div class="h-big up" style="font-size:30px;margin-top:6px">Old<br>Manila.</div>
+          <div class="imgframe up2" style="height:150px;margin-top:12px"><div class="film" style="background:linear-gradient(150deg,#2a2b3a,#0c0c12)"></div><div style="position:absolute;left:10px;top:10px" class="tick co">Live &middot; Day 4</div><div style="position:absolute;left:10px;bottom:10px;color:#fff" class="eyebrow">Up next &middot; 12:30 &middot; National Museum</div></div>
+          <hr class="hr k up3">
+          <div class="idxrow up3"><span class="n">10</span><span style="flex:1">Family BGC &middot; 10 days</span><span class="co">&rarr;</span></div>
+          <div class="cta-ed up3" style="margin-top:auto">New trip &rarr;</div>
+        </div></div></div>
+      <!-- live day -->
+      <div class="device"><p class="cap">Live day</p>
+        <div class="ph"><div class="sc pd"><div class="sb"></div>
+          <div class="eyebrow">Day 03 / 10 &middot; Sat</div>
+          <div class="h-big" style="font-size:26px;margin-top:4px">BGC walk<br>&amp; museum</div>
+          <div class="imgframe" style="margin-top:12px;border-color:var(--cobalt)">
+            <div class="pd" style="padding:12px"><div class="eyebrow co">Up next &middot; 3:00 PM</div><div class="h-big" style="font-size:18px;margin-top:4px">The Mind Museum</div>
+              <svg width="100%" height="26" style="margin-top:8px"><line x1="2" y1="18" x2="90%" y2="18" stroke="var(--cobalt)" stroke-width="2" stroke-dasharray="6 5"/><circle cx="2" cy="18" r="3" fill="var(--ink)"/><rect x="92%" y="11" width="12" height="12" fill="var(--cobalt)" transform="rotate(45 96 17)"/></svg>
+              <div class="body-s" style="font-size:12px;margin-top:2px">1.4 km &middot; ~6 min from you</div></div>
+            <div class="cta-ed">Navigate &rarr;</div></div>
+          <div class="idxrow"><span class="n">01</span><span style="flex:1">7:15 &middot; Breakfast &middot; Fat Seed</span></div>
+        </div></div></div>
+      <!-- stop -->
+      <div class="device"><p class="cap">Stop</p>
+        <div class="ph"><div class="sc">
+          <div class="imgframe" style="height:170px;border-top:0;border-left:0;border-right:0"><div class="film" style="background:linear-gradient(150deg,#33403a,#12140f)"></div><div style="position:absolute;left:12px;bottom:12px;color:#fff"><div class="eyebrow">14.5512&deg;N &middot; 121.0491&deg;E</div><div class="h-big" style="font-size:22px">Manam</div></div></div>
+          <div class="pd"><div class="cta-ed gh">Open in Maps &nearr;</div>
+            <div class="eyebrow" style="margin-top:16px">What to order</div>
+            <div class="idxrow"><span class="n">01</span><span style="flex:1">Crispy Sisig</span></div>
+            <div class="idxrow"><span class="n">02</span><span style="flex:1">Sinigang na Baka</span></div>
+            <div class="idxrow"><span class="n">03</span><span style="flex:1">Ube Ensaymada</span></div>
+          </div>
+        </div></div></div>
+    </div>
+  </section>
+
+  <div class="lock">
+    <div style="flex:1;min-width:240px"><h3>Editorial &mdash; keep going?</h3><p>This is direction 01 of the ones you wanted to try. Say &ldquo;lock editorial&rdquo; and I&rsquo;ll roll it across all screens &mdash; or &ldquo;next&rdquo; and I&rsquo;ll cut Tech / instrument, then Soft, then Travel-poster, so you can compare feels side by side.</p></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><span class="btn-ed">Lock editorial</span><span class="btn-ed gh">Next feel &rarr;</span></div>
+  </div>
+
+  <footer>
+    <span>Wayfare &middot; Visual Direction 01 &mdash; Editorial. Archivo + Newsreader. Paper #F4F2EC &middot; Ink #141312 &middot; Cobalt #1E33FF.</span>
+    <span>Structure unchanged &middot; feel, type &amp; motion pivoted &middot; 3D traveler exhibited, not decorated.</span>
+  </footer>
+</div>
+
+<script>
+  (function(){var r=document.documentElement,k='wf-ed-theme';try{var s=localStorage.getItem(k);if(s)r.setAttribute('data-theme',s);}catch(e){}
+    document.getElementById('tt').onclick=function(){var c=r.getAttribute('data-theme');var n=c==='dark'?'light':(c==='light'?'dark':(matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark'));r.setAttribute('data-theme',n);try{localStorage.setItem(k,n);}catch(e){}};})();
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  // a simple "sculpture" silhouette on the plinth (portrays the 3D figure; the real one is three.js)
+  (function(){var cv=document.querySelector('.fig3d');if(!cv)return;var ctx=cv.getContext('2d');var t=0;
+    function css(v,f){return (getComputedStyle(document.documentElement).getPropertyValue(v)||f).trim();}
+    function frame(){var w=cv.width,h=cv.height;ctx.clearRect(0,0,w,h);var ink=css('--ink','#141312'),cob=css('--cobalt','#1E33FF');
+      t+=reduce?0:0.02;var sway=Math.sin(t)*0.03;
+      ctx.save();ctx.translate(w/2,h*0.06);ctx.rotate(sway);
+      ctx.fillStyle=ink;
+      function cap(x1,y1,x2,y2,r){ctx.beginPath();ctx.lineWidth=r*2;ctx.lineCap='round';ctx.strokeStyle=ink;ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+      // head
+      ctx.beginPath();ctx.ellipse(0,70,52,64,0,0,7);ctx.fill();
+      // torso
+      cap(0,150,0,360,60);
+      // arms (slight walk sway)
+      var a=Math.sin(t*1.2)*22;
+      cap(-40,175,-70,300+a,26);cap(40,175,70,300-a,26);
+      // legs
+      cap(-26,360,-40,560-a,34);cap(26,360,40,560+a,34);
+      // accent: a cobalt "route" line at the feet
+      ctx.strokeStyle=cob;ctx.lineWidth=6;ctx.setLineDash([10,8]);ctx.lineDashOffset=-t*30;
+      ctx.beginPath();ctx.moveTo(-140,600);ctx.lineTo(150,600);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle=cob;ctx.beginPath();ctx.arc(150,600,7,0,7);ctx.fill();
+      ctx.restore();
+      if(!reduce)requestAnimationFrame(frame);}
+    frame();})();
+</script>

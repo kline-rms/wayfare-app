@@ -1,26 +1,30 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/wayfare/icon';
+import { MapFirst } from '@/components/wayfare/map-first';
 import { StepTop } from '@/components/wayfare/steps';
 import { useWayfare } from '@/components/wayfare/theme';
 import { Field, PillButton, SectionLabel, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
 import { go } from '@/lib/nav';
+import { wizard } from '@/lib/wizard';
+import { shortRange } from '@/lib/format';
 
 export default function Basics() {
   const { c, cardShadow } = useWayfare();
-  const insets = useSafeAreaInsets();
-  const [from, setFrom] = useState('Avida Towers Verte, BGC');
-  const [to, setTo] = useState('Manila & Makati');
-  const [pax, setPax] = useState(2);
+  const d = wizard.get();
+  const [from, setFrom] = useState(d.homeBase ?? 'Avida Towers Verte, BGC');
+  const [to, setTo] = useState(d.destination ?? 'Manila & Makati');
+  const [pax, setPax] = useState(d.partySize ?? 2);
+
+  const cont = () => {
+    wizard.patch({ origin: from, homeBase: from, destination: to, partySize: pax });
+    go('/create/vibe');
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: insets.top + Space.s, paddingHorizontal: Space.xl, paddingBottom: Space.xxl }}>
+    <MapFirst sheetTop={0.16}>
         <StepTop title="Build it yourself" step={1} total={4} />
         <Txt variant="h1" style={{ marginTop: Space.xl }}>
           Where to?
@@ -39,8 +43,7 @@ export default function Basics() {
 
         <SectionLabel style={{ marginTop: Space.xl }}>When</SectionLabel>
         <View style={{ flexDirection: 'row', gap: Space.m }}>
-          <DateBox label="Aug 26" />
-          <DateBox label="Sep 6" />
+          <DateBox label={shortRange(d.startDate!, d.endDate!)} />
         </View>
 
         <View style={styles.paxRow}>
@@ -56,10 +59,9 @@ export default function Basics() {
         </View>
 
         <View style={{ marginTop: Space.xl }}>
-          <PillButton label="Continue" icon="arrow" knob onPress={() => go('/create/vibe')} />
+          <PillButton label="Continue" icon="arrow" knob onPress={cont} />
         </View>
-      </ScrollView>
-    </View>
+    </MapFirst>
   );
 
   function DateBox({ label }: { label: string }) {

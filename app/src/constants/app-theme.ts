@@ -2,11 +2,11 @@
 // Per-proposal accent + semantic colors for cost/travel chips.
 
 export const Accents = {
-  // keyed by proposal id
-  "p1-balanced": { light: "#2563EB", dark: "#60A5FA" }, // blue
-  "p2-romantic": { light: "#DB2777", dark: "#F472B6" }, // pink
-  "p3-explore": { light: "#059669", dark: "#34D399" }, // green
-  default: { light: "#6366F1", dark: "#818CF8" }, // indigo
+  // keyed by proposal id — the 3 "color worlds" (marigold / grape / mint)
+  "p1-balanced": { light: "#FFA828", dark: "#FFB84D" }, // marigold
+  "p2-romantic": { light: "#7C5CF6", dark: "#8E76FF" }, // grape
+  "p3-explore": { light: "#2FD98A", dark: "#3EE59A" }, // mint
+  default: { light: "#7C5CF6", dark: "#8E76FF" }, // grape
 } as const;
 
 export function accentFor(proposalId: string, scheme: "light" | "dark"): string {
@@ -15,8 +15,8 @@ export function accentFor(proposalId: string, scheme: "light" | "dark"): string 
 }
 
 export const Semantic = {
-  travel: { light: "#B45309", dark: "#FBBF24" }, // amber — travel/Grab
-  food: { light: "#0E7490", dark: "#22D3EE" }, // cyan — food/activities
-  border: { light: "#E4E4E7", dark: "#2A2C31" },
-  cardShadow: "rgba(0,0,0,0.08)",
+  travel: { light: "#C47800", dark: "#FFB84D" }, // marigold — travel/Grab
+  food: { light: "#C47800", dark: "#FFB84D" }, // marigold — food/activities
+  border: { light: "#E4DCFB", dark: "#3A2F72" }, // grape hairline
+  cardShadow: "rgba(58,38,128,0.12)", // grape-tinted
 };

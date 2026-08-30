@@ -1,0 +1,13 @@
+import { chromium } from '@playwright/test';
+const b=await chromium.launch();
+const p=await b.newPage({viewport:{width:420,height:820},deviceScaleFactor:2});
+const errs=[]; p.on('pageerror',e=>errs.push('PE: '+e.message)); p.on('console',m=>{if(m.type()==='error')errs.push('C: '+m.text().slice(0,180));});
+await p.goto('http://localhost:8081', { waitUntil:'domcontentloaded', timeout:120000 });
+await p.waitForFunction(()=>/log in/i.test(document.body?.innerText||''),{timeout:120000}).catch(()=>{});
+const inputs=p.locator('input'); await inputs.nth(0).fill('e2e@wayfare.dev'); await inputs.nth(1).fill('secret123');
+await p.getByText('Log in',{exact:true}).click().catch(()=>{});
+await p.waitForFunction(()=>/good morning|plan a new trip|upcoming/i.test(document.body?.innerText||''),{timeout:60000}).catch(()=>{});
+await p.waitForTimeout(8000);
+await p.screenshot({path:'../design/_shots/home-mf.png'});
+await b.close();
+console.log('errors('+errs.length+'):'); errs.slice(0,8).forEach(e=>console.log('  '+e));

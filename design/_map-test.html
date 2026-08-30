@@ -1,0 +1,77 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wayfare Map Test</title>
+<link href="./vendor/maplibre/maplibre-gl.css" rel="stylesheet">
+<style>html,body{margin:0;height:100%;background:#17123A}#map{position:absolute;inset:0}</style>
+</head><body>
+<div id="map"></div>
+<script type="module">
+import * as maplibregl from './vendor/maplibre/maplibre-gl.mjs';
+// Dark cinematic basemap (Carto dark raster — keyless dev stand-in; swapped for
+// the self-hosted Protomaps .pmtiles vector style in production).
+const style = {
+  version: 8,
+  sources: {
+    osm: {
+      type: 'raster',
+      tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+      tileSize: 256, attribution: '© OpenStreetMap',
+    },
+  },
+  layers: [
+    { id: 'bg', type: 'background', paint: { 'background-color': '#17123A' } },
+    { id: 'osm', type: 'raster', source: 'osm',
+      paint: { 'raster-brightness-max': 0.42, 'raster-saturation': -0.6, 'raster-contrast': 0.05,
+               'raster-hue-rotate': 236, 'raster-opacity': 0.82 } },
+  ],
+};
+
+// Demo BGC stops (lng, lat).
+const stops = [
+  { name: 'Fat Seed Cafe', c: [121.0512, 14.5509], cat: '#FFA828' },
+  { name: 'The Mind Museum', c: [121.0490, 14.5495], cat: '#7C5CF6' },
+  { name: 'Manam High Street', c: [121.0503, 14.5525], cat: '#2FD98A' },
+  { name: 'Grace Park', c: [121.0488, 14.5533], cat: '#FFA828' },
+];
+
+const map = new maplibregl.Map({
+  container: 'map', style, center: stops[0].c, zoom: 15.5, pitch: 52, bearing: -18, attributionControl: false,
+});
+
+map.on('load', () => {
+  // Route line (straight segments here; OSRM walking geometry in the app).
+  map.addSource('route', { type: 'geojson',
+    data: { type: 'Feature', geometry: { type: 'LineString', coordinates: stops.map(s => s.c) } } });
+  map.addLayer({ id: 'route-glow', type: 'line', source: 'route',
+    paint: { 'line-color': '#7C5CF6', 'line-width': 10, 'line-opacity': 0.25, 'line-blur': 6 },
+    layout: { 'line-cap': 'round', 'line-join': 'round' } });
+  map.addLayer({ id: 'route', type: 'line', source: 'route',
+    paint: { 'line-color': '#FFA828', 'line-width': 4, 'line-dasharray': [0.4, 1.8] },
+    layout: { 'line-cap': 'round', 'line-join': 'round' } });
+
+  // Stop pins.
+  stops.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.style.cssText = `width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${s.cat};box-shadow:0 6px 12px -3px rgba(0,0,0,.7);border:2px solid #17123A;display:flex;align-items:center;justify-content:center`;
+    const n = document.createElement('span');
+    n.textContent = i + 1; n.style.cssText = 'transform:rotate(45deg);color:#fff;font:700 10px sans-serif';
+    el.appendChild(n);
+    new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat(s.c).addTo(map);
+  });
+
+  // "You are here" pulsing marker at stop 0.
+  const me = document.createElement('div');
+  me.style.cssText = 'width:20px;height:20px;border-radius:50%;background:#7C5CF6;box-shadow:0 0 0 8px rgba(124,92,246,.3)';
+  new maplibregl.Marker({ element: me }).setLngLat(stops[0].c).addTo(map);
+
+  // Fit to the route.
+  const b = new maplibregl.LngLatBounds();
+  stops.forEach(s => b.extend(s.c));
+  map.fitBounds(b, { padding: 70, pitch: 52, bearing: -18, duration: 0 });
+  window.__mapReady = true;
+});
+map.on('error', e => { window.__mapError = String(e.error || e); });
+</script>
+</body></html>

@@ -1,115 +1,213 @@
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Circle, Line, Path } from 'react-native-svg';
 
 import { Icon } from '@/components/wayfare/icon';
-import { useWayfare } from '@/components/wayfare/theme';
-import { IconButton, PillButton, StateView, Txt } from '@/components/wayfare/ui';
+import WayfareMap from '@/components/wayfare/wayfare-map';
+import type { LineGeometry, MapStop } from '@/components/wayfare/wayfare-map.shared';
+import { IconButton, StateView, StatusPill, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
 import { useAsync } from '@/hooks/use-async';
 import { api } from '@/lib/api';
 import { back } from '@/lib/nav';
 import { openMaps } from '@/lib/maps';
+import { haversineKm } from '@/lib/geo';
+import { walkRoute } from '@/lib/route';
 import type { Itinerary } from '@/lib/types';
+
+const PIN = ['#FFA828', '#7C5CF6', '#2FD98A']; // marigold / grape / mint, cycled
 
 async function loadPrimary(): Promise<Itinerary> {
   const list = await api.listItineraries();
   return api.getItinerary(list[0].id);
 }
 
+type Params = { lat?: string; lng?: string; label?: string };
+
+function buildStops(data: Itinerary, params: Params): MapStop[] {
+  if (params.lat && params.lng) {
+    return [{ lat: Number(params.lat), lng: Number(params.lng), label: params.label, you: true }];
+  }
+  return data.places
+    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng) && !(p.lat === 0 && p.lng === 0))
+    .map((p, i) => ({ lat: p.lat, lng: p.lng, label: p.name, sub: p.area, color: PIN[i % 3], you: i === 0 }));
+}
+
+function routeKm(stops: MapStop[]): number {
+  let km = 0;
+  for (let i = 1; i < stops.length; i++) km += haversineKm(stops[i - 1], stops[i]);
+  return km;
+}
+
 export default function MapScreen() {
-  const params = useLocalSearchParams<{ lat?: string; lng?: string; label?: string }>();
-  const { c, scheme } = useWayfare();
+  const params = useLocalSearchParams<Params>();
   const insets = useSafeAreaInsets();
   const { data, loading, error, reload } = useAsync(loadPrimary, []);
+  const [route, setRoute] = useState<LineGeometry | undefined>();
+  const [navigating, setNavigating] = useState(false);
+
+  const stops = useMemo(() => (data ? buildStops(data, params) : []), [data, params.lat, params.lng, params.label]);
+
+  useEffect(() => {
+    let alive = true;
+    if (stops.length > 1) walkRoute(stops).then((r) => alive && setRoute(r));
+    else setRoute(undefined);
+    return () => {
+      alive = false;
+    };
+  }, [stops]);
+
   if (loading || error || !data) return <StateView loading={loading} error={error} onRetry={reload} />;
 
-  // Use the day that has a location as the "next stop"; default to first place.
-  const nextPlace = data.places[0];
-  const lat = params.lat ? Number(params.lat) : nextPlace.lat;
-  const lng = params.lng ? Number(params.lng) : nextPlace.lng;
-  const label = params.label ?? nextPlace.name;
+  const next = params.lat
+    ? { name: params.label ?? 'Destination', area: '', lat: Number(params.lat), lng: Number(params.lng) }
+    : data.places[0];
+  const focus = stops[0] ?? { lat: next.lat, lng: next.lng, label: next.name };
+  const km = routeKm(stops);
+  const mins = Math.max(1, Math.round((km / 4.6) * 60)); // ~4.6 km/h walking
+  const arrive = new Date(Date.now() + mins * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const external = () => openMaps(focus.lat, focus.lng, focus.label ?? next.name);
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
-      {/* stylised map canvas */}
-      <View style={[styles.canvas, { backgroundColor: scheme === 'dark' ? '#20201d' : '#DFE4E1' }]}>
-        <MapArt tint={c.a2} road={scheme === 'dark' ? '#33322d' : '#EDEFEC'} />
-        <View style={[styles.topBar, { top: insets.top + 8 }]}>
-          <IconButton name="back" round onPress={back} />
-          <View style={[styles.searchPill, { backgroundColor: c.card }]}>
-            <Icon name="search" size={18} color={c.sec} />
-            <Txt style={{ fontWeight: '700' }} numberOfLines={1}>
-              BGC → Old Manila route
+    <View style={{ flex: 1, backgroundColor: '#17123A' }}>
+      <WayfareMap stops={stops} routeGeometry={route} pitch={navigating ? 62 : 52} style={styles.map} />
+
+      {/* top overlay */}
+      <View style={[styles.topBar, { top: insets.top + 8 }]}>
+        <IconButton name="back" round tint="rgba(36,28,86,0.9)" iconColor="#fff" onPress={navigating ? () => setNavigating(false) : back} />
+        {!navigating ? (
+          <View style={styles.searchPill}>
+            <Icon name="search" size={18} color="#B4ADE0" />
+            <Txt style={{ fontWeight: '700', color: '#fff' }} numberOfLines={1}>
+              {data.title}
             </Txt>
           </View>
-        </View>
-        <View style={[styles.locate, { top: insets.top + 74 }]}>
-          <IconButton name="locate" round onPress={() => openMaps(lat, lng, label)} />
-        </View>
+        ) : (
+          <View style={styles.turnCard}>
+            <Txt style={{ fontFamily: undefined, fontWeight: '800', fontSize: 22, color: '#FFA828' }}>
+              {km > 0.15 ? `${(km).toFixed(1)}km` : `${Math.round(km * 1000)}m`}
+            </Txt>
+            <View style={{ flex: 1 }}>
+              <Txt style={{ fontWeight: '800', color: '#fff' }} numberOfLines={1}>
+                Head to {next.name}
+              </Txt>
+              <Txt variant="small" style={{ color: '#B4ADE0' }} numberOfLines={1}>
+                {stops.length > 1 ? `${stops.length - 1} stops after this` : next.area || 'on your route'}
+              </Txt>
+            </View>
+          </View>
+        )}
+        {!navigating ? (
+          <IconButton name="locate" round tint="rgba(36,28,86,0.9)" iconColor="#fff" onPress={external} />
+        ) : null}
       </View>
 
       {/* bottom sheet */}
-      <View style={[styles.sheet, { backgroundColor: c.bg, paddingBottom: insets.bottom + Space.l }]}>
-        <View style={[styles.grabber, { backgroundColor: c.ter }]} />
-        <View style={styles.nextRow}>
-          <View style={[styles.pinChip, { backgroundColor: c.a3 }]}>
-            <Icon name="pin" size={20} color="#fff" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Txt style={{ fontWeight: '800' }}>Next: {label}</Txt>
-            <Txt variant="small" muted>
-              {nextPlace.area}
-            </Txt>
-          </View>
-        </View>
-        <PillButton label="Start navigation" icon="nav" onPress={() => openMaps(lat, lng, label)} />
+      <View style={[styles.sheet, { paddingBottom: insets.bottom + Space.l }]}>
+        <View style={styles.grabber} />
+
+        {navigating ? (
+          <>
+            <View style={styles.gps}>
+              <Gps b={km >= 1 ? `${km.toFixed(1)}` : `${Math.round(km * 1000)}`} s={km >= 1 ? 'km away' : 'm away'} />
+              <Gps b={`${mins}`} s="min walk" />
+              <Gps b={arrive} s="arrive" />
+            </View>
+            <Pressable onPress={() => setNavigating(false)} style={[styles.navBtn, { backgroundColor: '#FF4667' }]}>
+              <Txt style={{ color: '#fff', fontWeight: '800' }}>End · I&apos;m here</Txt>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <View style={styles.sumRow}>
+              <Txt style={{ fontWeight: '800', color: '#fff' }}>
+                {stops.length > 1 ? `${stops.length} stops today` : `Next: ${next.name}`}
+              </Txt>
+              <StatusPill label="☀ 31° CLEAR" tone="active" />
+            </View>
+            {stops.length > 1 ? (
+              <Txt variant="small" style={{ color: '#B4ADE0' }}>
+                {km.toFixed(1)} km · ~{mins} min walking
+              </Txt>
+            ) : null}
+
+            <View style={{ gap: 10, marginTop: 4 }}>
+              {stops.slice(0, 3).map((s, i) => (
+                <View key={i} style={styles.stopRow}>
+                  <View style={[styles.dot, { backgroundColor: s.color ?? '#7C5CF6' }]} />
+                  <Txt style={{ flex: 1, fontWeight: '700', color: '#fff' }} numberOfLines={1}>
+                    {s.label ?? `Stop ${i + 1}`}
+                  </Txt>
+                  <Txt variant="small" style={{ color: '#8479B8' }} numberOfLines={1}>
+                    {s.sub ?? ''}
+                  </Txt>
+                </View>
+              ))}
+            </View>
+
+            <Pressable onPress={() => setNavigating(true)} style={[styles.navBtn, { backgroundColor: '#2FD98A' }]}>
+              <Icon name="nav" size={18} color="#06432b" />
+              <Txt style={{ color: '#06432b', fontWeight: '800' }}>Start navigation</Txt>
+            </Pressable>
+          </>
+        )}
       </View>
     </View>
   );
 }
 
-function MapArt({ tint, road }: { tint: string; road: string }) {
+function Gps({ b, s }: { b: string; s: string }) {
   return (
-    <Svg style={StyleSheet.absoluteFill}>
-      {/* roads */}
-      <Path d="M -20 120 C 120 80, 200 260, 400 220" stroke={road} strokeWidth={22} fill="none" />
-      <Path d="M 60 -20 C 90 200, 260 300, 320 560" stroke={road} strokeWidth={18} fill="none" />
-      <Line x1={0} y1={340} x2={420} y2={300} stroke={road} strokeWidth={14} />
-      {/* route */}
-      <Path d="M 96 452 C 160 380, 240 300, 300 170" stroke={tint} strokeWidth={5} strokeDasharray="2 10" strokeLinecap="round" fill="none" />
-      {/* current location */}
-      <Circle cx={96} cy={452} r={30} fill={tint} opacity={0.16} />
-      <Circle cx={96} cy={452} r={9} fill="#1A73E8" stroke="#fff" strokeWidth={3} />
-      {/* destination */}
-      <Circle cx={300} cy={168} r={9} fill="#EA4335" stroke="#fff" strokeWidth={3} />
-    </Svg>
+    <View style={styles.gpsTile}>
+      <Txt style={{ fontWeight: '800', fontSize: 18, color: '#fff' }}>{b}</Txt>
+      <Txt variant="small" style={{ color: '#B4ADE0' }}>
+        {s}
+      </Txt>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  canvas: { flex: 1, overflow: 'hidden' },
+  map: { flex: 1, borderRadius: 0 },
   topBar: { position: 'absolute', left: Space.l, right: Space.l, flexDirection: 'row', gap: Space.s, alignItems: 'center' },
   searchPill: {
     flex: 1,
     height: 46,
-    borderRadius: 14,
+    borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingHorizontal: 14,
+    backgroundColor: 'rgba(36,28,86,0.9)',
   },
-  locate: { position: 'absolute', right: Space.l },
+  turnCard: {
+    flex: 1,
+    minHeight: 52,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 14,
+    backgroundColor: 'rgba(40,30,90,0.92)',
+  },
   sheet: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#2A2166',
     borderTopLeftRadius: 26,
     borderTopRightRadius: 26,
-    marginTop: -22,
     paddingHorizontal: Space.xl,
     paddingTop: 14,
     gap: Space.m,
   },
-  grabber: { width: 40, height: 5, borderRadius: 3, alignSelf: 'center', marginBottom: 6 },
-  nextRow: { flexDirection: 'row', alignItems: 'center', gap: Space.m },
-  pinChip: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  grabber: { width: 40, height: 5, borderRadius: 3, alignSelf: 'center', marginBottom: 6, backgroundColor: 'rgba(255,255,255,0.3)' },
+  sumRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Space.s },
+  stopRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  dot: { width: 12, height: 12, borderRadius: 6 },
+  gps: { flexDirection: 'row', gap: 8 },
+  gpsTile: { flex: 1, backgroundColor: '#332B77', borderRadius: 14, paddingVertical: 10, alignItems: 'center' },
+  navBtn: { height: 52, borderRadius: 999, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
 });

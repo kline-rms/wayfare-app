@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
 
+import { MapFirst } from '@/components/wayfare/map-first';
 import { AIOrb, Card, CategoryIcon, Txt } from '@/components/wayfare/ui';
 import { Icon } from '@/components/wayfare/icon';
 import { useWayfare } from '@/components/wayfare/theme';
@@ -9,17 +9,16 @@ import { Space } from '@/constants/wayfare';
 
 export default function AlertsScreen() {
   const { c } = useWayfare();
-  const insets = useSafeAreaInsets();
+  const header = (
+    <Txt variant="h1" style={{ color: '#fff' }}>
+      Alerts
+    </Txt>
+  );
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: insets.top + Space.s, paddingHorizontal: Space.xl, paddingBottom: Space.xxl }}>
-        <Txt variant="h1">Alerts</Txt>
-
-        <Txt variant="label" muted style={{ marginTop: Space.xl, marginBottom: Space.s }}>
-          NOW
-        </Txt>
+    <MapFirst header={header} sheetTop={0.32} dockGap collapsible>
+      <Txt variant="label" muted style={{ marginBottom: Space.s }}>
+        NOW
+      </Txt>
         <Card padded={false} style={{ paddingHorizontal: Space.l }}>
           <NotifRow
             leading={<CategoryIcon name="temple" color={c.a3} size={40} iconSize={20} />}
@@ -32,7 +31,7 @@ export default function AlertsScreen() {
           <Divider />
           <NotifRow
             leading={
-              <View style={[styles.chip, { backgroundColor: '#E7F6EE' }]}>
+              <View style={[styles.chip, { backgroundColor: 'rgba(47,217,138,0.20)' }]}>
                 <Icon name="checkC" size={22} color={c.a2} />
               </View>
             }
@@ -52,8 +51,7 @@ export default function AlertsScreen() {
           <Divider />
           <NotifRow leading={<CategoryIcon name="coffee" color={c.a1} size={40} iconSize={20} />} title="1 hour before — Old Manila day" body="Grab to the National Museum for 9:00 AM." time="Yst" read last />
         </Card>
-      </ScrollView>
-    </View>
+    </MapFirst>
   );
 }
 

@@ -25,6 +25,8 @@ export interface DayLocation {
 export interface Place {
   name: string;
   area: string;
+  /** Google Place ID, filled by the finalize crawl; links to the places cache. */
+  placeId?: string;
   lat: number;
   lng: number;
   /** "14.55056, 121.05139" display form. */
@@ -36,6 +38,47 @@ export interface Place {
   imageUrl?: string;
   /** Source link for the coordinates (wiki/mapcarta/etc.). */
   coordinateSource?: string;
+}
+
+/**
+ * An atomic scheduled block within a day (a single row of the source itinerary
+ * sheet). Present on itineraries authored at block granularity (e.g. the Family
+ * trip). Coarse "one block per day" itineraries omit `Day.activities`.
+ */
+export interface Activity {
+  /** Stable id, e.g. "fam-2026-09-10-01". */
+  id: string;
+  /** Time range/timestamp text, e.g. "5:35–7:05 PM" or "10:00 PM onward". */
+  time: string;
+  /** The scheduled block, e.g. "Family breakfast". */
+  activity: string;
+  /** Venue or "home", e.g. "The Fat Seed Cafe + Roastery BGC". */
+  where: string;
+  /** Why this block fits work, rest, distance and the children's energy. */
+  reasoning?: string;
+  /** Ready-to-open Google Maps URL for the destination. */
+  mapsUrl?: string;
+  /** Google Place ID, filled by the finalize crawl; links to the places cache. */
+  placeId?: string;
+  /** Destination coordinates (parsed from the maps link when available). */
+  lat?: number;
+  lng?: number;
+  /** Who attends, e.g. "Whole family", "Sister + 3 girls". */
+  participants?: string;
+  /** Category enum/label, e.g. "Meal", "Rest", "Travel", "Museum". */
+  category?: string;
+  /** Specific family order or home-meal suggestion (meal blocks). */
+  mealSuggestion?: string;
+  /** Mom's status, e.g. "FOCUSED WFH", "JOINING FAMILY", "Family". */
+  momStatus?: string;
+  /** Dad's status, e.g. "Working", "Before work", "OPTIONAL / READY". */
+  dadStatus?: string;
+  /** Protected recovery requirement, e.g. "Toddler nap". */
+  restNap?: string;
+  /** Rough block/family cost in the itinerary currency. */
+  cost?: number;
+  /** Whether the block is optional (Yes/No in the source). */
+  optional?: boolean;
 }
 
 export interface Day {
@@ -63,6 +106,38 @@ export interface Day {
   notes: string;
   /** Map anchor for the day; absent for travel/flexible days. */
   location?: DayLocation;
+  /** Block-level schedule for the day, when authored at that granularity. */
+  activities?: Activity[];
+}
+
+/** A restaurant entry in an itinerary's dining guide. */
+export interface DiningEntry {
+  restaurant: string;
+  /** When / who, e.g. "Sep 12 dinner; all 6". */
+  whenWho?: string;
+  /** Recommended family order. */
+  recommendedOrder?: string;
+  /** Rough budget text, e.g. "₱3,000–₱4,500". */
+  budget?: string;
+  why?: string;
+  mapsUrl?: string;
+  /** Menu / source link. */
+  menuSource?: string;
+  notes?: string;
+}
+
+/** A planned grocery run. */
+export interface GroceryRun {
+  /** When, e.g. "Sep 11 morning". */
+  when?: string;
+  store?: string;
+  who?: string;
+  purpose?: string;
+  /** Suggested basket contents. */
+  basket?: string;
+  /** Budget text, e.g. "₱5,000–₱8,000". */
+  budget?: string;
+  why?: string;
 }
 
 export interface MoneyRange {
@@ -110,11 +185,51 @@ export interface Itinerary {
   proposals: Proposal[];
   /** Places & Maps catalog for the whole trip. */
   places: Place[];
+  /** Trip flavor; drives which detail sections render. Defaults to "couple". */
+  kind?: "couple" | "family";
+  /** Restaurant guide for the trip, when curated. */
+  diningGuide?: DiningEntry[];
+  /** Grocery plan for the trip, when curated. */
+  groceryPlan?: GroceryRun[];
   /** Owner id (for multi-user later; e.g. Firebase uid). Optional for now. */
   ownerId?: string;
   /** ISO timestamps. */
   createdAt?: string;
   updatedAt?: string;
+}
+
+/** Public user shape returned by the auth endpoints (never includes secrets). */
+export interface User {
+  id: string;
+  email: string;
+  displayName?: string;
+  createdAt: string;
+}
+
+/** What the user asks for; the input to AI itinerary generation. */
+export interface GenerateRequest {
+  /** Where the traveler is coming from. */
+  origin: string;
+  /** Where they're going (place-to-place, e.g. "BGC, Taguig"). */
+  destination: string;
+  /** ISO start/end of the trip. */
+  startDate: string;
+  endDate: string;
+  partySize: number;
+  /** What the trip is for, e.g. "Family trip", "Date", "Foodie weekend". */
+  purpose?: string;
+  pace?: "relaxed" | "balanced" | "packed";
+  budget?: "shoestring" | "moderate" | "comfortable" | "luxury";
+  /** ISO 4217, defaults to PHP. */
+  currency?: string;
+  /** Where the traveler stays (defaults to the destination). */
+  homeBase?: string;
+  /** Free-form interests, e.g. ["museums", "coffee", "playgrounds"]. */
+  interests?: string[];
+  /** Non-negotiables, e.g. ["The Mind Museum"]. */
+  mustDos?: string[];
+  /** Constraints in plain language: work blocks, nap windows, mobility, etc. */
+  constraints?: string;
 }
 
 /** Summary shape returned by list endpoints (no heavy day data). */
@@ -126,4 +241,77 @@ export interface ItinerarySummary {
   partySize: number;
   currency: string;
   proposalCount: number;
+}
+
+// ---------------------------------------------------------------------------
+// Places enrichment cache — Google Places, one-time crawl on finalize.
+// See docs/places-caching-design.md for the compliance + cost rationale.
+// ---------------------------------------------------------------------------
+
+/**
+ * A cached place record, keyed by Google Place ID and SHARED across every user
+ * and itinerary (the first trip to include a place pays for it; all others read
+ * this cache for free). Only fields Google's terms permit us to store live here:
+ * the Place ID (kept indefinitely), factual fields + the rating aggregate
+ * (short-term, refreshed on a TTL), and photo *references* (pointers, not the
+ * image bytes). Review text and photo bytes are NEVER stored — they are served
+ * live from Google on the detail screen.
+ */
+export interface CachedPlace {
+  /** Google Place ID — the join key; safe to keep indefinitely. */
+  placeId: string;
+  name: string;
+  address: string;
+  location: { lat: number; lng: number };
+  googleMapsUrl: string;
+  /** Category tags, e.g. ["restaurant", "filipino_restaurant"]. */
+  types: string[];
+  /** Aggregate rating value (e.g. 4.6). */
+  rating?: number;
+  /** Number of ratings behind the aggregate. */
+  ratingCount?: number;
+  /** 0–4 price level. */
+  priceLevel?: number;
+  phone?: string;
+  website?: string;
+  /** Google "weekday" opening-hours lines, e.g. "Monday: 9 AM – 6 PM". */
+  hours?: string[];
+  /** Pointers to Google photos (resource names) — NOT the image bytes. */
+  photoRefs?: string[];
+  /** Optional owned, permanently-cacheable hero image (e.g. Wikimedia, CC). */
+  ownedImageUrl?: string;
+  source: "google" | "stub";
+  /** ISO timestamp of the last successful fetch; drives the freshness TTL. */
+  fetchedAt: string;
+  /** Itinerary ids referencing this place (never evict while non-empty). */
+  refItineraries: string[];
+}
+
+/** Server-shaped card the app renders: cached facts + live photo access. */
+export interface PlaceCard {
+  placeId: string;
+  name: string;
+  address: string;
+  location: { lat: number; lng: number };
+  googleMapsUrl: string;
+  types: string[];
+  rating?: number;
+  ratingCount?: number;
+  priceLevel?: number;
+  hours?: string[];
+  phone?: string;
+  website?: string;
+  /** Server photo-proxy URLs (resolved live from Google; bytes never stored). */
+  photoUrls: string[];
+  ownedImageUrl?: string;
+  /** Whether the cached facts are still within the freshness TTL. */
+  fresh: boolean;
+}
+
+/** A single live review (fetched on demand; never stored). */
+export interface PlaceReview {
+  author?: string;
+  rating?: number;
+  text?: string;
+  relativeTime?: string;
 }

@@ -1,21 +1,27 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/wayfare/icon';
+import { MapFirst } from '@/components/wayfare/map-first';
 import { StepTop } from '@/components/wayfare/steps';
 import { useWayfare } from '@/components/wayfare/theme';
 import { AITip, Field, PillButton, SectionLabel, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
 import { go } from '@/lib/nav';
+import { wizard } from '@/lib/wizard';
 
 const INTERESTS = ['Heritage', 'Food', 'Cafés', 'Museums', 'Views', 'Waterfront', 'Nightlife', 'Shopping', 'Markets'];
 
 export default function Interests() {
   const { c, cardShadow } = useWayfare();
-  const insets = useSafeAreaInsets();
-  const [sel, setSel] = useState<Set<string>>(new Set(['Heritage', 'Food', 'Cafés']));
-  const [musts, setMusts] = useState(['Intramuros', 'National Museum']);
+  const d = wizard.get();
+  const [sel, setSel] = useState<Set<string>>(new Set(d.interests ?? ['Heritage', 'Food', 'Cafés']));
+  const [musts, setMusts] = useState(d.mustDos ?? ['Intramuros', 'National Museum']);
+
+  const cont = () => {
+    wizard.patch({ interests: [...sel], mustDos: musts });
+    go('/create/review');
+  };
 
   const toggle = (k: string) =>
     setSel((s) => {
@@ -26,10 +32,7 @@ export default function Interests() {
     });
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: insets.top + Space.s, paddingHorizontal: Space.xl, paddingBottom: Space.xxl }}>
+    <MapFirst sheetTop={0.16}>
         <StepTop title="Build it yourself" step={3} total={4} />
         <Txt variant="h1" style={{ marginTop: Space.xl }}>
           Anything you love?
@@ -70,10 +73,9 @@ export default function Interests() {
         </View>
 
         <View style={{ marginTop: Space.xl }}>
-          <PillButton label="Continue" icon="arrow" knob onPress={() => go('/create/review')} />
+          <PillButton label="Continue" icon="arrow" knob onPress={cont} />
         </View>
-      </ScrollView>
-    </View>
+    </MapFirst>
   );
 }
 

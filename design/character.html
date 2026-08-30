@@ -1,0 +1,148 @@
+<title>Wayfare Character</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Space+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap">
+<style>
+  :root{--mono:'Space Mono',monospace}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#E7E4DE;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0}
+  canvas{display:block}
+  .hud{position:fixed;left:22px;top:20px;z-index:5}
+  .hud .kick{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#8a7e70}
+  .hud h1{font-family:'Fraunces',serif;font-weight:600;font-size:34px;letter-spacing:-.02em;margin:4px 0 0;color:#241a15}
+  .hud .sub{font-family:var(--mono);font-size:12px;color:#8a7e70;margin-top:4px}
+  .hud .sub b{color:#241a15}
+  .row{position:fixed;z-index:5;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .models{left:22px;bottom:118px}
+  .anims{left:22px;bottom:70px}
+  .opts{left:22px;bottom:22px}
+  .btn{font-family:var(--mono);font-size:12px;border:1px solid #cfc7ba;background:#fff;color:#241a15;border-radius:999px;padding:9px 15px;cursor:pointer;display:flex;align-items:center;gap:7px}
+  .btn .sw{width:12px;height:12px;border-radius:50%}
+  .btn.on{border-color:#241a15;box-shadow:0 0 0 2px rgba(36,26,21,.12)}
+  .btn.dim{opacity:.35}
+  .btn.big{font-weight:700;padding:11px 18px}
+  .tag{position:fixed;right:22px;top:22px;z-index:5;font-family:var(--mono);font-size:11px;color:#8a7e70;text-align:right;line-height:1.7}
+  .tag b{color:#241a15}
+  .loading{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);color:#8a7e70;z-index:6}
+  body.dark{background:#141010}
+  body.dark .hud h1,body.dark .hud .sub b,body.dark .tag b{color:#F3ECE1}
+  body.dark .btn{background:#26201c;border-color:#3a2f27;color:#F3ECE1}
+</style>
+<div id="stage"></div>
+<div class="loading" id="loading">loading&hellip;</div>
+<div class="hud"><div class="kick">Wayfare &middot; Character 01</div><h1>The Traveler</h1><div class="sub"><span id="mdl">Human</span>&nbsp;&middot;&nbsp;<b id="pose">Idle</b> &middot; mocap</div></div>
+<div class="tag">three.js @0.185 &middot; GLTFLoader + AnimationMixer<br>rigged model &middot; Mixamo mocap clips<br><b>drag</b> orbit &middot; <b>scroll</b> zoom</div>
+<div class="row models">
+  <button class="btn on" data-model="Xbot.glb" data-name="Mannequin">Mannequin</button>
+  <button class="btn" data-model="Soldier.glb" data-name="Soldier">Soldier</button>
+  <button class="btn" data-model="CesiumMan.glb" data-name="Casual man">Casual man</button>
+</div>
+<div class="row anims">
+  <button class="btn big on" data-anim="idle">Idle</button>
+  <button class="btn big" data-anim="walk">Walk</button>
+  <button class="btn big" data-anim="run">Run</button>
+</div>
+<div class="row opts">
+  <button class="btn on" data-col=""><span class="sw" style="background:#b9bdc2"></span>Natural</button>
+  <button class="btn" data-col="#FF5A36"><span class="sw" style="background:#FF5A36"></span>Ember</button>
+  <button class="btn" data-col="#5AB6E8"><span class="sw" style="background:#5AB6E8"></span>Sky</button>
+  <button class="btn" data-col="#F0609A"><span class="sw" style="background:#F0609A"></span>Rose</button>
+  <button class="btn" id="bg">&#9680; Studio / Dark</button>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const STUDIO = new THREE.Color('#E7E4DE'), DARK = new THREE.Color('#141010');
+scene.background = STUDIO;
+
+const camera = new THREE.PerspectiveCamera(35, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(1.6, 1.7, 4.6);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.target.set(0, 1.0, 0); controls.minDistance = 1.5; controls.maxDistance = 16; controls.maxPolarAngle = Math.PI*0.52;
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9488, 0.85));
+const key = new THREE.DirectionalLight(0xffffff, 2.4);
+key.position.set(3, 7, 5); key.castShadow = true;
+key.shadow.mapSize.set(2048,2048); key.shadow.radius = 7; key.shadow.bias = -0.0003;
+key.shadow.camera.near = 1; key.shadow.camera.far = 30;
+Object.assign(key.shadow.camera, { left:-4, right:4, top:5, bottom:-2 }); key.shadow.camera.updateProjectionMatrix();
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xdfe8ff, 0.55); fill.position.set(-5,3,-2); scene.add(fill);
+const rim  = new THREE.DirectionalLight(0xffe9d8, 0.5);  rim.position.set(-2,4,-6); scene.add(rim);
+
+const ground = new THREE.Mesh(new THREE.CircleGeometry(8, 64), new THREE.ShadowMaterial({ opacity:0.24 }));
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+
+const loader = new GLTFLoader();
+const clock = new THREE.Clock();
+let mixer, actions = {}, current, meshes = [], model, tint = '';
+
+function findClip(anims, want){ // case-insensitive contains match
+  return anims.find(c => c.name.toLowerCase() === want) || anims.find(c => c.name.toLowerCase().includes(want));
+}
+
+function loadModel(url, label){
+  document.getElementById('loading').style.display = 'block';
+  loader.load('./vendor/models/'+url, (gltf)=>{
+    if(model){ scene.remove(model); mixer.stopAllAction(); }
+    model = gltf.scene; meshes = [];
+    model.traverse(o=>{ if(o.isMesh){ o.castShadow = true; o.frustumCulled = false; o.material = o.material.clone(); meshes.push(o); if(tint) o.material.color.set(tint); } });
+    scene.add(model);
+    mixer = new THREE.AnimationMixer(model);
+    actions = {};
+    ['idle','walk','run'].forEach(k=>{ const c = findClip(gltf.animations, k); if(c) actions[k] = mixer.clipAction(c); });
+    // enable only the animations this model actually has
+    document.querySelectorAll('[data-anim]').forEach(b=>{ const has=!!actions[b.dataset.anim]; b.classList.toggle('dim', !has); b.style.pointerEvents = has?'':'none'; });
+    const order = ['idle','walk','run'];
+    const startKey = order.find(k=>actions[k]) || null;
+    current = (startKey && actions[startKey]) || mixer.clipAction(gltf.animations[0]);
+    current.play();
+    document.querySelectorAll('[data-anim]').forEach(x=>x.classList.remove('on'));
+    const startBtn = document.querySelector(`[data-anim="${startKey}"]`); if(startBtn) startBtn.classList.add('on');
+    document.getElementById('pose').textContent = startBtn ? startBtn.textContent : (gltf.animations[0]?.name || '—');
+    // frame
+    const box = new THREE.Box3().setFromObject(model); const size = box.getSize(new THREE.Vector3()); const c = box.getCenter(new THREE.Vector3());
+    controls.target.set(0, c.y, 0);
+    camera.position.set(size.y*0.65, c.y + size.y*0.2, size.y*2.0); controls.update();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('mdl').textContent = label;
+  }, undefined, (e)=>{ document.getElementById('loading').textContent = 'load error'; console.error(e); });
+}
+loadModel('Xbot.glb', 'Mannequin');
+
+document.querySelectorAll('[data-model]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('[data-model]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+  loadModel(b.dataset.model, b.dataset.name);
+});
+document.querySelectorAll('[data-anim]').forEach(b=>b.onclick=()=>{
+  const next = actions[b.dataset.anim]; if(!next || next===current) return;
+  next.reset().setEffectiveWeight(1).play(); current.crossFadeTo(next, 0.35, false); current = next;
+  document.querySelectorAll('[data-anim]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+  document.getElementById('pose').textContent = b.textContent;
+});
+document.querySelectorAll('[data-col]').forEach(b=>b.onclick=()=>{
+  tint = b.dataset.col; meshes.forEach(m=>m.material.color.set(tint || 0xffffff));
+  document.querySelectorAll('[data-col]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+});
+document.getElementById('bg').onclick=()=>{ document.body.classList.toggle('dark'); scene.background = document.body.classList.contains('dark')?DARK:STUDIO; };
+
+function animate(){ const dt = clock.getDelta(); if(mixer) mixer.update(dt); controls.update(); renderer.render(scene, camera); requestAnimationFrame(animate); }
+animate();
+addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+</script>

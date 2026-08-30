@@ -8,6 +8,8 @@ import { Icon, IconName } from '@/components/wayfare/icon';
 import { useWayfare } from '@/components/wayfare/theme';
 import { AITip, Card, Chip, PillButton, StateView, Txt } from '@/components/wayfare/ui';
 import { UpNext } from '@/components/wayfare/up-next';
+import { DiningGuide } from '@/components/wayfare/dining-guide';
+import { currentActivity, isMeal } from '@/lib/dining';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
 import type { LineGeometry, MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { walkRoute } from '@/lib/route';
@@ -105,6 +107,12 @@ export default function DayScreen() {
   const { it, day } = data;
   const places = placesFor(it, day);
 
+  // Dining guide: every meal block, with the one happening NOW surfaced first.
+  const nowAct = currentActivity(day);
+  const nowMeal = nowAct && isMeal(nowAct) ? nowAct : null;
+  const mealBlocks = (day.activities ?? []).filter(isMeal);
+  const orderedMeals = nowMeal ? [nowMeal, ...mealBlocks.filter((m) => m.id !== nowMeal.id)] : mealBlocks;
+
   // In-app "navigate": maximise the map and fit the A→B route across the day.
   const navigate = () => {
     setFocus(null);
@@ -175,6 +183,20 @@ export default function DayScreen() {
         {day.activities?.length ? (
           <View style={{ marginTop: Space.l }}>
             <UpNext activities={day.activities} homeBase={it.homeBase} />
+          </View>
+        ) : null}
+
+        {/* dining guide — auto-surfaces the current meal (no check-in) */}
+        {orderedMeals.length ? (
+          <View style={{ marginTop: Space.l }}>
+            <Txt variant="title" style={{ marginBottom: Space.s }}>
+              Dining guide · {orderedMeals.length}
+            </Txt>
+            <View style={{ gap: Space.m }}>
+              {orderedMeals.map((a) => (
+                <DiningGuide key={a.id} activity={a} partySize={it.partySize} now={a.id === nowMeal?.id} />
+              ))}
+            </View>
           </View>
         ) : null}
 

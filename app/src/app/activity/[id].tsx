@@ -5,6 +5,8 @@ import { Icon, IconName } from '@/components/wayfare/icon';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
 import { useWayfare } from '@/components/wayfare/theme';
 import { AITip, Card, Chip, PillButton, StateView, Txt } from '@/components/wayfare/ui';
+import { DiningGuide } from '@/components/wayfare/dining-guide';
+import { currentActivity, isMeal } from '@/lib/dining';
 import type { MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { Space } from '@/constants/wayfare';
 import { useAsync } from '@/hooks/use-async';
@@ -29,13 +31,6 @@ async function loadActivity(
     if (day && activity) return { it, day, activity };
   }
   throw new Error('Activity not found');
-}
-
-function dishesOf(meal: string): string[] {
-  return meal
-    .split(/[;•]|(?:,(?=\s*[A-Z0-9]))/)
-    .map((d) => d.replace(/\.$/, '').trim())
-    .filter(Boolean);
 }
 
 function catStyle(category: string | undefined, c: ReturnType<typeof useWayfare>['c']): { color: string; icon: IconName } {
@@ -152,25 +147,10 @@ export default function ActivityDetail() {
         </Card>
       ) : null}
 
-      {a.mealSuggestion ? (
-        <Card style={{ marginTop: Space.m, gap: 10 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon name="food" size={18} color={c.a1} />
-            <Txt style={{ fontWeight: '800' }}>What to order at {a.where}</Txt>
-          </View>
-          {dishesOf(a.mealSuggestion).map((dish, i) => (
-            <View key={i} style={styles.dishRow}>
-              <View style={[styles.dishNum, { backgroundColor: c.a1 }]}>
-                <Txt variant="small" style={{ color: '#fff', fontWeight: '800' }}>
-                  {i + 1}
-                </Txt>
-              </View>
-              <Txt variant="sec" style={{ flex: 1, lineHeight: 20 }}>
-                {dish}
-              </Txt>
-            </View>
-          ))}
-        </Card>
+      {isMeal(a) ? (
+        <View style={{ marginTop: Space.m }}>
+          <DiningGuide activity={a} partySize={it.partySize} now={currentActivity(day)?.id === a.id} />
+        </View>
       ) : null}
     </MapFirst>
   );

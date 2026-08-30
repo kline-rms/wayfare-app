@@ -3,6 +3,22 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] — 2026-08-31
+
+### Added
+- **Time-and-place-aware dining guide.** Dining stops now surface order
+  **suggestions** automatically: the block's time names the meal (Breakfast /
+  Brunch / Lunch / Merienda / Dinner), and the meal happening **now** (on today's
+  trip day, by the real clock) gets a **● NOW** badge and floats to the top. Cards
+  show "Suggestions for N people · order what you like", the dish list, and the
+  note "Just a guide — nothing's fixed." Appears on the Day page (a "Dining guide"
+  section), Activity detail, and Place detail. New `lib/dining.ts` +
+  `components/wayfare/dining-guide.tsx`.
+
+### Removed
+- The manual **"I'm here · check in"** confirmation on Place detail — presence at a
+  dining stop is now inferred from time + place instead of a button tap.
+
 ## [2.1.0] — 2026-08-31
 
 ### Added
@@ -60,6 +76,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.2.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.2.0
 [2.1.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.1.0
 [2.0.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.0.0
 [1.0.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v1.0.0

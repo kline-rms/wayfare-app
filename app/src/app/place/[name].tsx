@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/wayfare/icon';
+import { DiningGuide } from '@/components/wayfare/dining-guide';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
 import { useWayfare } from '@/components/wayfare/theme';
 import { AITip, StateView, Txt } from '@/components/wayfare/ui';
@@ -10,24 +10,55 @@ import type { MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { Space } from '@/constants/wayfare';
 import { useAsync } from '@/hooks/use-async';
 import { api } from '@/lib/api';
+import { currentActivity, isMeal } from '@/lib/dining';
 import { back } from '@/lib/nav';
 import { openMaps } from '@/lib/maps';
-import type { Itinerary, Place } from '@/lib/types';
+import type { Activity, Itinerary, Place } from '@/lib/types';
 
-async function loadPlace(name: string): Promise<Place> {
+const norm = (s: string) => s.toLowerCase().split(/[,(]/)[0].trim();
+function samePlace(where: string, name: string) {
+  const a = norm(where);
+  const b = norm(name);
+  return a.includes(b) || b.includes(a);
+}
+
+interface PlaceData {
+  place: Place;
+  meal: Activity | null;
+  partySize: number;
+  now: boolean;
+}
+
+async function loadPlace(name: string): Promise<PlaceData> {
   const list = await api.listItineraries();
   const it: Itinerary = await api.getItinerary(list[0].id);
   const place = it.places.find((p) => p.name === name);
   if (!place) throw new Error('Place not found');
-  return place;
+  // Find a dining block at this place; prefer the one happening right now.
+  let meal: Activity | null = null;
+  let now = false;
+  for (const p of it.proposals) {
+    for (const d of p.days) {
+      const cur = currentActivity(d);
+      for (const a of d.activities ?? []) {
+        if (!isMeal(a) || !samePlace(a.where, place.name)) continue;
+        if (!meal) meal = a;
+        if (cur?.id === a.id) {
+          meal = a;
+          now = true;
+        }
+      }
+    }
+  }
+  return { place, meal, partySize: it.partySize, now };
 }
 
 export default function PlaceDetail() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const { c, cardShadow } = useWayfare();
-  const { data: place, loading, error, reload } = useAsync(() => loadPlace(name), [name]);
-  const [here, setHere] = useState(false);
-  if (loading || error || !place) return <StateView loading={loading} error={error} onRetry={reload} />;
+  const { data, loading, error, reload } = useAsync(() => loadPlace(name), [name]);
+  if (loading || error || !data) return <StateView loading={loading} error={error} onRetry={reload} />;
+  const { place, meal, partySize, now } = data;
 
   const valid = Number.isFinite(place.lat) && Number.isFinite(place.lng) && !(place.lat === 0 && place.lng === 0);
   const stops: MapStop[] = valid ? [{ lat: place.lat, lng: place.lng, label: place.name, color: '#7C5CF6' }] : [];
@@ -84,21 +115,20 @@ export default function PlaceDetail() {
         {place.why}
       </Txt>
 
-      <View style={{ marginTop: Space.l }}>
-        <AITip>
-          Coordinates {place.coordinates}
-          {place.coordinateSource ? ` · ${place.coordinateSource}` : ''}.
-        </AITip>
-      </View>
-
-      <Pressable
-        onPress={() => setHere(true)}
-        style={[styles.checkBtn, { backgroundColor: c.a2, marginTop: Space.xl }]}>
-        <Icon name="check" size={18} color="#06432b" />
-        <Txt color="#06432b" style={{ fontWeight: '800' }}>
-          {here ? 'Checked in · done' : "I'm here · check in"}
-        </Txt>
-      </Pressable>
+      {/* Dining guide — appears automatically for dining stops; no check-in.
+          Highlights as NOW when you're here at its mealtime. */}
+      {meal ? (
+        <View style={{ marginTop: Space.l }}>
+          <DiningGuide activity={meal} partySize={partySize} now={now} />
+        </View>
+      ) : (
+        <View style={{ marginTop: Space.l }}>
+          <AITip>
+            Coordinates {place.coordinates}
+            {place.coordinateSource ? ` · ${place.coordinateSource}` : ''}.
+          </AITip>
+        </View>
+      )}
     </MapFirst>
   );
 }

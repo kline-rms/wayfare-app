@@ -3,6 +3,18 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] — 2026-08-31
+
+### Added
+- **Home itinerary switcher.** Home now shows a swipeable row of *all* your trips
+  ("Your trips · N"); selecting one makes it the active trip and the map re-routes
+  and re-pins to it while the LIVE chip / title / progress / "Next" follow. Tapping
+  the active card (or "Open this trip") opens the full itinerary. Home previously
+  showed only the primary trip.
+
+### Changed
+- Home loads all itineraries up-front so switching between them is instant.
+
 ## [2.0.0] — 2026-08-31
 
 The **Map-first 3D redesign**: the app is now a fixed cinematic-night experience where
@@ -48,5 +60,6 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.1.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.1.0
 [2.0.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.0.0
 [1.0.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v1.0.0

@@ -193,11 +193,44 @@ export interface Itinerary {
   diningGuide?: DiningEntry[];
   /** Grocery plan for the trip, when curated. */
   groceryPlan?: GroceryRun[];
+  /** Expense ledger for reimbursements (receipts, per-payer, paid/unpaid). */
+  expenses?: Expense[];
   /** Owner id (for multi-user later; e.g. Firebase uid). Optional for now. */
   ownerId?: string;
   /** ISO timestamps. */
   createdAt?: string;
   updatedAt?: string;
+}
+
+/** One line item read from a receipt. */
+export interface ExpenseItem {
+  name: string;
+  qty?: number;
+  price?: number;
+}
+
+/** A recorded expense (usually from a scanned receipt) awaiting reimbursement. */
+export interface Expense {
+  id: string;
+  /** ISO date the money was spent. */
+  date: string;
+  /** Optional link to the itinerary day it belongs to. */
+  dayId?: string;
+  /** Who paid — a member name / relation (e.g. "Sister-in-law", "Nanny"). */
+  payer: string;
+  merchant?: string;
+  category?: string;
+  /** Total amount in the itinerary currency. */
+  amount: number;
+  currency?: string;
+  items?: ExpenseItem[];
+  /** Stored receipt image (data URL or hosted URL). */
+  receiptUrl?: string;
+  note?: string;
+  status: "unpaid" | "paid";
+  /** When it was reimbursed, plus proof of the transfer. */
+  paidAt?: string;
+  proofUrl?: string;
 }
 
 /** Public user shape returned by the auth endpoints (never includes secrets). */

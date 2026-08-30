@@ -12,6 +12,8 @@ import { Platform } from 'react-native';
 import { authStore } from './auth';
 import type {
   Activity,
+  Expense,
+  ExpenseItem,
   GenerateRequest,
   Itinerary,
   ItinerarySummary,
@@ -89,6 +91,25 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
   return (await res.json()) as T;
 }
 
+async function patchJson<T>(path: string, body: unknown): Promise<T> {
+  const url = `${API_BASE_URL}${path}`;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(body),
+    });
+  } catch (cause) {
+    throw new Error(`Cannot reach the itinerary server at ${API_BASE_URL}. Is it running?`, { cause });
+  }
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({}));
+    throw new Error((detail as { error?: string }).error ?? `Request failed (${res.status}) for ${path}`);
+  }
+  return (await res.json()) as T;
+}
+
 async function delJson<T>(path: string): Promise<T> {
   const url = `${API_BASE_URL}${path}`;
   let res: Response;
@@ -112,6 +133,15 @@ export interface AuthResult {
 export interface GenerateResult {
   engine: 'openai' | 'stub';
   itinerary: Itinerary;
+}
+
+export interface ParsedReceipt {
+  merchant?: string;
+  date?: string | null;
+  currency?: string | null;
+  items?: ExpenseItem[];
+  total?: number;
+  engine?: 'openai' | 'stub';
 }
 
 export const api = {
@@ -147,6 +177,16 @@ export const api = {
     postJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/activities`, { dayId, activity }),
   removeActivity: (itineraryId: string, activityId: string): Promise<Itinerary> =>
     delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/activities/${encodeURIComponent(activityId)}`),
+
+  // ---- expenses / reimbursements ----
+  // Vision OCR: read a receipt image into a structured draft.
+  parseReceipt: (imageUrl: string): Promise<ParsedReceipt> => postJson('/api/receipts/parse', { imageUrl }),
+  addExpense: (itineraryId: string, expense: Expense): Promise<Itinerary> =>
+    postJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/expenses`, { expense }),
+  updateExpense: (itineraryId: string, expenseId: string, patch: Partial<Expense>): Promise<Itinerary> =>
+    patchJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/expenses/${encodeURIComponent(expenseId)}`, patch),
+  removeExpense: (itineraryId: string, expenseId: string): Promise<Itinerary> =>
+    delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/expenses/${encodeURIComponent(expenseId)}`),
 
   // ---- places (Google enrichment, cached; see docs/places-caching-design.md) ----
   // Cached facts + live photo URLs for one place.

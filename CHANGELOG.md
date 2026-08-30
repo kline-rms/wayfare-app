@@ -3,6 +3,24 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] — 2026-08-31
+
+### Added
+- **Reimbursement ledger + receipt OCR.** Snap/upload a receipt → **vision OCR**
+  (gpt-4o-mini) reads merchant / date / itemized lines / total → review → it lands
+  in the trip's **expense ledger**. Filter by **period** (week / month / trip / all),
+  **status** (unpaid / paid / all), and **payer**; running **unpaid total**; **"Settle N"**
+  batch mark-paid; expand a row to see the **receipt image + itemized list**; mark
+  paid / remove. Entry from Profile → Reimbursements. Money moves outside the app
+  (GCash/bank) — Wayfare records & proves it; proof + signature come next.
+- New: `POST /api/receipts/parse`, `POST`/`PATCH`/`DELETE /api/itineraries/:id/expenses`;
+  `chatVisionJson`; `Itinerary.expenses` + `Expense`/`ExpenseItem` types;
+  `add-expense.tsx` + `reimbursements.tsx`; `api.parseReceipt`/`addExpense`/`updateExpense`/`removeExpense`.
+
+### Changed
+- `useAsync`-backed screens (Day, Reimbursements) keep the current data during a
+  refetch instead of flashing a full-screen spinner after an edit.
+
 ## [2.3.0] — 2026-08-31
 
 ### Added
@@ -89,6 +107,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.4.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.4.0
 [2.3.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.3.0
 [2.2.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.2.0
 [2.1.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.1.0

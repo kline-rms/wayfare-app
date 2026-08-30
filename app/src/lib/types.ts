@@ -120,9 +120,33 @@ export interface Itinerary {
   kind?: "couple" | "family";
   diningGuide?: DiningEntry[];
   groceryPlan?: GroceryRun[];
+  expenses?: Expense[];
   ownerId?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface ExpenseItem {
+  name: string;
+  qty?: number;
+  price?: number;
+}
+
+export interface Expense {
+  id: string;
+  date: string;
+  dayId?: string;
+  payer: string;
+  merchant?: string;
+  category?: string;
+  amount: number;
+  currency?: string;
+  items?: ExpenseItem[];
+  receiptUrl?: string;
+  note?: string;
+  status: "unpaid" | "paid";
+  paidAt?: string;
+  proofUrl?: string;
 }
 
 export interface User {

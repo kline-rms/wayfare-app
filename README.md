@@ -151,7 +151,8 @@ monorepo config).
 | `release/v2.0.0` · tag `v2.0.0` | Map-first **3D night** redesign |
 | `release/v2.1.0` · tag `v2.1.0` | + Home itinerary switcher |
 | `release/v2.2.0` · tag `v2.2.0` | + Time-and-place-aware dining guide |
-| `release/v2.3.0` · tag `v2.3.0` | + Add-a-stop (non-destructive day editing) (current) |
+| `release/v2.3.0` · tag `v2.3.0` | + Add-a-stop (non-destructive day editing) |
+| `release/v2.4.0` · tag `v2.4.0` | + Reimbursement ledger + receipt OCR (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

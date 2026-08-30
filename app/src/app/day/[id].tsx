@@ -110,7 +110,9 @@ export default function DayScreen() {
       alive = false;
     };
   }, [mapStops]);
-  if (loading || error || !data) return <StateView loading={loading} error={error} onRetry={reload} />;
+  // Loader only until first data; later refetches (add/remove a stop) keep the day
+  // on screen instead of flashing a spinner.
+  if (!data) return <StateView loading={loading} error={error} onRetry={reload} />;
 
   const { it, day } = data;
   const places = placesFor(it, day);

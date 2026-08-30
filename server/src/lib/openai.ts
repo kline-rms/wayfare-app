@@ -77,3 +77,58 @@ export async function chatJson<T>(
     throw new Error("OpenAI returned invalid JSON.", { cause });
   }
 }
+
+/**
+ * Vision + JSON mode: read an image (data URL or https URL) against a prompt and
+ * return the parsed object. gpt-4o-mini is multimodal, so this stays cheap;
+ * `detail: "low"` keeps the image token cost down.
+ */
+export async function chatVisionJson<T>(
+  prompt: string,
+  imageUrl: string,
+  opts: { maxTokens?: number } = {},
+): Promise<T> {
+  let res: Response;
+  try {
+    res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${env.openaiApiKey}`,
+      },
+      body: JSON.stringify({
+        model: env.openaiModel,
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              { type: "image_url", image_url: { url: imageUrl, detail: "low" } },
+            ],
+          },
+        ],
+        temperature: 0.1,
+        max_tokens: opts.maxTokens ?? 900,
+        response_format: { type: "json_object" },
+      }),
+    });
+  } catch (cause) {
+    throw new Error("Could not reach OpenAI (network error).", { cause });
+  }
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`OpenAI vision request failed (${res.status}): ${detail.slice(0, 300)}`);
+  }
+  const data = (await res.json()) as {
+    choices?: { message?: { content?: string } }[];
+    usage?: { prompt_tokens: number; completion_tokens: number };
+  };
+  logCost(env.openaiModel, data.usage);
+  const content = data.choices?.[0]?.message?.content;
+  if (!content) throw new Error("OpenAI returned no content.");
+  try {
+    return JSON.parse(content) as T;
+  } catch (cause) {
+    throw new Error("OpenAI returned invalid JSON.", { cause });
+  }
+}

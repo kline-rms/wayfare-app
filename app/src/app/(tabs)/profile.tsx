@@ -65,6 +65,7 @@ export default function ProfileScreen() {
         <ListRow icon="wallet" title="Currency" subtitle="Philippine Peso (₱)" trailing={chev} />
         <ListRow icon="calClock" title="Availability & work blocks" subtitle="Mon–Fri · 7 AM – 4 PM" trailing={chev} onPress={() => go('/availability')} />
         <ListRow icon="bell" title="Reminders" subtitle="1 hour and 15 min before" trailing={chev} onPress={() => go('/reminders')} />
+        <ListRow icon="peso" title="Reimbursements" subtitle="Receipts &amp; who owes what" trailing={chev} onPress={() => go('/reimbursements')} />
         <ListRow icon="moon" title="Stay up late" subtitle="Allow plans past 11 PM" trailing={<Toggle value={stayLate} onChange={setStayLate} />} last />
       </Card>
 

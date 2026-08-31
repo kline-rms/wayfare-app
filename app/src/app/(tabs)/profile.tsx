@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -8,6 +8,7 @@ import { useWayfare } from '@/components/wayfare/theme';
 import { Card, ListRow, SectionLabel, Toggle, Txt } from '@/components/wayfare/ui';
 import { Gradients } from '@/constants/wayfare';
 import { Space } from '@/constants/wayfare';
+import { api, type AppSettings } from '@/lib/api';
 import { authStore, useAuth } from '@/lib/auth';
 import { go, replaceTo } from '@/lib/nav';
 
@@ -15,6 +16,19 @@ export default function ProfileScreen() {
   const { c } = useWayfare();
   const { user } = useAuth();
   const [stayLate, setStayLate] = useState(false);
+  const [places, setPlaces] = useState<AppSettings | null>(null);
+
+  // Load the Google Places gate state (default OFF, server-enforced).
+  useEffect(() => {
+    api.getAppSettings().then(setPlaces).catch(() => {});
+  }, []);
+  const togglePlaces = async (v: boolean) => {
+    try {
+      setPlaces(await api.setPlacesEnabled(v));
+    } catch {
+      /* ignore */
+    }
+  };
 
   const chev = <Icon name="chevR" size={16} color={c.ter} />;
   const name = user?.displayName || user?.email?.split('@')[0] || 'Traveler';
@@ -72,7 +86,21 @@ export default function ProfileScreen() {
         <ListRow icon="calClock" title="Availability & work blocks" subtitle="Mon–Fri · 7 AM – 4 PM" trailing={chev} onPress={() => go('/availability')} />
         <ListRow icon="bell" title="Reminders" subtitle="1 hour and 15 min before" trailing={chev} onPress={() => go('/reminders')} />
         <ListRow icon="peso" title="Reimbursements" subtitle="Receipts &amp; who owes what" trailing={chev} onPress={() => go('/reimbursements')} />
-        <ListRow icon="wallet" title="Google Places cost" subtitle="What place data costs us · $0 so far" trailing={chev} onPress={openCostRef} />
+        <ListRow
+          icon="globe"
+          title="Google Places API"
+          subtitle={
+            places == null
+              ? 'Loading…'
+              : !places.placesKeyConfigured
+                ? 'No key configured'
+                : places.placesEnabled
+                  ? `On · ~$${places.spend.estUsd.toFixed(2)} this session · ${places.spend.calls} calls`
+                  : 'Off · every request gated, $0'
+          }
+          trailing={<Toggle value={!!places?.placesEnabled} onChange={places?.placesKeyConfigured ? togglePlaces : undefined} />}
+        />
+        <ListRow icon="wallet" title="Google Places cost" subtitle="What place data costs us · reference" trailing={chev} onPress={openCostRef} />
         <ListRow icon="moon" title="Stay up late" subtitle="Allow plans past 11 PM" trailing={<Toggle value={stayLate} onChange={setStayLate} />} last />
       </Card>
 

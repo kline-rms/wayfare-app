@@ -138,6 +138,12 @@ export interface GenerateResult {
   itinerary: Itinerary;
 }
 
+export interface AppSettings {
+  placesKeyConfigured: boolean;
+  placesEnabled: boolean;
+  spend: { calls: number; estUsd: number };
+}
+
 export interface ParsedReceipt {
   merchant?: string;
   date?: string | null;
@@ -211,6 +217,10 @@ export const api = {
     delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/shares/${encodeURIComponent(token)}`),
   getShared: (token: string): Promise<{ itinerary: Itinerary; role: Share['role'] }> =>
     getJson(`/api/shared/${encodeURIComponent(token)}`),
+
+  // ---- app settings (the Google Places money gate) ----
+  getAppSettings: (): Promise<AppSettings> => getJson('/api/settings'),
+  setPlacesEnabled: (enabled: boolean): Promise<AppSettings> => patchJson('/api/settings', { placesEnabled: enabled }),
 
   // ---- places (Google enrichment, cached; see docs/places-caching-design.md) ----
   // Cached facts + live photo URLs for one place.

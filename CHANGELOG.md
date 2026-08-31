@@ -3,6 +3,17 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.8.0] — 2026-08-31
+
+### Added
+- **Google Places toggle + hard money gate.** A Settings switch (Profile →
+  "Google Places API", **default OFF**) turns Places on/off anytime. Server-enforced:
+  every Google call (search, details, reviews, photo) passes one `placesAllowed()`
+  gate (`lib/settings.ts`); when off, no request goes out — verified "request blocked,
+  no spend", $0. A **spend tracker** (calls + est $) shows in Settings and via
+  `GET /api/settings`. New: `lib/settings.ts`, `GET`/`PATCH /api/settings`,
+  `api.getAppSettings`/`setPlacesEnabled`.
+
 ## [2.7.0] — 2026-08-31
 
 ### Added
@@ -149,6 +160,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.8.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.8.0
 [2.7.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.7.0
 [2.6.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.6.0
 [2.5.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.5.0

@@ -8,8 +8,21 @@
 // See docs/places-caching-design.md for the SKU/cost breakdown.
 import type { PlaceReview } from "../../../packages/shared/src/index.ts";
 import { env } from "../lib/env.ts";
+import { getPlacesEnabled, trackSpend } from "../lib/settings.ts";
 
 const BASE = "https://places.googleapis.com/v1";
+
+// THE GATE. Every Google-Places call passes through this. A request only goes out
+// when there's a key AND the runtime toggle is ON — otherwise we never touch the
+// network (no spend). Gated attempts are logged so we can see they were blocked.
+function placesAllowed(): boolean {
+  if (!env.hasGoogleMaps) return false;
+  if (!getPlacesEnabled()) {
+    console.log("[places] gate OFF — request blocked (no spend)");
+    return false;
+  }
+  return true;
+}
 
 // ~USD per 1,000 requests, approximate (verify on the live pricing page —
 // Google restructured to per-SKU billing + a monthly free allotment in 2025).
@@ -22,6 +35,7 @@ const SKU_COST: Record<string, number> = {
 
 function logCost(sku: keyof typeof SKU_COST, n = 1) {
   const cost = (SKU_COST[sku] ?? 0) * n;
+  trackSpend(cost);
   console.log(`[places] ${sku} x${n}  ≈ $${cost.toFixed(5)}`);
 }
 
@@ -52,7 +66,7 @@ const PRICE_LEVEL: Record<string, number> = {
 
 /** Text Search — resolve a free-text venue name to a Google Place ID (cheap mask). */
 export async function searchPlaceId(query: string): Promise<string | null> {
-  if (!env.hasGoogleMaps || !query.trim()) return null;
+  if (!placesAllowed() || !query.trim()) return null;
   try {
     const res = await fetch(`${BASE}/places:searchText`, {
       method: "POST",
@@ -78,7 +92,7 @@ export async function searchPlaceId(query: string): Promise<string | null> {
 
 /** Place Details with the enrichment field mask (facts + aggregate + photo refs). */
 export async function fetchDetails(placeId: string): Promise<GoogleDetails | null> {
-  if (!env.hasGoogleMaps) return null;
+  if (!placesAllowed()) return null;
   // NB: this mask deliberately EXCLUDES `reviews` to stay off the priciest tier.
   const mask = [
     "id",
@@ -132,7 +146,7 @@ export async function fetchDetails(placeId: string): Promise<GoogleDetails | nul
 
 /** Live reviews — fetched on demand, NEVER stored (ToS). Up to 5 from Google. */
 export async function fetchReviews(placeId: string): Promise<PlaceReview[]> {
-  if (!env.hasGoogleMaps) return [];
+  if (!placesAllowed()) return [];
   try {
     const res = await fetch(`${BASE}/places/${encodeURIComponent(placeId)}`, {
       headers: {
@@ -162,7 +176,7 @@ export async function fetchReviews(placeId: string): Promise<PlaceReview[]> {
  * simply 302 the browser to the returned photoUri. Nothing is stored.
  */
 export async function resolvePhotoUri(photoName: string, maxWidthPx = 800): Promise<string | null> {
-  if (!env.hasGoogleMaps) return null;
+  if (!placesAllowed()) return null;
   try {
     const url =
       `${BASE}/${photoName}/media?maxWidthPx=${maxWidthPx}` +

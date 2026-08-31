@@ -7,6 +7,7 @@ import { registerAuthRoutes } from "./routes/auth.ts";
 import { registerPlaceRoutes } from "./routes/places.ts";
 import { registerExpenseRoutes } from "./routes/expenses.ts";
 import { registerMemberRoutes } from "./routes/members.ts";
+import { registerSettingsRoutes } from "./routes/settings.ts";
 import { env } from "./lib/env.ts";
 
 const PORT = Number(process.env.PORT ?? 4100);
@@ -38,6 +39,7 @@ registerGenerateRoutes(app);
 registerPlaceRoutes(app, repo);
 registerExpenseRoutes(app, repo);
 registerMemberRoutes(app, repo);
+registerSettingsRoutes(app);
 
 if (env.authSecret === "dev-insecure-secret-change-me") {
   app.log.warn("AUTH_SECRET is unset — using an insecure dev secret. Set AUTH_SECRET in server/.env.");

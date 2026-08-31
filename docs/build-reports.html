@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -417,7 +417,42 @@
   <div class="files"><h3>Touched</h3><code>app/public/places-cost.html</code><code>(tabs)/profile.tsx</code></div>
 </div></section>
 
+<!-- ============ v2.8.0 ============ -->
+<section id="v2-8-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.8.0</span><h2>Google Places toggle + money gate</h2></div>
+  <div class="req"><b>Requested.</b> A Settings toggle to turn Google Places on/off anytime, and — most importantly — <b>gatekeep every request so no money leaks</b>.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Server-side gate (the money control)</b> — <code>lib/settings.ts</code> holds <code>placesEnabled</code> (default <b>OFF</b>); <code>google.ts</code> routes <em>every</em> Google call through one <code>placesAllowed()</code> check. Off → no network request, logged "request blocked (no spend)".</li>
+      <li><b>Spend tracker</b> — <code>logCost</code> → <code>trackSpend</code>; running calls + est $ exposed via <code>GET /api/settings</code>.</li>
+      <li><b>Settings API</b> — <code>GET</code>/<code>PATCH /api/settings</code>; the server refuses to enable without a key.</li>
+      <li><b>Toggle UI</b> — Profile → "Google Places API" (on/off + live spend), beside the cost reference.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>The gate is <em>server-side and default-OFF</em> on purpose — a client-only switch could be bypassed, and money safety can't depend on the client. It's in-memory so a restart returns to the safe default rather than silently staying on.</p>
+      <p>Putting the check at the single lowest chokepoint (the raw fetch guard) means no code path can ever reach Google around it <span class="conn">connects → server/places/google.ts</span> — new Places features inherit the gate for free.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 900 130" role="img" aria-label="Places gate data flow">
+    <defs><marker id="j" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11.5">
+      <rect x="20" y="40" width="150" height="50" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="95" y="63" text-anchor="middle" fill="#fff">Profile toggle</text><text x="95" y="80" text-anchor="middle" fill="var(--sub)" font-size="10">PATCH /settings</text>
+      <rect x="215" y="40" width="160" height="50" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="295" y="63" text-anchor="middle" fill="#fff">settings.ts</text><text x="295" y="80" text-anchor="middle" fill="var(--sub)" font-size="10">placesEnabled (OFF)</text>
+      <rect x="420" y="40" width="170" height="50" rx="10" fill="#3a2e80" stroke="var(--coral)"/><text x="505" y="63" text-anchor="middle" fill="#fff">placesAllowed()</text><text x="505" y="80" text-anchor="middle" fill="var(--sub)" font-size="10">the gate · every call</text>
+      <rect x="640" y="16" width="230" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="755" y="42" text-anchor="middle" fill="var(--ink)" font-size="11">Google (search/details/photo/reviews)</text>
+      <rect x="640" y="74" width="230" height="42" rx="10" fill="var(--night2)" stroke="var(--line)"/><text x="755" y="100" text-anchor="middle" fill="var(--sub)" font-size="11">OFF → blocked · $0</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M170 65 L211 65" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#j)"/>
+      <path d="M375 65 L416 65" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#j)"/>
+      <path d="M590 55 L636 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#j)"/>
+      <path d="M590 75 L636 92" stroke="var(--coral)" color="var(--coral)" stroke-dasharray="3 4" marker-end="url(#j)"/>
+    </g>
+  </svg></div><figcaption>Every Google call passes the gate; ON → allowed (mint), OFF → blocked with no spend (coral).</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>server/lib/settings.ts</code><code>server/places/google.ts</code><code>server/routes/settings.ts</code><code>(tabs)/profile.tsx</code><code>api.getAppSettings/setPlacesEnabled</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.7.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.8.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

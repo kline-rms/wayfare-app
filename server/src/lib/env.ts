@@ -41,4 +41,7 @@ export const env = {
   get hasGoogleMaps() {
     return this.googleMapsApiKey.length > 0;
   },
+  // The Places gate's initial state. Default OFF so no request can spend until
+  // it's explicitly turned on in Settings. Set PLACES_ENABLED=1 to default on.
+  placesEnabledDefault: process.env.PLACES_ENABLED === "1",
 };

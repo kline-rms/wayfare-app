@@ -13,6 +13,7 @@ const COLLECTION = "itineraries";
 const USERS = "users";
 const PLACES = "places";
 
+let _db: ReturnType<typeof getFirestore> | null = null;
 function firestore() {
   if (!getApps().length) {
     initializeApp({
@@ -22,7 +23,13 @@ function firestore() {
       ...(env.googleCreds ? { credential: applicationDefault() } : {}),
     });
   }
-  return getFirestore();
+  if (!_db) {
+    _db = getFirestore();
+    // Optional fields (e.g. an expense with no note, a reimbursement with no
+    // memberId) arrive as `undefined`; Firestore rejects those by default.
+    _db.settings({ ignoreUndefinedProperties: true });
+  }
+  return _db;
 }
 
 function toSummary(it: Itinerary): ItinerarySummary {

@@ -3,6 +3,25 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.6.0] — 2026-08-31
+
+### Added
+- **Reimbursement proof + e-signature + notifications.** Settle a payer in a
+  dedicated flow: upload the **GCash/bank transfer screenshot** as proof, capture
+  the payee's **signature** (sign-pad → SVG), confirm → records a **Reimbursement**
+  (proof + signature), marks the batch **paid + linked**, and posts a
+  "Reimbursed ₱X to {payer}" event to **Alerts** (the in-app notification). Alerts
+  is now driven by real reimbursement events. **Void** a reimbursement reverts its
+  expenses to unpaid.
+- New: `Signature` / `Reimbursement` types + `Itinerary.reimbursements` +
+  `Expense.reimbursementId`; `POST /api/itineraries/:id/reimburse` +
+  `DELETE …/reimbursements/:rid`; `SignaturePad` component + `settle.tsx`;
+  `api.reimburse` / `voidReimbursement`.
+
+### Fixed
+- Firestore now uses `ignoreUndefinedProperties` — optional fields (no note, no
+  memberId, no proof) no longer 500 the write.
+
 ## [2.5.0] — 2026-08-31
 
 ### Added
@@ -120,6 +139,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.6.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.6.0
 [2.5.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.5.0
 [2.4.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.4.0
 [2.3.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.3.0

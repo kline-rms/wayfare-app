@@ -56,7 +56,6 @@ export default function Reimbursements() {
   const [status, setStatus] = useState<'unpaid' | 'paid' | 'all'>('unpaid');
   const [payer, setPayer] = useState<string>('All');
   const [openId, setOpenId] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
 
   const payers = useMemo(() => ['All', ...new Set((data?.expenses ?? []).map((e) => e.payer))], [data]);
 
@@ -85,17 +84,12 @@ export default function Reimbursements() {
     await api.removeExpense(data.id, e.id);
     edits.markStale();
   };
-  const settleAll = async () => {
-    setBusy(true);
-    try {
-      for (const e of unpaid) {
-        await api.updateExpense(data.id, e.id, { status: 'paid', paidAt: new Date().toISOString() });
-      }
-      edits.markStale();
-    } finally {
-      setBusy(false);
-    }
+  const voidReimb = async (rid: string) => {
+    await api.voidReimbursement(data.id, rid);
+    edits.markStale();
   };
+  // Settle → proof + signature flow (records a reimbursement, marks paid, notifies).
+  const settle = () => go({ pathname: '/settle', params: { it: data.id, payer, currency: cur } });
 
   const header = (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -147,11 +141,9 @@ export default function Reimbursements() {
               {unpaid.length} receipt{unpaid.length === 1 ? '' : 's'}
             </Txt>
           </View>
-          <Pressable onPress={busy ? undefined : settleAll} style={[styles.settle, { backgroundColor: c.a2 }]}>
+          <Pressable onPress={settle} style={[styles.settle, { backgroundColor: c.a2 }]}>
             <Icon name="check" size={16} color="#06432b" />
-            <Txt style={{ color: '#06432b', fontWeight: '800', fontSize: 13 }}>
-              {busy ? 'Settling…' : `Settle ${unpaid.length}`}
-            </Txt>
+            <Txt style={{ color: '#06432b', fontWeight: '800', fontSize: 13 }}>Settle {unpaid.length}</Txt>
           </Pressable>
         </View>
       ) : null}
@@ -203,12 +195,47 @@ export default function Reimbursements() {
                       {e.note}
                     </Txt>
                   ) : null}
+                  {(() => {
+                    const r = e.reimbursementId ? data.reimbursements?.find((x) => x.id === e.reimbursementId) : null;
+                    if (!r) return null;
+                    return (
+                      <View style={{ gap: 6, marginTop: 2 }}>
+                        {r.proofUrl ? (
+                          <>
+                            <Txt variant="small" faint>
+                              TRANSFER PROOF
+                            </Txt>
+                            <Image source={{ uri: r.proofUrl }} style={{ width: '100%', height: 130, borderRadius: 10 }} contentFit="cover" />
+                          </>
+                        ) : null}
+                        {r.signature ? (
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                            {r.signature.image ? (
+                              <Image source={{ uri: r.signature.image }} style={{ width: 90, height: 34, borderRadius: 6, backgroundColor: c.card }} contentFit="contain" />
+                            ) : null}
+                            <Txt variant="small" style={{ color: c.a2, fontWeight: '700', flex: 1 }} numberOfLines={1}>
+                              ✓ Authorised by {r.signature.by} · {r.signature.at.slice(0, 10)}
+                            </Txt>
+                          </View>
+                        ) : null}
+                      </View>
+                    );
+                  })()}
                   <View style={{ flexDirection: 'row', gap: Space.s, marginTop: 4 }}>
-                    <Pressable onPress={() => markPaid(e)} style={[styles.action, { backgroundColor: e.status === 'paid' ? c.fieldBg : c.a2 }]}>
-                      <Txt style={{ fontWeight: '800', fontSize: 12.5, color: e.status === 'paid' ? c.sec : '#06432b' }}>
-                        {e.status === 'paid' ? 'Mark unpaid' : 'Mark paid'}
-                      </Txt>
-                    </Pressable>
+                    {e.reimbursementId ? (
+                      <Pressable onPress={() => voidReimb(e.reimbursementId as string)} style={[styles.action, { backgroundColor: c.fieldBg }]}>
+                        <Txt style={{ fontWeight: '800', fontSize: 12.5, color: c.sec }}>Void reimbursement</Txt>
+                      </Pressable>
+                    ) : e.status === 'unpaid' ? (
+                      <Pressable onPress={() => go({ pathname: '/settle', params: { it: data.id, payer: e.payer, currency: cur } })} style={[styles.action, { backgroundColor: c.a2 }]}>
+                        <Icon name="check" size={14} color="#06432b" />
+                        <Txt style={{ fontWeight: '800', fontSize: 12.5, color: '#06432b' }}>Reimburse</Txt>
+                      </Pressable>
+                    ) : (
+                      <Pressable onPress={() => markPaid(e)} style={[styles.action, { backgroundColor: c.fieldBg }]}>
+                        <Txt style={{ fontWeight: '800', fontSize: 12.5, color: c.sec }}>Mark unpaid</Txt>
+                      </Pressable>
+                    )}
                     <Pressable onPress={() => remove(e)} style={[styles.action, { backgroundColor: c.fieldBg }]}>
                       <Icon name="close" size={14} color={c.danger} />
                       <Txt style={{ fontWeight: '800', fontSize: 12.5, color: c.danger }}>Remove</Txt>

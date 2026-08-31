@@ -195,6 +195,8 @@ export interface Itinerary {
   groceryPlan?: GroceryRun[];
   /** Expense ledger for reimbursements (receipts, per-payer, paid/unpaid). */
   expenses?: Expense[];
+  /** Settled reimbursement batches (proof + signature). */
+  reimbursements?: Reimbursement[];
   /** Everyone who should know this trip — a dynamic roster (any relation/role). */
   members?: Member[];
   /** Active share links (tokenised access to this trip). */
@@ -235,6 +237,33 @@ export interface Expense {
   /** When it was reimbursed, plus proof of the transfer. */
   paidAt?: string;
   proofUrl?: string;
+  /** Links to the Reimbursement batch that settled it. */
+  reimbursementId?: string;
+}
+
+/** A payee's authorisation signature for a reimbursement. */
+export interface Signature {
+  by: string;
+  at: string;
+  /** Data URL of the signed pad. */
+  image?: string;
+}
+
+/** A settled batch: money moved outside the app; this is the record + proof. */
+export interface Reimbursement {
+  id: string;
+  /** Who was reimbursed. */
+  to: string;
+  toMemberId?: string;
+  amount: number;
+  currency?: string;
+  expenseIds: string[];
+  /** Screenshot of the actual transfer (GCash/bank). */
+  proofUrl?: string;
+  /** The payee's signed authorisation. */
+  signature?: Signature;
+  note?: string;
+  createdAt: string;
 }
 
 /** Anyone who should know a trip — dynamic; relation is free-form. */

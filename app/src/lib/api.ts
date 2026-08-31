@@ -22,6 +22,7 @@ import type {
   PlaceReview,
   Proposal,
   Share,
+  Signature,
   User,
 } from './types';
 
@@ -189,6 +190,13 @@ export const api = {
     patchJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/expenses/${encodeURIComponent(expenseId)}`, patch),
   removeExpense: (itineraryId: string, expenseId: string): Promise<Itinerary> =>
     delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/expenses/${encodeURIComponent(expenseId)}`),
+  // Settle a batch with proof + signature (records the reimbursement, marks paid).
+  reimburse: (
+    itineraryId: string,
+    body: { to: string; toMemberId?: string; expenseIds: string[]; proofUrl?: string; signature?: Signature; note?: string },
+  ): Promise<Itinerary> => postJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/reimburse`, body),
+  voidReimbursement: (itineraryId: string, reimbursementId: string): Promise<Itinerary> =>
+    delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/reimbursements/${encodeURIComponent(reimbursementId)}`),
 
   // ---- members ("who should know this trip?") + share links ----
   addMember: (itineraryId: string, member: Member): Promise<Itinerary> =>

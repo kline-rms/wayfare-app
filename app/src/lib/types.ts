@@ -121,6 +121,7 @@ export interface Itinerary {
   diningGuide?: DiningEntry[];
   groceryPlan?: GroceryRun[];
   expenses?: Expense[];
+  reimbursements?: Reimbursement[];
   members?: Member[];
   shares?: Share[];
   ownerId?: string;
@@ -149,6 +150,26 @@ export interface Expense {
   status: "unpaid" | "paid";
   paidAt?: string;
   proofUrl?: string;
+  reimbursementId?: string;
+}
+
+export interface Signature {
+  by: string;
+  at: string;
+  image?: string;
+}
+
+export interface Reimbursement {
+  id: string;
+  to: string;
+  toMemberId?: string;
+  amount: number;
+  currency?: string;
+  expenseIds: string[];
+  proofUrl?: string;
+  signature?: Signature;
+  note?: string;
+  createdAt: string;
 }
 
 export interface Member {

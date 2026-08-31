@@ -17,9 +17,11 @@ import type {
   GenerateRequest,
   Itinerary,
   ItinerarySummary,
+  Member,
   PlaceCard,
   PlaceReview,
   Proposal,
+  Share,
   User,
 } from './types';
 
@@ -187,6 +189,20 @@ export const api = {
     patchJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/expenses/${encodeURIComponent(expenseId)}`, patch),
   removeExpense: (itineraryId: string, expenseId: string): Promise<Itinerary> =>
     delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/expenses/${encodeURIComponent(expenseId)}`),
+
+  // ---- members ("who should know this trip?") + share links ----
+  addMember: (itineraryId: string, member: Member): Promise<Itinerary> =>
+    postJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/members`, { member }),
+  updateMember: (itineraryId: string, memberId: string, patch: Partial<Member>): Promise<Itinerary> =>
+    patchJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/members/${encodeURIComponent(memberId)}`, patch),
+  removeMember: (itineraryId: string, memberId: string): Promise<Itinerary> =>
+    delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/members/${encodeURIComponent(memberId)}`),
+  createShare: (itineraryId: string, opts: { role?: Share['role']; memberId?: string; label?: string }): Promise<{ share: Share; itinerary: Itinerary }> =>
+    postJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/shares`, opts),
+  removeShare: (itineraryId: string, token: string): Promise<Itinerary> =>
+    delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/shares/${encodeURIComponent(token)}`),
+  getShared: (token: string): Promise<{ itinerary: Itinerary; role: Share['role'] }> =>
+    getJson(`/api/shared/${encodeURIComponent(token)}`),
 
   // ---- places (Google enrichment, cached; see docs/places-caching-design.md) ----
   // Cached facts + live photo URLs for one place.

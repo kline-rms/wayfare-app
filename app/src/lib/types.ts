@@ -121,6 +121,8 @@ export interface Itinerary {
   diningGuide?: DiningEntry[];
   groceryPlan?: GroceryRun[];
   expenses?: Expense[];
+  members?: Member[];
+  shares?: Share[];
   ownerId?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -147,6 +149,23 @@ export interface Expense {
   status: "unpaid" | "paid";
   paidAt?: string;
   proofUrl?: string;
+}
+
+export interface Member {
+  id: string;
+  name: string;
+  relation?: string;
+  role: "owner" | "editor" | "viewer";
+  email?: string;
+  color?: string;
+}
+
+export interface Share {
+  token: string;
+  memberId?: string;
+  role: "editor" | "viewer";
+  label?: string;
+  createdAt?: string;
 }
 
 export interface User {

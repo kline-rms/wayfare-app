@@ -226,8 +226,19 @@ export default function Reimbursements() {
         ) : null}
       </View>
 
-      <View style={{ marginTop: Space.l }}>
-        <PillButton label="Add expense" icon="plus" knob onPress={() => go({ pathname: '/add-expense', params: { it: data.id, currency: cur } })} />
+      <View style={{ marginTop: Space.l, gap: Space.s }}>
+        <PillButton
+          label="Add expense"
+          icon="plus"
+          knob
+          onPress={() =>
+            go({
+              pathname: '/add-expense',
+              params: { it: data.id, currency: cur, payers: (data.members ?? []).map((m) => m.name).join('|') },
+            })
+          }
+        />
+        <PillButton label="Companions & sharing" icon="users" variant="secondary" onPress={() => go({ pathname: '/companions', params: { it: data.id } })} />
       </View>
 
       <Txt variant="small" faint style={{ textAlign: 'center', marginTop: Space.m, lineHeight: 16 }}>

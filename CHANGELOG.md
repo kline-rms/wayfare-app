@@ -3,6 +3,19 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.5.0] — 2026-08-31
+
+### Added
+- **Sharing & companions (dynamic).** A **"Who else should know this trip?"** roster —
+  add anyone with any relation and role (viewer / editor), then hand them a **share
+  link**. Links resolve to a **read-only shared trip view** (public; the token embeds
+  the itinerary id so it resolves without a scan). Nothing is hardcoded to
+  "sister-in-law" — expense **payers** now come from this roster too.
+- New: `Member` / `Share` types + `Itinerary.members` / `shares`; member CRUD +
+  share create/delete + public `GET /api/shared/:token`; `companions.tsx` +
+  `shared/[token].tsx`; `api.addMember`/`updateMember`/`removeMember`/`createShare`/
+  `removeShare`/`getShared`; entries from the trip header + Reimbursements.
+
 ## [2.4.0] — 2026-08-31
 
 ### Added
@@ -107,6 +120,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.5.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.5.0
 [2.4.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.4.0
 [2.3.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.3.0
 [2.2.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.2.0

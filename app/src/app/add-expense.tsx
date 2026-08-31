@@ -16,7 +16,7 @@ import { edits } from '@/lib/edits';
 import { back } from '@/lib/nav';
 import type { Expense, ExpenseItem } from '@/lib/types';
 
-const PAYERS = ['Sister-in-law', 'Nanny', 'Mom', 'Dad'];
+const DEFAULT_PAYERS = ['Me', 'Sister-in-law', 'Nanny', 'Friend'];
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
 // Shrink a photo so the OCR payload + stored thumbnail stay small.
@@ -40,13 +40,15 @@ function downscale(dataUrl: string, max = 720, quality = 0.6): Promise<string> {
 }
 
 export default function AddExpense() {
-  const { it, dayId, currency = 'PHP' } = useLocalSearchParams<{ it: string; dayId?: string; currency?: string }>();
+  const { it, dayId, currency = 'PHP', payers } = useLocalSearchParams<{ it: string; dayId?: string; currency?: string; payers?: string }>();
   const { c, cardShadow } = useWayfare();
+  // Payers come from the trip's Companions roster (dynamic), not a hardcoded list.
+  const payerList = payers ? payers.split('|').filter(Boolean) : DEFAULT_PAYERS;
   const [receipt, setReceipt] = useState<string | null>(null);
   const [parsing, setParsing] = useState(false);
   const [merchant, setMerchant] = useState('');
   const [date, setDate] = useState(todayISO());
-  const [payer, setPayer] = useState('Sister-in-law');
+  const [payer, setPayer] = useState(payerList[0] ?? 'Me');
   const [total, setTotal] = useState('');
   const [note, setNote] = useState('');
   const [items, setItems] = useState<ExpenseItem[]>([]);
@@ -161,7 +163,7 @@ export default function AddExpense() {
 
       <SectionLabel style={{ marginTop: Space.l }}>Who paid</SectionLabel>
       <View style={styles.chips}>
-        {PAYERS.map((p) => {
+        {payerList.map((p) => {
           const on = p === payer;
           return (
             <Pressable

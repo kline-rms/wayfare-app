@@ -195,6 +195,10 @@ export interface Itinerary {
   groceryPlan?: GroceryRun[];
   /** Expense ledger for reimbursements (receipts, per-payer, paid/unpaid). */
   expenses?: Expense[];
+  /** Everyone who should know this trip — a dynamic roster (any relation/role). */
+  members?: Member[];
+  /** Active share links (tokenised access to this trip). */
+  shares?: Share[];
   /** Owner id (for multi-user later; e.g. Firebase uid). Optional for now. */
   ownerId?: string;
   /** ISO timestamps. */
@@ -231,6 +235,29 @@ export interface Expense {
   /** When it was reimbursed, plus proof of the transfer. */
   paidAt?: string;
   proofUrl?: string;
+}
+
+/** Anyone who should know a trip — dynamic; relation is free-form. */
+export interface Member {
+  id: string;
+  name: string;
+  /** Free-form: "Sister-in-law", "Nanny", "Friend", "Grandma", … */
+  relation?: string;
+  role: "owner" | "editor" | "viewer";
+  email?: string;
+  /** Avatar tint. */
+  color?: string;
+}
+
+/** A tokenised share link granting access to a trip. */
+export interface Share {
+  /** Token of the form "<itineraryId>~<random>" so it resolves without a scan. */
+  token: string;
+  /** The member this link is for (optional — a general link has none). */
+  memberId?: string;
+  role: "editor" | "viewer";
+  label?: string;
+  createdAt?: string;
 }
 
 /** Public user shape returned by the auth endpoints (never includes secrets). */

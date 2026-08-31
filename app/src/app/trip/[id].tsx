@@ -87,6 +87,11 @@ export default function TripOverview() {
           {chosen.name} · {range}
         </Txt>
       </View>
+      <Pressable onPress={() => go({ pathname: '/companions', params: { it: data.id } })}>
+        <MapIconButton>
+          <Icon name="users" size={20} color="#fff" />
+        </MapIconButton>
+      </Pressable>
       <Pressable onPress={() => go('/calendar')}>
         <MapIconButton>
           <Icon name="calClock" size={20} color="#fff" />

@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -387,7 +387,37 @@
   <div class="files"><h3>Touched</h3><code>server/routes/expenses.ts (reimburse/void)</code><code>components/wayfare/signature-pad.tsx</code><code>settle.tsx</code><code>(tabs)/alerts.tsx</code><code>repo/firestoreRepo.ts</code><code>Reimbursement/Signature types</code></div>
 </div></section>
 
+<!-- ============ v2.7.0 ============ -->
+<section id="v2-7-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.7.0</span><h2>Google Places cost reference</h2></div>
+  <div class="req"><b>Requested.</b> Before turning on Google Places, know exactly what it costs — per place, per itinerary, what re-charges on revisit, what we pull vs. the full menu — as a local HTML we can open from Settings.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b><code>public/places-cost.html</code></b> — an interactive calculator + the SKU menu, built on the real cost model in <code>server/places/google.ts</code> (details $0.020–0.025, photo $0.007, reviews $0.025) and our current field mask.</li>
+      <li><b>Settings entry</b> — Profile → "Google Places cost" opens it via <code>Linking.openURL(origin + '/places-cost.html')</code>.</li>
+      <li>No API change — this is a planning reference; the crawl itself stays off until the toggle is flipped.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Cost visibility before spend: the page makes the three buckets explicit — <b>facts</b> (cached once, $0 on revisit), <b>photos</b> (lazy, ~1h reuse), <b>reviews</b> (never stored, on-demand). It reads the same numbers the server bills at, so the estimate can't drift from the code <span class="conn">connects → server/places/google.ts</span>.</p>
+      <p>Kept as a local file opened from Settings (not an app screen or a hosted artifact) so it's a quick internal reference we can update as Google's pricing moves.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 900 110" role="img" aria-label="Cost reference data flow">
+    <defs><marker id="i" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11.5">
+      <rect x="20" y="30" width="180" height="50" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="110" y="53" text-anchor="middle" fill="#fff">Profile → row</text><text x="110" y="70" text-anchor="middle" fill="var(--sub)" font-size="10">Linking.openURL</text>
+      <rect x="250" y="30" width="220" height="50" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="360" y="53" text-anchor="middle" fill="#fff">public/places-cost.html</text><text x="360" y="70" text-anchor="middle" fill="var(--sub)" font-size="10">interactive calculator</text>
+      <rect x="520" y="30" width="220" height="50" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="630" y="53" text-anchor="middle" fill="var(--ink)">google.ts cost model</text><text x="630" y="70" text-anchor="middle" fill="var(--sub)" font-size="10">$0.020 / $0.007 / $0.025</text>
+    </g>
+    <g fill="none" stroke-width="1.6" stroke="var(--grape-hi)" color="var(--grape-hi)">
+      <path d="M200 55 L246 55" marker-end="url(#i)"/>
+      <path d="M470 55 L516 55" stroke="var(--mint)" color="var(--mint)" marker-end="url(#i)"/>
+    </g>
+  </svg></div><figcaption>A Settings tap opens the reference, which mirrors the server's own billing rates so estimates track the code.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>app/public/places-cost.html</code><code>(tabs)/profile.tsx</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.6.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.7.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

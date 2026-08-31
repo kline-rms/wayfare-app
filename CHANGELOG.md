@@ -3,6 +3,16 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.7.0] — 2026-08-31
+
+### Added
+- **Google Places cost reference.** A local interactive HTML (`app/public/places-cost.html`)
+  — cost calculator + full SKU menu (what we pull vs. everything Google offers), the
+  three cost buckets (facts cached-once, photos lazy/~1h reuse, reviews on-demand and
+  never stored), and the recrawl rules. Built on the server's real cost model
+  (`google.ts`). Opens from **Profile → "Google Places cost"**. No crawl is turned on —
+  we're still at $0 spent; this is the pre-spend reference.
+
 ## [2.6.0] — 2026-08-31
 
 ### Added
@@ -139,6 +149,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.7.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.7.0
 [2.6.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.6.0
 [2.5.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.5.0
 [2.4.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.4.0

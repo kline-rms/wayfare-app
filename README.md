@@ -154,7 +154,8 @@ monorepo config).
 | `release/v2.3.0` · tag `v2.3.0` | + Add-a-stop (non-destructive day editing) |
 | `release/v2.4.0` · tag `v2.4.0` | + Reimbursement ledger + receipt OCR |
 | `release/v2.5.0` · tag `v2.5.0` | + Dynamic sharing & companions |
-| `release/v2.6.0` · tag `v2.6.0` | + Reimbursement proof + e-signature + notifications (current) |
+| `release/v2.6.0` · tag `v2.6.0` | + Reimbursement proof + e-signature + notifications |
+| `release/v2.7.0` · tag `v2.7.0` | + Google Places cost reference (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { Icon } from '@/components/wayfare/icon';
@@ -23,6 +23,12 @@ export default function ProfileScreen() {
   const signOut = () => {
     authStore.clear();
     replaceTo('/(auth)/login');
+  };
+
+  // Opens the local Google Places cost reference (served from app/public/).
+  const openCostRef = () => {
+    const base = typeof window !== 'undefined' && window.location ? window.location.origin : '';
+    Linking.openURL(`${base}/places-cost.html`);
   };
 
   const header = (
@@ -66,6 +72,7 @@ export default function ProfileScreen() {
         <ListRow icon="calClock" title="Availability & work blocks" subtitle="Mon–Fri · 7 AM – 4 PM" trailing={chev} onPress={() => go('/availability')} />
         <ListRow icon="bell" title="Reminders" subtitle="1 hour and 15 min before" trailing={chev} onPress={() => go('/reminders')} />
         <ListRow icon="peso" title="Reimbursements" subtitle="Receipts &amp; who owes what" trailing={chev} onPress={() => go('/reimbursements')} />
+        <ListRow icon="wallet" title="Google Places cost" subtitle="What place data costs us · $0 so far" trailing={chev} onPress={openCostRef} />
         <ListRow icon="moon" title="Stay up late" subtitle="Allow plans past 11 PM" trailing={<Toggle value={stayLate} onChange={setStayLate} />} last />
       </Card>
 

@@ -15,7 +15,7 @@ import { hasSplitRoles, isDestination } from '@/lib/activity';
 import { api } from '@/lib/api';
 import { money } from '@/lib/format';
 import { formatEta, haversineKm } from '@/lib/geo';
-import { back } from '@/lib/nav';
+import { back, go } from '@/lib/nav';
 import { openMaps } from '@/lib/maps';
 import type { Activity, Day, Itinerary } from '@/lib/types';
 
@@ -101,8 +101,13 @@ export default function ActivityDetail() {
               </Txt>
             </View>
           ) : null}
-          <View style={{ marginTop: Space.m }}>
-            <PillButton label="Open in Google Maps" icon="nav" onPress={openInMaps} />
+          <View style={{ marginTop: Space.m, gap: Space.s }}>
+            <PillButton
+              label="Navigate here"
+              icon="nav"
+              onPress={() => go({ pathname: '/navigate', params: { lat: String(a.lat), lng: String(a.lng), label: a.where } })}
+            />
+            <PillButton label="Open in Google Maps" icon="share" variant="secondary" onPress={openInMaps} />
           </View>
         </>
       ) : (

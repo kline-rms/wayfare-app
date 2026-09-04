@@ -13,7 +13,7 @@ import { useAsync } from '@/hooks/use-async';
 import { api } from '@/lib/api';
 import { currentActivity, isMeal } from '@/lib/dining';
 import { img, photoForPlace } from '@/lib/images';
-import { back } from '@/lib/nav';
+import { back, go } from '@/lib/nav';
 import { openMaps } from '@/lib/maps';
 import { usePlaceCard, usePlaceReviews } from '@/lib/places';
 import type { Activity, Itinerary, Place } from '@/lib/types';
@@ -129,13 +129,15 @@ export default function PlaceDetail() {
             <Txt style={{ fontWeight: '700' }}>Free</Txt>
           </View>
         </View>
-        <Pressable onPress={() => openMaps(place.lat, place.lng, place.name)} style={[styles.info, { backgroundColor: c.card }, cardShadow]}>
+        <Pressable
+          onPress={() => go({ pathname: '/navigate', params: { lat: String(place.lat), lng: String(place.lng), label: place.name } })}
+          style={[styles.info, { backgroundColor: c.card }, cardShadow]}>
           <Icon name="nav" size={18} color={c.ink} />
           <View>
             <Txt variant="small" faint>
               Directions
             </Txt>
-            <Txt style={{ fontWeight: '700' }}>Open maps</Txt>
+            <Txt style={{ fontWeight: '700' }}>Navigate</Txt>
           </View>
         </Pressable>
       </View>

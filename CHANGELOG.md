@@ -3,6 +3,18 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.10.0] — 2026-09-05
+
+### Added
+- **In-app turn-by-turn navigation.** Pressing Navigate now routes inside the app
+  from your live GPS position to the destination on our own map — no bounce to
+  Google Maps. Real turn-by-turn steps + distance/ETA via OSRM (keyless, $0), a
+  next-maneuver card, a Drive/Walk toggle, and Recenter. The camera **defaults to
+  a flat top-down view**, with a one-tap **2D/3D** toggle (tilts into 3D buildings).
+  "Open in Google Maps" remains as a fallback. New: `directions()` in `lib/route.ts`,
+  `app/navigate.tsx`, a `pitch` camera effect on the web map, and a `style` prop on
+  `Icon`. Navigate on place, activity, and day screens now opens the in-app navigator.
+
 ## [2.9.0] — 2026-09-05
 
 ### Added
@@ -176,6 +188,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.10.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.10.0
 [2.9.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.9.0
 [2.8.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.8.0
 [2.7.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.7.0

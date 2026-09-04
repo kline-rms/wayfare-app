@@ -324,6 +324,15 @@ export function WayfareMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focus?.lng, focus?.lat, focus?.zoom]);
 
+  // Animate the camera tilt when `pitch` changes — this is what the nav screen's
+  // 2D (top-down) ↔ 3D toggle rides on. Kept separate from draw() so a tilt
+  // change doesn't re-fit or re-add layers.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.easeTo({ pitch, duration: 500 });
+  }, [pitch]);
+
   return (
     <View style={[{ height, width: '100%', borderRadius: 22, overflow: 'hidden', backgroundColor: NIGHT, position: 'relative' }, style]}>
       <View ref={containerRef} style={{ flex: 1 }} />

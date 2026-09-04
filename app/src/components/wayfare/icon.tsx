@@ -80,10 +80,12 @@ export const Icon = memo(function Icon({
   name,
   size = 22,
   color = '#191A1C',
+  style,
 }: {
   name: IconName;
   size?: number;
   color?: string;
+  style?: any;
 }) {
   const def = D[name];
   if (!def) return null;
@@ -91,7 +93,7 @@ export const Icon = memo(function Icon({
   const fill = def.fill ? color : 'none';
   const sw = def.sw ?? 2;
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={style}>
       <G
         stroke={stroke}
         strokeWidth={sw}

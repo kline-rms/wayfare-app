@@ -393,10 +393,17 @@ export default function DayScreen() {
         <View style={{ marginTop: Space.xl, gap: Space.m }}>
           <PillButton label="Navigate route" icon="nav" onPress={navigate} />
           <PillButton
-            label="Open in Maps app"
-            icon="share"
+            label="Navigate here"
+            icon="nav"
             variant="secondary"
-            onPress={() => (day.location ? openMaps(day.location.lat, day.location.lng, day.location.mapAnchor) : go('/map'))}
+            onPress={() =>
+              day.location
+                ? go({
+                    pathname: '/navigate',
+                    params: { lat: String(day.location.lat), lng: String(day.location.lng), label: day.location.mapAnchor ?? day.destination },
+                  })
+                : go('/map')
+            }
           />
           {day.activities?.length ? (
             <PillButton label="Remind me for this day" icon="calClock" variant="secondary" onPress={remindForDay} />

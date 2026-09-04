@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -491,7 +491,43 @@
   <div class="files"><h3>Touched</h3><code>itineraries.ts (finalize-places)</code><code>lib/places.ts</code><code>place-photo.tsx</code><code>place/[name].tsx</code><code>trip/[id].tsx</code><code>day/[id].tsx</code><code>icon.tsx (phone)</code><code>api.finalizePlaces</code></div>
 </div></section>
 
+<!-- ============ v2.10.0 ============ -->
+<section id="v2-10-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.10.0</span><h2>In-app turn-by-turn navigation</h2></div>
+  <div class="req"><b>Requested.</b> When you press Navigate, route <b>inside the app</b> from your live GPS position to the destination — don't bounce out to Google Maps. Default to a flat top-down view, with an option to tilt into 3D.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Directions engine</b> — <code>route.ts</code> <code>directions(from,to,profile)</code>: OSRM real geometry + <b>turn-by-turn steps</b> (readable maneuvers) + distance/ETA; straight-line fallback when the profile/network is unavailable. Keyless, $0.</li>
+      <li><b>Navigator screen</b> — <code>app/navigate.tsx</code>: live GPS origin (<code>useLocation</code>), route line + you-dot + destination pin, next-maneuver card, full steps list, Drive/Walk toggle, Recenter, and "Open in Google Maps" fallback.</li>
+      <li><b>2D/3D toggle</b> — new <code>pitch</code> effect in <code>wayfare-map.web.tsx</code> eases the camera tilt; <b>top-down (pitch 0) is the default</b>, 3D is pitch 55.</li>
+      <li><b>Entry points rewired</b> — Navigate on place detail, activity detail, and the day screen now open the in-app navigator; Google Maps stays as a secondary tap. Added a <code>style</code> prop to <code>Icon</code> for rotated maneuver arrows.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Reuses what already worked: the same <b>OSRM</b> service behind the map's route lines <span class="conn">connects → lib/route.ts</span> and the same <b>MapLibre</b> map <span class="conn">connects → wayfare-map.web.tsx</span> — the navigator is composition, not a new stack, so it inherits the 3D buildings and keyless $0 routing.</p>
+      <p>Origin is <b>frozen at route time</b> (Recenter re-reads GPS) so a position tick doesn't churn the route or yank the camera. Top-down default matches how people read a route; 3D is one tap away for orientation. Verified live: BGC→Manila 12.1&nbsp;km / 16&nbsp;min, 13 real steps.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 900 132" role="img" aria-label="In-app navigation data flow">
+    <defs><marker id="n" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="46" width="150" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="91" y="66" text-anchor="middle" fill="#fff">useLocation (GPS)</text><text x="91" y="82" text-anchor="middle" fill="var(--sub)" font-size="9.5">origin (frozen)</text>
+      <rect x="206" y="46" width="150" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="281" y="66" text-anchor="middle" fill="#fff">directions()</text><text x="281" y="82" text-anchor="middle" fill="var(--sub)" font-size="9.5">OSRM · steps · $0</text>
+      <rect x="410" y="20" width="200" height="40" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="510" y="44" text-anchor="middle" fill="var(--ink)" font-size="10.5">Map: route + you + pin</text>
+      <rect x="410" y="72" width="200" height="40" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="510" y="96" text-anchor="middle" fill="var(--ink)" font-size="10.5">Steps sheet + next card</text>
+      <rect x="660" y="20" width="220" height="40" rx="10" fill="var(--night2)" stroke="var(--marigold)"/><text x="770" y="44" text-anchor="middle" fill="var(--ink)" font-size="10">2D top-down (default) / 3D</text>
+      <rect x="660" y="72" width="220" height="40" rx="10" fill="var(--night2)" stroke="var(--line)"/><text x="770" y="96" text-anchor="middle" fill="var(--sub)" font-size="10">Open in Google Maps (fallback)</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M166 69 L211 69" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#n)"/>
+      <path d="M356 62 L406 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#n)"/>
+      <path d="M356 76 L406 92" stroke="var(--sky)" color="var(--sky)" marker-end="url(#n)"/>
+      <path d="M610 40 L656 40" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#n)"/>
+    </g>
+  </svg></div><figcaption>GPS → OSRM directions → map + steps; camera defaults to 2D top-down, 3D on tap, Google Maps as fallback.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>lib/route.ts (directions)</code><code>app/navigate.tsx</code><code>wayfare-map.web.tsx (pitch)</code><code>icon.tsx (style + phone)</code><code>place/[name].tsx</code><code>activity/[id].tsx</code><code>day/[id].tsx</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.9.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.10.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

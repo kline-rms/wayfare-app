@@ -3,6 +3,19 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.15.0] — 2026-09-05
+
+### Added
+- **Row-level spreadsheet importer.** Importing a CSV/XLSX now rebuilds the trip
+  from its *actual* rows — days, times, places, coordinates, meal suggestions,
+  mom/dad status, cost — instead of regenerating an AI plan from the destination.
+  Parses both formats (SheetJS, lazy-loaded), groups by date, pulls lat/lng from
+  the Maps link, auto-detects the home base + party, and previews the parse before
+  saving. Saving runs the normal finalize crawl; text-only links are located by
+  the activity resolver. New: `lib/import-parse.ts`, `lib/import-build.ts`; the
+  import screen now previews and saves the real trip. Verified: the 130-row family
+  sheet → 10 days / 130 activities / 121 located, at $0.
+
 ## [2.14.1] — 2026-09-05
 
 ### Fixed
@@ -257,6 +270,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.15.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.15.0
 [2.14.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.1
 [2.14.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.0
 [2.13.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.13.0

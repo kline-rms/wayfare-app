@@ -1,5 +1,6 @@
-// Import (web) — pick a CSV, preview the detected columns + row count, then hand
-// the trip to the generator. (Full server-side row import is a later endpoint.)
+// Import (web) — pick a CSV/XLSX exported in our column layout and rebuild the
+// itinerary from its actual rows (days, times, places, coordinates). Saving it
+// runs the normal finalize crawl, so places get Place IDs + photos.
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -9,20 +10,17 @@ import { useWayfare } from '@/components/wayfare/theme';
 import { Card, Chip, Field, PillButton, SectionLabel, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
 import { api } from '@/lib/api';
+import { shortRange } from '@/lib/format';
+import { buildItineraryFromRows } from '@/lib/import-build';
+import { parseSpreadsheet } from '@/lib/import-parse';
 import { back, replaceTo } from '@/lib/nav';
-import { wizard } from '@/lib/wizard';
-import type { GenerateRequest } from '@/lib/types';
-
-interface Parsed {
-  name: string;
-  rows: number;
-  headers: string[];
-}
+import type { Itinerary } from '@/lib/types';
 
 export default function ImportScreen() {
   const { c } = useWayfare();
-  const [parsed, setParsed] = useState<Parsed | null>(null);
-  const [dest, setDest] = useState('');
+  const [built, setBuilt] = useState<Itinerary | null>(null);
+  const [fileName, setFileName] = useState('');
+  const [title, setTitle] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,32 +31,48 @@ export default function ImportScreen() {
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
+      setError(null);
       try {
-        const text = await file.text();
-        const lines = text.split(/\r?\n/).filter((l) => l.trim());
-        const headers = (lines[0] ?? '').split(',').map((s) => s.trim()).filter(Boolean);
-        setParsed({ name: file.name, rows: Math.max(0, lines.length - 1), headers });
-      } catch {
-        setError('Could not read that file — a .csv works best.');
+        const rows = await parseSpreadsheet(await file.arrayBuffer());
+        const guess = file.name.replace(/\.(xlsx?|csv)$/i, '').replace(/[_-]+/g, ' ').trim().slice(0, 44);
+        const it = buildItineraryFromRows(rows, { title: guess });
+        setFileName(file.name);
+        setBuilt(it);
+        setTitle(it.title);
+      } catch (e) {
+        setBuilt(null);
+        setError((e as Error).message || 'Could not read that file — try a .csv or .xlsx export.');
       }
     };
     input.click();
   };
 
-  const generate = async () => {
+  const importTrip = async () => {
+    if (!built) return;
     setBusy(true);
     setError(null);
+    const name = title.trim() || built.title;
+    const toSave: Itinerary = {
+      ...built,
+      title: name,
+      proposals: built.proposals.map((p) => ({ ...p, name })),
+    };
     try {
-      wizard.reset();
-      wizard.patch({ origin: 'Imported plan', destination: dest.trim() || 'My trip' });
-      const res = await api.generate(wizard.get() as GenerateRequest);
-      wizard.setResult(res);
-      replaceTo('/create/proposals');
+      const saved = await api.saveItinerary(toSave);
+      replaceTo({ pathname: '/trip/[id]', params: { id: saved.id } });
     } catch (e) {
-      setError((e as Error).message);
+      const msg = (e as Error).message;
+      // Re-importing the same file → same id → open the existing trip.
+      if (/already exists/i.test(msg)) {
+        replaceTo({ pathname: '/trip/[id]', params: { id: built.id } });
+        return;
+      }
+      setError(msg);
       setBusy(false);
     }
   };
+
+  const stops = built ? built.proposals[0].days.reduce((s, d) => s + (d.activities?.length ?? 0), 0) : 0;
 
   const header = (
     <Pressable onPress={back}>
@@ -69,64 +83,77 @@ export default function ImportScreen() {
   );
   return (
     <MapFirst header={header} sheetTop={0.2}>
-        <Txt variant="h1">
-          Import{'\n'}your plan
-        </Txt>
-        <Txt variant="sec" muted style={{ marginTop: 6 }}>
-          Bring a CSV of places and times — we&apos;ll map the columns and route it.
-        </Txt>
+      <Txt variant="h1">
+        Import{'\n'}your plan
+      </Txt>
+      <Txt variant="sec" muted style={{ marginTop: 6 }}>
+        Bring a CSV/XLSX with Date, Time, Activity, Where and a Maps link — we rebuild the exact trip.
+      </Txt>
 
-        {!parsed ? (
-          <Pressable onPress={pick} style={styles.drop}>
-            <Icon name="upload" size={26} color={c.a3} />
-            <Txt style={{ fontWeight: '800', marginTop: 8 }}>Drop your file here</Txt>
-            <Txt variant="small" muted style={{ marginTop: 2 }}>
-              .csv · .xlsx · tap to browse
-            </Txt>
-          </Pressable>
-        ) : (
-          <View style={{ marginTop: Space.l }}>
-            <PillButton label="Choose a different file" icon="upload" variant="secondary" onPress={pick} />
-          </View>
-        )}
-
-        {parsed ? (
-          <View style={{ marginTop: Space.l }}>
-            <Card style={{ gap: Space.s }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: Space.s }}>
-                <Txt style={{ fontWeight: '800', flex: 1 }} numberOfLines={1}>
-                  {parsed.name}
-                </Txt>
-                <Chip label={`${parsed.rows} rows`} color={c.a2} filled small />
-              </View>
-              <SectionLabel>Detected columns</SectionLabel>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-                {parsed.headers.length ? (
-                  parsed.headers.map((h) => <Chip key={h} label={h} small />)
-                ) : (
-                  <Txt variant="small" muted>No header row found.</Txt>
-                )}
-              </View>
-            </Card>
-
-            <View style={{ marginTop: Space.l }}>
-              <SectionLabel>Where is this trip?</SectionLabel>
-              <Field icon="pin" placeholder="e.g. Manila & Makati" value={dest} onChangeText={setDest} />
-            </View>
-          </View>
-        ) : null}
-
-        {error ? (
-          <Txt variant="sec" style={{ color: c.danger, marginTop: Space.l }}>
-            {error}
+      {!built ? (
+        <Pressable onPress={pick} style={styles.drop}>
+          <Icon name="upload" size={26} color={c.a3} />
+          <Txt style={{ fontWeight: '800', marginTop: 8 }}>Drop your file here</Txt>
+          <Txt variant="small" muted style={{ marginTop: 2 }}>
+            .csv · .xlsx · tap to browse
           </Txt>
-        ) : null}
+        </Pressable>
+      ) : (
+        <View style={{ marginTop: Space.l }}>
+          <PillButton label="Choose a different file" icon="upload" variant="secondary" onPress={pick} />
+        </View>
+      )}
 
-        {parsed ? (
-          <View style={{ marginTop: Space.xl }}>
-            <PillButton label={busy ? 'Building your plans…' : 'Import & generate'} icon="arrow" knob onPress={busy ? undefined : generate} />
+      {built ? (
+        <View style={{ marginTop: Space.l }}>
+          <Card style={{ gap: Space.s }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: Space.s }}>
+              <Txt style={{ fontWeight: '800', flex: 1 }} numberOfLines={1}>
+                {fileName}
+              </Txt>
+              <Chip label={`${built.proposals[0].days.length} days`} color={c.a3} filled small />
+              <Chip label={`${stops} stops`} color={c.a2} filled small />
+            </View>
+            <Txt variant="small" muted>
+              {shortRange(built.dateRange.start, built.dateRange.end)} · home base {built.homeBase || '—'} · {built.places.length} places detected
+            </Txt>
+          </Card>
+
+          <View style={{ marginTop: Space.l }}>
+            <SectionLabel>Trip name</SectionLabel>
+            <Field icon="edit" placeholder="Name this trip" value={title} onChangeText={setTitle} />
           </View>
-        ) : null}
+
+          {/* quick peek at the first day so you can trust the parse */}
+          <View style={{ marginTop: Space.l }}>
+            <SectionLabel>{`Day 1 · ${built.proposals[0].days[0]?.dateLabel ?? ''}`}</SectionLabel>
+            <Card style={{ gap: Space.s }}>
+              {(built.proposals[0].days[0]?.activities ?? []).slice(0, 4).map((a) => (
+                <View key={a.id} style={{ flexDirection: 'row', gap: Space.m }}>
+                  <Txt variant="mono" faint style={{ width: 96 }} numberOfLines={1}>
+                    {a.time}
+                  </Txt>
+                  <Txt variant="small" style={{ flex: 1 }} numberOfLines={1}>
+                    {a.activity} · {a.where}
+                  </Txt>
+                </View>
+              ))}
+            </Card>
+          </View>
+        </View>
+      ) : null}
+
+      {error ? (
+        <Txt variant="sec" style={{ color: c.danger, marginTop: Space.l }}>
+          {error}
+        </Txt>
+      ) : null}
+
+      {built ? (
+        <View style={{ marginTop: Space.xl }}>
+          <PillButton label={busy ? 'Importing…' : 'Import this trip'} icon="arrow" knob onPress={busy ? undefined : importTrip} />
+        </View>
+      ) : null}
     </MapFirst>
   );
 }

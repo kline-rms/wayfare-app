@@ -3,6 +3,24 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.13.0] — 2026-09-05
+
+### Added
+- **Real place photos across the itineraries.** Trip day cards now show a
+  **collage** of that day's destination photos (1–4 tiles) so a multi-stop day
+  looks like several places; the accommodation / "where we are" is excluded. Each
+  **day-timeline block** now carries the place's real photo on its time column
+  (destinations only). New `PhotoCollage` component.
+
+### Changed
+- **Navigator 2D default is now genuinely flat** — the 3D building extrusions hide
+  whenever the camera is level, so top-down reads as a clean 2D map; 3D brings
+  them back.
+
+### Ops
+- Turned the Places gate ON and backfilled the BGC–Manila trip (14/14 linked,
+  $0.748); the family trip was already cached (free). Photos now render.
+
 ## [2.12.0] — 2026-09-05
 
 ### Added
@@ -217,6 +235,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.13.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.13.0
 [2.12.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.12.0
 [2.11.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.11.0
 [2.10.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.10.0

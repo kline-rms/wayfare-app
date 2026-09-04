@@ -433,7 +433,12 @@ function ActivityBlock({ a, itId, dayId, onRemove }: { a: Activity; itId: string
         pressed && { opacity: 0.9 },
       ]}>
       <View style={styles.blockTime}>
-        <Txt variant="mono" faint style={{ textAlign: 'right' }}>
+        {/* Real photo of the place for this block (linked destinations only —
+            never home / "where we are", which carry no placeId). */}
+        {a.placeId ? (
+          <PlacePhoto placeId={a.placeId} fallback={img(photoForPlace(a.where))} style={styles.blockThumb} />
+        ) : null}
+        <Txt variant="mono" faint style={{ textAlign: a.placeId ? 'center' : 'right', marginTop: a.placeId ? 5 : 0 }}>
           {a.time}
         </Txt>
       </View>
@@ -552,7 +557,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   block: { flexDirection: 'row', gap: 10, borderRadius: 18, padding: 13, alignItems: 'flex-start' },
-  blockTime: { width: 58, paddingTop: 2 },
+  blockTime: { width: 60, paddingTop: 2, alignItems: 'center' },
+  blockThumb: { width: 56, height: 56, borderRadius: 14 },
   blockDot: { width: 26, height: 26, borderRadius: 9, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
   blockChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 7 },
   statusRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 6 },

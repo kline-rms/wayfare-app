@@ -255,6 +255,11 @@ export function WayfareMap({
         },
         insertBefore,
       );
+      // Respect the current camera: a flat (top-down) view keeps buildings hidden
+      // so it reads as a clean 2D map; a tilted view shows them.
+      if (dataRef.current.pitch <= 5) {
+        map.setLayoutProperty('buildings-3d', 'visibility', 'none');
+      }
 
       // Roads: brighten to a visible lavender so they read on the night map and
       // sit as part of the 3D scene (occluded by buildings in front of them).
@@ -360,6 +365,15 @@ export function WayfareMap({
     const map = mapRef.current;
     if (!map) return;
     map.easeTo({ pitch, duration: 500 });
+    // A flat top-down view should read as 2D — hide the 3D building extrusions
+    // when the camera isn't tilted, and bring them back when it is.
+    const setBuildingVis = () => {
+      if (map.getLayer && map.getLayer('buildings-3d')) {
+        map.setLayoutProperty('buildings-3d', 'visibility', pitch > 5 ? 'visible' : 'none');
+      }
+    };
+    if (map.isStyleLoaded && map.isStyleLoaded()) setBuildingVis();
+    else map.once('idle', setBuildingVis);
   }, [pitch]);
 
   // Spin the "you" puck's arrow to the live heading — no map redraw needed.

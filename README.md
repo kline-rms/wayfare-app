@@ -160,7 +160,8 @@ monorepo config).
 | `release/v2.9.0` · tag `v2.9.0` | + Real Places photos, cards & reviews |
 | `release/v2.10.0` · tag `v2.10.0` | + In-app turn-by-turn navigation |
 | `release/v2.11.0` · tag `v2.11.0` | + Real Walk routing, directional puck, cleaner Up Next |
-| `release/v2.12.0` · tag `v2.12.0` | + Chase camera, triangle arrow, live re-routing (current) |
+| `release/v2.12.0` · tag `v2.12.0` | + Chase camera, triangle arrow, live re-routing |
+| `release/v2.13.0` · tag `v2.13.0` | + Photo collages, day-timeline images, flat 2D nav (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

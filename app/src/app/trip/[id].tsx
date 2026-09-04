@@ -6,6 +6,7 @@ import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, View } f
 import { Icon } from '@/components/wayfare/icon';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
 import { PlacePhoto } from '@/components/wayfare/place-photo';
+import { PhotoCollage, type CollageItem } from '@/components/wayfare/photo-collage';
 import { useWayfare } from '@/components/wayfare/theme';
 import { Card, StateView, StatusPill, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
@@ -16,7 +17,7 @@ import { img, photoForPlace } from '@/lib/images';
 import { back, go } from '@/lib/nav';
 import { walkRoute } from '@/lib/route';
 import type { LineGeometry, MapStop } from '@/components/wayfare/wayfare-map.shared';
-import type { Day, Itinerary } from '@/lib/types';
+import type { Day, Itinerary, Place } from '@/lib/types';
 
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 const PIN = ['#FFA828', '#7C5CF6', '#2FD98A'];
@@ -33,13 +34,24 @@ function dayFocus(it: Itinerary, day: Day): Focus {
   return pl && Number.isFinite(pl.lat) ? { lng: pl.lng, lat: pl.lat, zoom: 15.5 } : null;
 }
 
-// The place whose real photo best represents a day's card (its anchor area).
-function dayPlaceId(it: Itinerary, day: Day): string | undefined {
-  const anchor = `${day.location?.mapAnchor ?? ''} ${day.destination} ${day.theme}`.toLowerCase();
-  const pl = it.places.find(
-    (p) => anchor.includes(p.area.split(',')[0].trim().toLowerCase()) || anchor.includes(p.name.toLowerCase().split(' ')[0]),
-  );
-  return pl?.placeId;
+// The destination places a day covers — used to collage the day's card so it
+// reads as "several places", not one hero. Excludes nothing but the itinerary's
+// own catalog (home base isn't a place), matching the day-screen's logic.
+function dayPlaces(it: Itinerary, day: Day): Place[] {
+  const hay = `${day.destination} ${day.detailedPlan ?? ''} ${day.location?.mapAnchor ?? ''} ${day.theme}`.toLowerCase();
+  // Never collage "where we are" — drop the accommodation / home base.
+  const homeFirst = (it.homeBase ?? '').split(',')[0].trim().toLowerCase();
+  const notHome = (pl: Place) => !homeFirst || !pl.name.toLowerCase().includes(homeFirst);
+  const matches = it.places.filter((pl) => {
+    if (!notHome(pl)) return false;
+    const key = pl.area.split(',')[0].trim().toLowerCase();
+    return hay.includes(key) || hay.includes(pl.name.toLowerCase().split(' ')[0]);
+  });
+  const pool = matches.length ? matches : it.places.filter(notHome);
+  return pool.slice(0, 4);
+}
+function dayCollage(it: Itinerary, day: Day): CollageItem[] {
+  return dayPlaces(it, day).map((p) => ({ placeId: p.placeId, fallback: img(photoForPlace(p.name)) }));
 }
 
 export default function TripOverview() {
@@ -210,7 +222,7 @@ export default function TripOverview() {
                   key={d.id}
                   onPress={() => selectDay(i, d)}
                   style={[styles.slideCard, { backgroundColor: c.card, borderColor: on ? c.primary : 'transparent' }, cardShadow]}>
-                  <PlacePhoto placeId={dayPlaceId(data, d)} fallback={img(photoForPlace(`${d.destination} ${d.theme}`))} style={styles.slideThumb} />
+                  <PhotoCollage items={dayCollage(data, d)} radius={12} style={styles.slideThumb} />
                   <Txt variant="small" faint style={{ marginTop: 8 }}>
                     DAY {i + 1}
                   </Txt>
@@ -240,7 +252,7 @@ export default function TripOverview() {
                 key={d.id}
                 onPress={() => go({ pathname: '/day/[id]', params: { id: d.id } })}
                 style={({ pressed }) => [styles.dayRow, { backgroundColor: c.card }, cardShadow, pressed && { opacity: 0.85 }]}>
-                <PlacePhoto placeId={dayPlaceId(data, d)} fallback={img(photoForPlace(`${d.destination} ${d.theme}`))} style={styles.dayThumb} />
+                <PhotoCollage items={dayCollage(data, d)} radius={16} style={styles.dayThumb} />
                 <View style={{ flex: 1 }}>
                   <Txt variant="small" faint>
                     DAY {i + 1} · {d.dateLabel.toUpperCase()}

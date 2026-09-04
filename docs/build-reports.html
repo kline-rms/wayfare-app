@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -601,7 +601,42 @@
   <div class="files"><h3>Touched</h3><code>navigate.tsx (chase + live route)</code><code>wayfare-map.web.tsx (arrow + focus bearing/offset)</code><code>wayfare-map.shared.ts</code><code>map-first.tsx</code><code>use-location.ts (movement heading)</code></div>
 </div></section>
 
+<!-- ============ v2.13.0 ============ -->
+<section id="v2-13-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.13.0</span><h2>Real photos everywhere: collages, day-timeline images, flat 2D nav</h2></div>
+  <div class="req"><b>Requested.</b> Actually show the real Google photos in the itineraries; when a card covers several places, <b>collage</b> them (and never photo "where we are"); put the place image on each <b>day-timeline</b> block; and make the navigator's default a genuine <b>flat top view</b>.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Why they were missing</b> — the gate was OFF (photos serve through the gated proxy) and only the family trip was linked. Fixed: gate ON + backfilled bgc-manila (14/14, $0.748); family was free from cache.</li>
+      <li><b>PhotoCollage</b> — a 1/2/3/4-tile mosaic of a day's destination photos on the trip's day cards, so a multi-stop day looks like several places. Excludes the home base ("where we are").</li>
+      <li><b>Day-timeline images</b> — each block's time column now carries the place's real photo (destinations only; home/rest blocks stay image-free).</li>
+      <li><b>Flat 2D default</b> — the 3D building extrusions now hide whenever the camera is flat, so the navigator's default top-down reads as a clean 2D map; tap 3D to bring them back.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Collage vs. single hero is an honesty fix: one photo implied one destination. The mosaic reuses <code>PlacePhoto</code> per tile <span class="conn">connects → components/place-photo.tsx</span> so each tile independently shows a real photo or its stock fallback, and the home base is filtered the same way <code>isDestination</code> filters it.</p>
+      <p>The 2D map looked 3D because extrusions render regardless of tilt; binding their visibility to pitch (hidden ≤5°) makes "2D" mean 2D without a second basemap. Every screen that wants 3D still passes a tilted pitch, so nothing else changes.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 880 128" role="img" aria-label="Places photos data flow">
+    <defs><marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="44" width="176" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="104" y="64" text-anchor="middle" fill="#fff">day → its places</text><text x="104" y="80" text-anchor="middle" fill="var(--sub)" font-size="9.5">drop home base</text>
+      <rect x="232" y="44" width="176" height="46" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="320" y="64" text-anchor="middle" fill="#fff">PlacePhoto ×N</text><text x="320" y="80" text-anchor="middle" fill="var(--sub)" font-size="9.5">real / stock fallback</text>
+      <rect x="452" y="16" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="552" y="41" text-anchor="middle" fill="var(--ink)" font-size="10.5">trip card = collage</text>
+      <rect x="452" y="72" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="552" y="97" text-anchor="middle" fill="var(--ink)" font-size="10.5">day block = photo</text>
+      <rect x="692" y="44" width="172" height="46" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="778" y="64" text-anchor="middle" fill="var(--ink)" font-size="10">gate ON · proxy</text><text x="778" y="80" text-anchor="middle" fill="var(--sub)" font-size="9.5">~$0.007/photo view</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M192 67 L228 67" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#r)"/>
+      <path d="M408 60 L448 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#r)"/>
+      <path d="M408 74 L448 92" stroke="var(--sky)" color="var(--sky)" marker-end="url(#r)"/>
+      <path d="M652 55 L688 62" stroke="var(--coral)" color="var(--coral)" stroke-dasharray="3 4" marker-end="url(#r)"/>
+    </g>
+  </svg></div><figcaption>Each card's destinations (home excluded) become collage/timeline photos, served real through the gated proxy.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>photo-collage.tsx (new)</code><code>trip/[id].tsx (day collage)</code><code>day/[id].tsx (block photos)</code><code>wayfare-map.web.tsx (2D hides buildings)</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.12.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.13.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

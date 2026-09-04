@@ -1,6 +1,6 @@
 // Confirm timeline — the edit hub. Reached after picking a proposal (its timeline
 // is already expanded). Review the day-by-day plan, jump to editors, then save.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/wayfare/icon';
@@ -19,9 +19,12 @@ export default function Confirm() {
   const chosen = wizard.getChosen();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Once we've saved and are heading to the trip, resetting the wizard clears
+  // `chosen` — don't let the "no plan → /create" guard hijack that navigation.
+  const leaving = useRef(false);
 
   useEffect(() => {
-    if (!chosen) replaceTo('/create');
+    if (!chosen && !leaving.current) replaceTo('/create');
   }, [chosen]);
   if (!chosen) return <View style={{ flex: 1, backgroundColor: c.bg }} />;
 
@@ -33,8 +36,9 @@ export default function Confirm() {
     setError(null);
     try {
       const saved = await api.saveItinerary(itinerary);
-      wizard.reset();
+      leaving.current = true; // suppress the /create guard before clearing state
       replaceTo({ pathname: '/trip/[id]', params: { id: saved.id, proposal: proposalId } });
+      wizard.reset();
     } catch (e) {
       setError((e as Error).message);
       setBusy(false);

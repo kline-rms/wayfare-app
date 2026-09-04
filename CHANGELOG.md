@@ -3,6 +3,14 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.14.1] — 2026-09-05
+
+### Fixed
+- **Saving a new trip now opens that trip** instead of bouncing to `/create`. The
+  confirm screen reset the wizard before navigating, which cleared `chosen` and
+  tripped its "no plan" guard, racing the navigation. It now navigates first and
+  guards the teardown.
+
 ## [2.14.0] — 2026-09-05
 
 ### Fixed
@@ -249,6 +257,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.14.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.1
 [2.14.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.0
 [2.13.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.13.0
 [2.12.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.12.0

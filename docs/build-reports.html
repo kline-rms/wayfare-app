@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -668,7 +668,23 @@
   <div class="files"><h3>Touched</h3><code>up-next.tsx (grape recolour)</code><code>server/places/finalize.ts (activity resolution + coords)</code></div>
 </div></section>
 
+<!-- ============ v2.14.1 ============ -->
+<section id="v2-14-1" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.14.1</span><h2>Fix: saving a new trip lands on the trip (not /create)</h2></div>
+  <div class="req"><b>Requested.</b> After saving a freshly generated/imported trip, the app briefly routed to <code>/create</code> instead of opening the new trip.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>What changed</h3><ul>
+      <li><code>confirm.tsx</code> called <code>wizard.reset()</code> <em>before</em> navigating. Reset clears <code>chosen</code>, which re-rendered the screen and fired its "no plan → /create" guard, racing (and beating) the trip navigation.</li>
+      <li>Now it sets a <code>leaving</code> flag, navigates to the trip, then resets — so the guard can't hijack the save.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why</h3>
+      <p>A guard that redirects on cleared state must distinguish "user never had a plan" from "we're intentionally tearing down after success". The flag makes that intent explicit; ordering navigation before teardown removes the race entirely.</p>
+    </div>
+  </div>
+  <div class="files"><h3>Touched</h3><code>app/create/confirm.tsx</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.14.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.14.1 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

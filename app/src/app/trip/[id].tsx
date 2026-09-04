@@ -1,15 +1,16 @@
 import { Image } from 'expo-image';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/wayfare/icon';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
+import { PlacePhoto } from '@/components/wayfare/place-photo';
 import { useWayfare } from '@/components/wayfare/theme';
 import { Card, StateView, StatusPill, Txt } from '@/components/wayfare/ui';
 import { Space } from '@/constants/wayfare';
 import { useAsync } from '@/hooks/use-async';
-import { api } from '@/lib/api';
+import { api, type AppSettings } from '@/lib/api';
 import { dayCount, money, shortRange } from '@/lib/format';
 import { img, photoForPlace } from '@/lib/images';
 import { back, go } from '@/lib/nav';
@@ -32,6 +33,15 @@ function dayFocus(it: Itinerary, day: Day): Focus {
   return pl && Number.isFinite(pl.lat) ? { lng: pl.lng, lat: pl.lat, zoom: 15.5 } : null;
 }
 
+// The place whose real photo best represents a day's card (its anchor area).
+function dayPlaceId(it: Itinerary, day: Day): string | undefined {
+  const anchor = `${day.location?.mapAnchor ?? ''} ${day.destination} ${day.theme}`.toLowerCase();
+  const pl = it.places.find(
+    (p) => anchor.includes(p.area.split(',')[0].trim().toLowerCase()) || anchor.includes(p.name.toLowerCase().split(' ')[0]),
+  );
+  return pl?.placeId;
+}
+
 export default function TripOverview() {
   const { id, proposal } = useLocalSearchParams<{ id: string; proposal?: string }>();
   const { c, cardShadow } = useWayfare();
@@ -40,6 +50,25 @@ export default function TripOverview() {
   const [dayView, setDayView] = useState<'list' | 'slider'>('list');
   const [active, setActive] = useState<number | null>(null);
   const [focus, setFocus] = useState<Focus>(null);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [linking, setLinking] = useState(false);
+
+  useEffect(() => {
+    api.getAppSettings().then(setSettings).catch(() => setSettings(null));
+  }, []);
+
+  // One-time backfill of real Google photos + facts (gated + tracked server-side).
+  const loadPhotos = async () => {
+    setLinking(true);
+    try {
+      await api.finalizePlaces(id);
+      const next = await api.getAppSettings().catch(() => null);
+      if (next) setSettings(next);
+      reload();
+    } finally {
+      setLinking(false);
+    }
+  };
 
   const mapStops = useMemo<MapStop[]>(() => {
     if (!data) return [];
@@ -143,6 +172,28 @@ export default function TripOverview() {
         <SummaryCell value={money(chosen.estTotal.high, data.currency)} label="est. total" c={c} />
       </View>
 
+      {/* One-time real-photo backfill. Only appears when Places is ON and some
+          places aren't linked yet; hides once every place has a Place ID. */}
+      {settings?.placesEnabled && data.places.some((p) => !p.placeId) ? (
+        <Pressable
+          onPress={loadPhotos}
+          disabled={linking}
+          style={[styles.loadBanner, { backgroundColor: c.card, borderColor: c.primary }, cardShadow]}>
+          {linking ? (
+            <ActivityIndicator color={c.primary} />
+          ) : (
+            <Icon name="image" size={20} color={c.primary} />
+          )}
+          <View style={{ flex: 1 }}>
+            <Txt style={{ fontWeight: '800' }}>{linking ? 'Fetching real photos & info…' : 'Show real photos & info'}</Txt>
+            <Txt variant="small" muted style={{ marginTop: 1 }}>
+              Google Places · one-time · ~${(data.places.filter((p) => !p.placeId).length * 0.057).toFixed(2)}, then cached
+            </Txt>
+          </View>
+          {!linking ? <Icon name="chevR" size={16} color={c.ter} /> : null}
+        </Pressable>
+      ) : null}
+
       {dayView === 'slider' ? (
         <>
           <Txt variant="small" faint style={{ marginTop: Space.s }}>
@@ -159,7 +210,7 @@ export default function TripOverview() {
                   key={d.id}
                   onPress={() => selectDay(i, d)}
                   style={[styles.slideCard, { backgroundColor: c.card, borderColor: on ? c.primary : 'transparent' }, cardShadow]}>
-                  <Image source={img(photoForPlace(`${d.destination} ${d.theme}`))} style={styles.slideThumb} contentFit="cover" />
+                  <PlacePhoto placeId={dayPlaceId(data, d)} fallback={img(photoForPlace(`${d.destination} ${d.theme}`))} style={styles.slideThumb} />
                   <Txt variant="small" faint style={{ marginTop: 8 }}>
                     DAY {i + 1}
                   </Txt>
@@ -189,7 +240,7 @@ export default function TripOverview() {
                 key={d.id}
                 onPress={() => go({ pathname: '/day/[id]', params: { id: d.id } })}
                 style={({ pressed }) => [styles.dayRow, { backgroundColor: c.card }, cardShadow, pressed && { opacity: 0.85 }]}>
-                <Image source={img(photoForPlace(`${d.destination} ${d.theme}`))} style={styles.dayThumb} contentFit="cover" />
+                <PlacePhoto placeId={dayPlaceId(data, d)} fallback={img(photoForPlace(`${d.destination} ${d.theme}`))} style={styles.dayThumb} />
                 <View style={{ flex: 1 }}>
                   <Txt variant="small" faint>
                     DAY {i + 1} · {d.dateLabel.toUpperCase()}
@@ -303,6 +354,15 @@ const styles = StyleSheet.create({
   },
   sumDiv: { width: 1, height: 26 },
   dayRow: { flexDirection: 'row', alignItems: 'center', gap: Space.m, borderRadius: 20, padding: 12 },
+  loadBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    marginTop: Space.m,
+  },
   dayThumb: { width: 56, height: 56, borderRadius: 16 },
   slideCard: { width: 150, borderRadius: 18, padding: 10, borderWidth: 2 },
   slideThumb: { width: '100%', height: 78, borderRadius: 12 },

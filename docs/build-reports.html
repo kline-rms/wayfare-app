@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -452,7 +452,46 @@
   <div class="files"><h3>Touched</h3><code>server/lib/settings.ts</code><code>server/places/google.ts</code><code>server/routes/settings.ts</code><code>(tabs)/profile.tsx</code><code>api.getAppSettings/setPlacesEnabled</code></div>
 </div></section>
 
+<!-- ============ v2.9.0 ============ -->
+<section id="v2-9-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.9.0</span><h2>Real Google photos, place cards &amp; reviews</h2></div>
+  <div class="req"><b>Requested.</b> Actually <b>use</b> the Google Places data in the app — real photos on the trip/day thumbnails, a rich place card (rating, hours, phone, website), and reviews — all behind the gate so nothing spends unless it's on.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>On-demand linker</b> — <code>POST /itineraries/:id/finalize-places</code> runs the finalize crawl on an existing trip in the foreground and <b>writes Place IDs back</b>, so later visits pass the ID (no repeat Text Search). Fully gated: OFF → stubs, $0.</li>
+      <li><b>Reactive card cache</b> — <code>lib/places.ts</code>: <code>usePlaceCard</code> (shared, loads once) + <code>usePlaceReviews</code> (loads only on tap).</li>
+      <li><b>PlacePhoto</b> — real photo when a place is linked, silent stock fallback otherwise; used on trip day cards + day-page place cards.</li>
+      <li><b>Place detail</b> — photo hero, ★ rating + count, hours/phone/website, and a live Reviews section.</li>
+      <li><b>"Show real photos &amp; info" banner</b> on the trip page — appears only when Places is ON + places unlinked; shows the one-time cost; hides once linked.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>The split follows the SKU economics: <b>facts cache once and are then free</b>, so the crawl is one-time; <b>photos bill per render</b> (~$0.007) and <b>reviews per tap</b> (~$0.005), so those stay lazy — photos behind the toggle, reviews behind an explicit tap. Nothing auto-fetches the billable paths.</p>
+      <p>Reusing the existing finalize linker <span class="conn">connects → server/places/finalize.ts</span> means the on-demand path and the save-time path resolve places identically, and every call still passes the one gate <span class="conn">connects → server/places/google.ts</span>.</p>
+      <p><b>Verified live:</b> family trip 9/9 linked for <b>$0.513</b> (18 calls), card 4.4★/3,227, 5 reviews, photo proxy → real 800×530 JPEG. Gate left OFF.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 940 150" role="img" aria-label="Places UI data flow">
+    <defs><marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="52" width="150" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="91" y="72" text-anchor="middle" fill="#fff">Trip banner (tap)</text><text x="91" y="88" text-anchor="middle" fill="var(--sub)" font-size="9.5">finalize-places</text>
+      <rect x="206" y="52" width="150" height="46" rx="10" fill="#3a2e80" stroke="var(--coral)"/><text x="281" y="72" text-anchor="middle" fill="#fff">gate + crawl</text><text x="281" y="88" text-anchor="middle" fill="var(--sub)" font-size="9.5">Search+Details ·$0.51</text>
+      <rect x="396" y="52" width="150" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="471" y="72" text-anchor="middle" fill="#fff">link Place IDs</text><text x="471" y="88" text-anchor="middle" fill="var(--sub)" font-size="9.5">back onto trip</text>
+      <rect x="600" y="8" width="320" height="40" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="760" y="32" text-anchor="middle" fill="var(--ink)" font-size="10.5">getPlaceCard — facts (cached, FREE)</text>
+      <rect x="600" y="55" width="320" height="40" rx="10" fill="var(--card)" stroke="var(--marigold)"/><text x="760" y="79" text-anchor="middle" fill="var(--ink)" font-size="10.5">PlacePhoto — photo proxy (~$0.007/view)</text>
+      <rect x="600" y="102" width="320" height="40" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="760" y="126" text-anchor="middle" fill="var(--ink)" font-size="10.5">Reviews — live on tap (~$0.005)</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M166 75 L211 75" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#k)"/>
+      <path d="M356 75 L391 75" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#k)"/>
+      <path d="M546 68 L596 30" stroke="var(--mint)" color="var(--mint)" marker-end="url(#k)"/>
+      <path d="M546 75 L596 75" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#k)"/>
+      <path d="M546 82 L596 120" stroke="var(--sky)" color="var(--sky)" marker-end="url(#k)"/>
+    </g>
+  </svg></div><figcaption>One gated crawl links the trip; then facts are free, photos bill per view, reviews per tap.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>itineraries.ts (finalize-places)</code><code>lib/places.ts</code><code>place-photo.tsx</code><code>place/[name].tsx</code><code>trip/[id].tsx</code><code>day/[id].tsx</code><code>icon.tsx (phone)</code><code>api.finalizePlaces</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.8.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.9.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

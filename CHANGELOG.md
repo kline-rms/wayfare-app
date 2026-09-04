@@ -3,6 +3,22 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.9.0] — 2026-09-05
+
+### Added
+- **Real Google photos, place cards & reviews (the Places UI).** Trip/day
+  thumbnails and the place-detail hero now show real Google photos when a place
+  is linked (silent stock fallback otherwise). Place detail gains a card
+  (★ rating + count, hours, phone, website) and a **Reviews** section that fetches
+  live only on tap. A one-time **"Show real photos & info"** banner on the trip
+  page (visible only when Places is ON + unlinked) runs the crawl and shows the
+  cost. New: `POST /api/itineraries/:id/finalize-places` (gated on-demand linker),
+  `lib/places.ts` (`usePlaceCard`/`usePlaceReviews`), `PlacePhoto`, `phone` icon,
+  `api.finalizePlaces`.
+- Facts cache once (then free); photos bill per render (~$0.007), reviews per tap
+  (~$0.005) — the billable paths stay lazy and behind the gate. Verified live:
+  family trip 9/9 linked for $0.513.
+
 ## [2.8.0] — 2026-08-31
 
 ### Added
@@ -160,6 +176,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.9.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.9.0
 [2.8.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.8.0
 [2.7.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.7.0
 [2.6.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.6.0

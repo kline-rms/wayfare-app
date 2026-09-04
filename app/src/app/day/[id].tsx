@@ -18,6 +18,7 @@ import { useAsync } from '@/hooks/use-async';
 import { api } from '@/lib/api';
 import { money } from '@/lib/format';
 import { img, photoForPlace } from '@/lib/images';
+import { PlacePhoto } from '@/components/wayfare/place-photo';
 import { back, go } from '@/lib/nav';
 import { edits, useEditsVersion } from '@/lib/edits';
 import { hasSplitRoles } from '@/lib/activity';
@@ -373,7 +374,7 @@ export default function DayScreen() {
                   key={pl.name}
                   onPress={() => go({ pathname: '/place/[name]', params: { name: pl.name } })}
                   style={({ pressed }) => [styles.placeRow, { backgroundColor: c.card }, cardShadow, pressed && { opacity: 0.85 }]}>
-                  <Image source={img(photoForPlace(pl.name))} style={styles.placeThumb} contentFit="cover" />
+                  <PlacePhoto placeId={pl.placeId} fallback={img(photoForPlace(pl.name))} style={styles.placeThumb} />
                   <View style={{ flex: 1 }}>
                     <Txt style={{ fontWeight: '800' }} numberOfLines={1}>
                       {pl.name}

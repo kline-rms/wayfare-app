@@ -3,7 +3,7 @@ import type { Activity, Itinerary } from "../../../packages/shared/src/index.ts"
 import type { Repo } from "../repo/types.ts";
 import { SAMPLE_OWNER } from "../repo/types.ts";
 import { requireAuth } from "../lib/auth.ts";
-import { finalizeInBackground } from "../places/finalize.ts";
+import { finalizeInBackground, finalizeItineraryPlaces } from "../places/finalize.ts";
 
 /** Can this user read this itinerary? (their own, or a shared sample) */
 function canRead(it: Itinerary, uid: string): boolean {
@@ -144,6 +144,26 @@ export function registerItineraryRoutes(app: FastifyInstance, repo: Repo) {
       return repo.updateItinerary(it.id, { proposals, updatedAt: new Date().toISOString() });
     },
   );
+
+  // Backfill Google Place data for an EXISTING trip on demand — the app's
+  // "Load real photos & info" action. Runs the same finalize linker in the
+  // FOREGROUND and persists the resolved Place IDs so the next read shows real
+  // photos/facts, and later visits pass the Place ID (no repeat Text Search).
+  // Fully gated: with Places OFF, enrichment returns stubs — no Google call,
+  // nothing linked, $0. Idempotent — places already linked cost nothing.
+  app.post<{ Params: { id: string } }>("/api/itineraries/:id/finalize-places", async (req, reply) => {
+    const uid = requireAuth(req, reply);
+    if (!uid) return;
+    const it = await repo.getItinerary(req.params.id);
+    if (!it) return reply.code(404).send({ error: "Itinerary not found" });
+    if (!canRead(it, uid)) return reply.code(403).send({ error: "Not your itinerary" });
+    const patched = await finalizeItineraryPlaces(it, repo);
+    const linked = patched.places.filter((p) => p.placeId).length;
+    if (linked > 0) {
+      await repo.updateItinerary(it.id, { places: patched.places, proposals: patched.proposals });
+    }
+    return { linked, total: patched.places.length, itinerary: patched };
+  });
 
   // Delete an itinerary (owner only).
   app.delete<{ Params: { id: string } }>("/api/itineraries/:id", async (req, reply) => {

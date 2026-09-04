@@ -1,9 +1,10 @@
 import { useLocalSearchParams } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/wayfare/icon';
 import { DiningGuide } from '@/components/wayfare/dining-guide';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
+import { PlacePhoto } from '@/components/wayfare/place-photo';
 import { useWayfare } from '@/components/wayfare/theme';
 import { AITip, StateView, Txt } from '@/components/wayfare/ui';
 import type { MapStop } from '@/components/wayfare/wayfare-map.shared';
@@ -11,8 +12,10 @@ import { Space } from '@/constants/wayfare';
 import { useAsync } from '@/hooks/use-async';
 import { api } from '@/lib/api';
 import { currentActivity, isMeal } from '@/lib/dining';
+import { img, photoForPlace } from '@/lib/images';
 import { back } from '@/lib/nav';
 import { openMaps } from '@/lib/maps';
+import { usePlaceCard, usePlaceReviews } from '@/lib/places';
 import type { Activity, Itinerary, Place } from '@/lib/types';
 
 const norm = (s: string) => s.toLowerCase().split(/[,(]/)[0].trim();
@@ -57,6 +60,9 @@ export default function PlaceDetail() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const { c, cardShadow } = useWayfare();
   const { data, loading, error, reload } = useAsync(() => loadPlace(name), [name]);
+  const placeId = data?.place.placeId;
+  const card = usePlaceCard(placeId);
+  const reviews = usePlaceReviews(placeId);
   if (loading || error || !data) return <StateView loading={loading} error={error} onRetry={reload} />;
   const { place, meal, partySize, now } = data;
 
@@ -80,6 +86,14 @@ export default function PlaceDetail() {
 
   return (
     <MapFirst stops={stops} fit={false} sheetTop={0.4} pitch={40} header={header}>
+      {/* Real Google photo — shown only when this place has been enriched.
+          Un-enriched places look exactly as before (no stock hero here). */}
+      {card?.photoUrls?.length ? (
+        <View style={[styles.hero, cardShadow]}>
+          <PlacePhoto placeId={placeId} fallback={img(photoForPlace(place.name))} style={styles.heroImg} />
+        </View>
+      ) : null}
+
       <Txt variant="h1" style={{ fontSize: 26 }}>
         {place.name}
       </Txt>
@@ -88,6 +102,21 @@ export default function PlaceDetail() {
         <Txt variant="sec" muted>
           {place.area}
         </Txt>
+        {card?.rating ? (
+          <>
+            <Txt variant="sec" muted>
+              ·
+            </Txt>
+            <Txt variant="sec" style={{ color: '#FFA828', fontWeight: '800' }}>
+              ★ {card.rating.toFixed(1)}
+            </Txt>
+            {card.ratingCount ? (
+              <Txt variant="small" faint>
+                ({card.ratingCount.toLocaleString()})
+              </Txt>
+            ) : null}
+          </>
+        ) : null}
       </View>
 
       <View style={{ flexDirection: 'row', gap: Space.m, marginTop: Space.l }}>
@@ -115,6 +144,36 @@ export default function PlaceDetail() {
         {place.why}
       </Txt>
 
+      {/* Google facts (hours / phone / website) — present once enriched. */}
+      {card && (card.hours?.length || card.phone || card.website) ? (
+        <View style={[styles.facts, { backgroundColor: c.card }, cardShadow]}>
+          {card.hours?.length ? (
+            <View style={styles.factRow}>
+              <Icon name="clock" size={16} color={c.sec} />
+              <Txt variant="small" muted style={{ flex: 1 }}>
+                {card.hours[0]}
+              </Txt>
+            </View>
+          ) : null}
+          {card.phone ? (
+            <Pressable style={styles.factRow} onPress={() => Linking.openURL(`tel:${card.phone}`)}>
+              <Icon name="phone" size={16} color={c.sec} />
+              <Txt variant="small" style={{ flex: 1, color: c.ink }}>
+                {card.phone}
+              </Txt>
+            </Pressable>
+          ) : null}
+          {card.website ? (
+            <Pressable style={styles.factRow} onPress={() => Linking.openURL(card.website!)}>
+              <Icon name="globe" size={16} color={c.sec} />
+              <Txt variant="small" numberOfLines={1} style={{ flex: 1, color: c.primary }}>
+                {card.website.replace(/^https?:\/\/(www\.)?/, '')}
+              </Txt>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
+
       {/* Dining guide — appears automatically for dining stops; no check-in.
           Highlights as NOW when you're here at its mealtime. */}
       {meal ? (
@@ -129,12 +188,80 @@ export default function PlaceDetail() {
           </AITip>
         </View>
       )}
+
+      {/* Reviews — fetched live only on tap (billed per fetch, never stored). */}
+      {placeId ? (
+        <View style={{ marginTop: Space.l }}>
+          <View style={styles.reviewHead}>
+            <Txt variant="h2" style={{ fontSize: 18 }}>
+              Reviews
+            </Txt>
+            <Txt variant="small" faint>
+              Google · live
+            </Txt>
+          </View>
+          {reviews.reviews == null ? (
+            <Pressable
+              onPress={reviews.load}
+              disabled={reviews.loading}
+              style={[styles.reviewBtn, { backgroundColor: c.card }, cardShadow]}>
+              {reviews.loading ? (
+                <ActivityIndicator color={c.primary} />
+              ) : (
+                <>
+                  <Icon name="star" size={16} color={c.primary} />
+                  <Txt style={{ fontWeight: '700', color: c.ink }}>Show recent reviews</Txt>
+                </>
+              )}
+            </Pressable>
+          ) : reviews.reviews.length === 0 ? (
+            <Txt variant="small" muted>
+              {reviews.error ?? 'No reviews available for this place.'}
+            </Txt>
+          ) : (
+            <View style={{ gap: Space.m }}>
+              {reviews.reviews.map((r, i) => (
+                <View key={i} style={[styles.review, { backgroundColor: c.card }, cardShadow]}>
+                  <View style={styles.reviewTop}>
+                    <Txt style={{ fontWeight: '800' }} numberOfLines={1}>
+                      {r.author ?? 'Guest'}
+                    </Txt>
+                    {r.rating ? (
+                      <Txt variant="small" style={{ color: '#FFA828', fontWeight: '800' }}>
+                        ★ {r.rating}
+                      </Txt>
+                    ) : null}
+                  </View>
+                  {r.text ? (
+                    <Txt variant="small" muted style={{ marginTop: 4, lineHeight: 19 }} numberOfLines={5}>
+                      {r.text}
+                    </Txt>
+                  ) : null}
+                  {r.relativeTime ? (
+                    <Txt variant="small" faint style={{ marginTop: 6 }}>
+                      {r.relativeTime}
+                    </Txt>
+                  ) : null}
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      ) : null}
     </MapFirst>
   );
 }
 
 const styles = StyleSheet.create({
-  areaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10 },
+  areaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, flexWrap: 'wrap' },
+  hero: { borderRadius: 20, overflow: 'hidden', marginBottom: Space.l },
+  heroImg: { width: '100%', height: 190 },
+  facts: { borderRadius: 16, padding: 14, marginTop: Space.l, gap: 12 },
+  factRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  reviewHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: Space.m },
+  reviewBtn: { minHeight: 50, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 },
+  review: { borderRadius: 16, padding: 14 },
+  reviewTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   info: { flex: 1, borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 10 },
   checkBtn: {
     minHeight: 54,

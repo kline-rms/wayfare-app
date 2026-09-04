@@ -180,6 +180,11 @@ export const api = {
   // crawl server-side (Place IDs are linked back within a few seconds).
   saveItinerary: (itinerary: Itinerary): Promise<Itinerary> => postJson('/api/itineraries', itinerary),
 
+  // Backfill real Google photos + facts for an existing trip (links Place IDs).
+  // Gated server-side: returns { linked: 0 } and spends $0 when Places is off.
+  finalizePlaces: (itineraryId: string): Promise<{ linked: number; total: number; itinerary: Itinerary }> =>
+    postJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/finalize-places`, {}),
+
   // Add a stop to a day (insert-only; never re-plans the rest). Returns the
   // updated itinerary. Removing is limited to user-added stops server-side.
   addActivity: (itineraryId: string, dayId: string, activity: Activity): Promise<Itinerary> =>

@@ -3,6 +3,20 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.14.0] — 2026-09-05
+
+### Fixed
+- **Up Next colours now match the brand.** The card was drawing its background
+  from `c.ink` — the light *text* token in the pinned-dark theme — so it rendered
+  as a light card with light text and mint accents. Rebuilt on grape (`c.primary`)
+  with a white Navigate button.
+- **Places named only in a block now land in the right spot.** Finalize resolved
+  only the curated catalog, so venues mentioned only in an activity's `where`
+  (Manam, Wildflour, Mann Hann…) had no coordinates and defaulted to a wrong map
+  point. It now resolves those too — biased by the home-base area so multi-branch
+  names disambiguate — and writes placeId + lat/lng back onto the block. Family
+  trip's 7 unlocated restaurants now sit correctly in BGC.
+
 ## [2.13.0] — 2026-09-05
 
 ### Added
@@ -235,6 +249,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.14.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.0
 [2.13.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.13.0
 [2.12.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.12.0
 [2.11.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.11.0

@@ -14,7 +14,7 @@ import { useWayfare } from './theme';
 import { Txt } from './ui';
 
 export function UpNext({ activities, homeBase }: { activities: Activity[]; homeBase?: string }) {
-  const { c, cardShadow } = useWayfare();
+  const { c, ctaShadow } = useWayfare();
   const stops = activities.filter((a) => isDestination(a, homeBase));
   const [i, setI] = useState(0);
   const loc = useLocation();
@@ -38,13 +38,13 @@ export function UpNext({ activities, homeBase }: { activities: Activity[]; homeB
     go({ pathname: '/navigate', params: { lat: String(a.lat), lng: String(a.lng), label: a.where } });
 
   return (
-    <View style={[styles.card, { backgroundColor: c.ink }, cardShadow]}>
+    <View style={[styles.card, { backgroundColor: c.primary }, ctaShadow]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <View style={[styles.dot, { backgroundColor: c.a2 }]} />
-        <Txt variant="small" style={{ color: c.a2, fontWeight: '800', letterSpacing: 0.6 }}>
+        <View style={[styles.dot, { backgroundColor: '#fff' }]} />
+        <Txt variant="small" style={{ color: 'rgba(255,255,255,0.92)', fontWeight: '800', letterSpacing: 0.6 }}>
           UP NEXT
         </Txt>
-        <Txt variant="small" style={{ color: 'rgba(255,255,255,0.55)', marginLeft: 'auto' }}>
+        <Txt variant="small" style={{ color: 'rgba(255,255,255,0.72)', marginLeft: 'auto' }}>
           {a.time}
         </Txt>
       </View>
@@ -58,11 +58,11 @@ export function UpNext({ activities, homeBase }: { activities: Activity[]; homeB
 
       {/* Distance + ETA from where you are (no more walking figure). */}
       <View style={styles.etaRow}>
-        <View style={[styles.etaChip, { backgroundColor: 'rgba(255,255,255,0.10)' }]}>
-          <Icon name="locate" size={14} color={c.a2} />
+        <View style={[styles.etaChip, { backgroundColor: 'rgba(255,255,255,0.16)' }]}>
+          <Icon name="locate" size={14} color="#fff" />
           <Txt style={{ color: '#fff', fontWeight: '800' }}>{km != null ? formatDistance(km) : '—'}</Txt>
         </View>
-        <Txt variant="small" style={{ color: 'rgba(255,255,255,0.8)', flex: 1 }} numberOfLines={1}>
+        <Txt variant="small" style={{ color: 'rgba(255,255,255,0.82)', flex: 1 }} numberOfLines={1}>
           {etaLine}
         </Txt>
       </View>
@@ -70,9 +70,9 @@ export function UpNext({ activities, homeBase }: { activities: Activity[]; homeB
       <View style={styles.actions}>
         <Pressable
           onPress={navigate}
-          style={({ pressed }) => [styles.navBtn, { backgroundColor: c.a2 }, pressed && { opacity: 0.9 }]}>
-          <Icon name="nav" size={16} color="#fff" />
-          <Txt style={{ color: '#fff', fontWeight: '800' }}>Navigate</Txt>
+          style={({ pressed }) => [styles.navBtn, { backgroundColor: '#fff' }, pressed && { opacity: 0.9 }]}>
+          <Icon name="nav" size={16} color={c.primary} />
+          <Txt style={{ color: c.primary, fontWeight: '800' }}>Navigate</Txt>
         </Pressable>
         {!isLast ? (
           <Pressable onPress={() => setI(idx + 1)} style={({ pressed }) => [styles.skipBtn, pressed && { opacity: 0.7 }]}>

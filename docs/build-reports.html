@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -636,7 +636,39 @@
   <div class="files"><h3>Touched</h3><code>photo-collage.tsx (new)</code><code>trip/[id].tsx (day collage)</code><code>day/[id].tsx (block photos)</code><code>wayfare-map.web.tsx (2D hides buildings)</code></div>
 </div></section>
 
+<!-- ============ v2.14.0 ============ -->
+<section id="v2-14-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.14.0</span><h2>On-brand Up&nbsp;Next + activity places located (Manam fix)</h2></div>
+  <div class="req"><b>Requested.</b> Align the Up&nbsp;Next card with our colour scheme, and fix places like the family trip's Manam showing in the wrong location.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Up&nbsp;Next recolour</b> — it was drawing its background from <code>c.ink</code>, which is the light <em>text</em> token in our pinned-dark theme (a light card with light text + mint accents). Now a grape (<code>c.primary</code>) card with a white Navigate button — the brand's own palette.</li>
+      <li><b>Activity-level place resolution</b> — <code>finalize</code> previously crawled only the curated catalog, so venues named only in a block's <code>where</code> (Manam, Wildflour, Mann&nbsp;Hann…) had no coordinates and fell to a default map point. It now resolves those too, biased by the home base's area, and writes <b>placeId + lat/lng</b> back onto the block.</li>
+      <li><b>Verified</b> — the family trip's 7 unlocated restaurants now sit in BGC (Manam 14.550, 121.052); re-finalize cost $0.399.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>The colour bug is a token mix-up worth calling out: <code>ink</code> is "primary text", not a surface — using it as a background inverts in the theme that flips text/ground. Rebuilding on <code>primary</code> ties Up&nbsp;Next to the same grape the pins and CTAs use.</p>
+      <p>The location bug came from treating the catalog as the only crawl source. Blocks reference real venues the catalog never listed; biasing the search with the home-base area <span class="conn">connects → server/places/finalize.ts</span> disambiguates multi-branch names (a bare "Manam" can resolve to another city — or an island) to the right BGC branch. Coordinates now come from the same cached place, so map + list agree.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 860 122" role="img" aria-label="Activity place resolution">
+    <defs><marker id="s" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="40" width="180" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="106" y="59" text-anchor="middle" fill="#fff">block.where + area</text><text x="106" y="75" text-anchor="middle" fill="var(--sub)" font-size="9.5">"Manam, BGC, Taguig"</text>
+      <rect x="236" y="40" width="170" height="44" rx="10" fill="#3a2e80" stroke="var(--coral)"/><text x="321" y="59" text-anchor="middle" fill="#fff">Text Search</text><text x="321" y="75" text-anchor="middle" fill="var(--sub)" font-size="9.5">right branch</text>
+      <rect x="446" y="40" width="180" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="536" y="59" text-anchor="middle" fill="#fff">cached place</text><text x="536" y="75" text-anchor="middle" fill="var(--sub)" font-size="9.5">placeId + location</text>
+      <rect x="666" y="40" width="180" height="44" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="756" y="59" text-anchor="middle" fill="var(--ink)" font-size="10">block gets lat/lng</text><text x="756" y="75" text-anchor="middle" fill="var(--sub)" font-size="9.5">map + list agree</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M196 62 L232 62" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#s)"/>
+      <path d="M406 62 L442 62" stroke="var(--coral)" color="var(--coral)" marker-end="url(#s)"/>
+      <path d="M626 62 L662 62" stroke="var(--mint)" color="var(--mint)" marker-end="url(#s)"/>
+    </g>
+  </svg></div><figcaption>Blocks named only in prose now resolve to the right branch and carry real coordinates.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>up-next.tsx (grape recolour)</code><code>server/places/finalize.ts (activity resolution + coords)</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.13.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.14.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

@@ -6,7 +6,7 @@
 // Cheap by construction: enrichPlace only calls Google for cache misses / stale
 // entries, and only the priciest call (Text Search) is ever made — once, per
 // place, globally. See docs/places-caching-design.md.
-import type { Itinerary } from "../../../packages/shared/src/index.ts";
+import type { Activity, CachedPlace, Itinerary } from "../../../packages/shared/src/index.ts";
 import type { Repo } from "../repo/types.ts";
 import { enrichPlace } from "./service.ts";
 
@@ -15,37 +15,71 @@ function norm(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
-export async function finalizeItineraryPlaces(itinerary: Itinerary, repo: Repo): Promise<Itinerary> {
-  // Curated catalog is the source of truth for what to crawl.
-  const catalog = itinerary.places ?? [];
-  if (!catalog.length) return itinerary;
+function hasCoords(a: { lat?: number; lng?: number }): boolean {
+  return Number.isFinite(a.lat) && Number.isFinite(a.lng) && !(a.lat === 0 && a.lng === 0);
+}
 
-  // Resolve each unique place once; build a name -> placeId map.
-  const byName = new Map<string, string>();
+export async function finalizeItineraryPlaces(itinerary: Itinerary, repo: Repo): Promise<Itinerary> {
+  const catalog = itinerary.places ?? [];
+
+  // Location context so ambiguous, multi-branch venues resolve to the right one
+  // ("Manam" alone can hit a branch in another city — or Manam Island). Bias with
+  // the home base's area (everything after the venue name).
+  const region = (itinerary.homeBase ?? "")
+    .split(",")
+    .slice(1)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join(", ");
+  const homeFirst = (itinerary.homeBase ?? "").split(",")[0].trim().toLowerCase();
+  const isHome = (where: string) => !!homeFirst && where.toLowerCase().includes(homeFirst);
+
+  // 1) Resolve the curated catalog once → name -> cached place (with coords).
+  const byName = new Map<string, CachedPlace>();
   for (const p of catalog) {
     const query = [p.name, p.area].filter(Boolean).join(", ");
     const cached = await enrichPlace({ placeId: p.placeId, query }, repo, itinerary.id);
-    if (cached.source === "google") byName.set(norm(p.name), cached.placeId);
+    if (cached.source === "google") byName.set(norm(p.name), cached);
   }
 
-  // Link placeIds back onto the catalog + any block-level activities.
+  // 2) Resolve activity destinations that AREN'T in the catalog and have no
+  //    coordinates yet (e.g. dining spots named only in a block's `where`).
+  //    Each distinct place is searched once, then reused across matching blocks.
+  const byWhere = new Map<string, CachedPlace>();
+  for (const prop of itinerary.proposals) {
+    for (const d of prop.days) {
+      for (const a of d.activities ?? []) {
+        const where = a.where ?? "";
+        if (!where || isHome(where) || a.placeId || hasCoords(a)) continue;
+        const key = norm(where);
+        if (byName.has(key) || byWhere.has(key)) continue;
+        const cached = await enrichPlace({ query: [where, region].filter(Boolean).join(", ") }, repo, itinerary.id);
+        if (cached.source === "google") byWhere.set(key, cached);
+      }
+    }
+  }
+
+  // Link placeIds back onto the catalog.
   const places = catalog.map((p) => {
-    const id = byName.get(norm(p.name));
-    return id ? { ...p, placeId: id } : p;
+    const c = byName.get(norm(p.name));
+    return c ? { ...p, placeId: c.placeId } : p;
   });
+
+  // Link placeId AND coordinates onto activities (from catalog match or the
+  // activity-only resolution), so every located block maps correctly.
+  const linkActivity = (a: Activity): Activity => {
+    const c = byName.get(norm(a.where)) ?? byWhere.get(norm(a.where));
+    if (!c) return a;
+    const next: Activity = { ...a, placeId: a.placeId ?? c.placeId };
+    if (!hasCoords(a)) {
+      next.lat = c.location.lat;
+      next.lng = c.location.lng;
+    }
+    return next;
+  };
   const proposals = itinerary.proposals.map((prop) => ({
     ...prop,
-    days: prop.days.map((d) =>
-      d.activities
-        ? {
-            ...d,
-            activities: d.activities.map((a) => {
-              const id = a.placeId ?? byName.get(norm(a.where));
-              return id ? { ...a, placeId: id } : a;
-            }),
-          }
-        : d,
-    ),
+    days: prop.days.map((d) => (d.activities ? { ...d, activities: d.activities.map(linkActivity) } : d)),
   }));
 
   return { ...itinerary, places, proposals };

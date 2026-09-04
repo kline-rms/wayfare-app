@@ -27,6 +27,7 @@ export function MapFirst({
   dockGap = false,
   fit,
   focus,
+  youHeading,
   collapsible = false,
   collapsedTop = 0.86,
   expanded: expandedProp,
@@ -40,6 +41,8 @@ export function MapFirst({
   /** Fraction of the screen the map fills before the sheet starts (0–1). */
   sheetTop?: number;
   pitch?: number;
+  /** Live heading (deg) for the "you" puck pointer; passthrough to the map. */
+  youHeading?: number | null;
   interactiveMap?: boolean;
   /** Add bottom room for the circular tab dock (tab screens). */
   dockGap?: boolean;
@@ -95,6 +98,7 @@ export function MapFirst({
           fitPadding={fitPadding}
           focus={focus}
           pitch={pitch}
+          youHeading={youHeading}
           style={{ flex: 1, borderRadius: 0 }}
         />
       </View>

@@ -43,6 +43,12 @@ export interface WayfareMapProps {
   focus?: { lng: number; lat: number; zoom?: number } | null;
   /** Render 3D building extrusions (only shows with a vector basemap). */
   buildings3d?: boolean;
+  /**
+   * Compass heading (deg, 0 = north) for the "you are here" puck's direction
+   * pointer. null/undefined hides the pointer (just the dot). Updates live
+   * without redrawing the map.
+   */
+  youHeading?: number | null;
   /** Render the 3D walking mannequin at the "you are here" stop (web only). */
   character?: boolean;
   onReady?: () => void;

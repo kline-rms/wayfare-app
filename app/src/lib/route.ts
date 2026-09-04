@@ -4,9 +4,20 @@
 import type { LineGeometry, MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { haversineKm, type LatLng } from '@/lib/geo';
 
-const OSRM_BASE = process.env.EXPO_PUBLIC_OSRM_URL ?? 'https://router.project-osrm.org';
-
 export type TravelProfile = 'driving' | 'walking' | 'cycling';
+
+// FOSSGIS runs free public OSRM instances per travel mode (car/foot/bike) — the
+// router.project-osrm.org demo is car-only, so Walk would otherwise fall back to
+// a straight line. A self-hosted EXPO_PUBLIC_OSRM_URL overrides every mode.
+const FOSSGIS_OSRM: Record<TravelProfile, string> = {
+  driving: 'https://routing.openstreetmap.de/routed-car',
+  walking: 'https://routing.openstreetmap.de/routed-foot',
+  cycling: 'https://routing.openstreetmap.de/routed-bike',
+};
+function osrmBase(profile: TravelProfile): string {
+  const override = process.env.EXPO_PUBLIC_OSRM_URL;
+  return override ? override.replace(/\/$/, '') : FOSSGIS_OSRM[profile];
+}
 
 export interface NavStep {
   /** Human-readable maneuver, e.g. "Turn right onto Rizal Drive". */
@@ -105,7 +116,7 @@ export async function directions(from: LatLng, to: LatLng, profile: TravelProfil
   };
   try {
     const coords = `${from.lng},${from.lat};${to.lng},${to.lat}`;
-    const res = await fetch(`${OSRM_BASE}/route/v1/${profile}/${coords}?overview=full&geometries=geojson&steps=true`);
+    const res = await fetch(`${osrmBase(profile)}/route/v1/${profile}/${coords}?overview=full&geometries=geojson&steps=true`);
     if (!res.ok) return fallback;
     const data = (await res.json()) as {
       routes?: {
@@ -145,7 +156,7 @@ export async function walkRoute(stops: Pick<MapStop, 'lat' | 'lng'>[]): Promise<
   const straight: LineGeometry = { type: 'LineString', coordinates: stops.map((s) => [s.lng, s.lat]) };
   if (stops.length < 2) return straight;
   const coords = stops.map((s) => `${s.lng},${s.lat}`).join(';');
-  const base = process.env.EXPO_PUBLIC_OSRM_URL ?? 'https://router.project-osrm.org';
+  const base = osrmBase('walking');
   try {
     const res = await fetch(`${base}/route/v1/walking/${coords}?overview=full&geometries=geojson`);
     if (!res.ok) return straight;

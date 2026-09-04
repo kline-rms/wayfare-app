@@ -68,6 +68,7 @@ export function WayfareMap({
   fitPadding,
   focus,
   buildings3d = true,
+  youHeading,
   onReady,
   style,
 }: WayfareMapProps) {
@@ -75,9 +76,10 @@ export function WayfareMap({
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const popupRef = useRef<any>(null);
+  const youElRef = useRef<any>(null); // the rotatable inner puck for the "you" dot
   // Keep the latest props for the draw() closure without re-initialising the map.
-  const dataRef = useRef({ stops, routeGeometry, fit, fitPadding, focus, pitch, bearing });
-  dataRef.current = { stops, routeGeometry, fit, fitPadding, focus, pitch, bearing };
+  const dataRef = useRef({ stops, routeGeometry, fit, fitPadding, focus, pitch, bearing, youHeading });
+  dataRef.current = { stops, routeGeometry, fit, fitPadding, focus, pitch, bearing, youHeading };
 
   function openPopup(s: { lng: number; lat: number; label?: string; sub?: string; number?: number }) {
     const map = mapRef.current;
@@ -125,7 +127,21 @@ export function WayfareMap({
     stops.forEach((s, i) => {
       const el = document.createElement('div');
       if (s.you) {
-        el.style.cssText = `width:20px;height:20px;border-radius:50%;background:${GRAPE};box-shadow:0 0 0 8px rgba(124,92,246,.3)`;
+        // Directional puck: a soft halo + solid dot, with a triangular pointer
+        // that shows which way you're facing. The pointer is on an inner element
+        // so MapLibre keeps positioning the marker root while we rotate the puck.
+        el.style.cssText = 'width:34px;height:34px;position:relative';
+        const rot = document.createElement('div');
+        const h = dataRef.current.youHeading;
+        rot.style.cssText = `position:absolute;inset:0;transition:transform .2s ease-out;transform:rotate(${h ?? 0}deg)`;
+        rot.innerHTML =
+          `<div class="wf-beak" style="position:absolute;left:50%;top:-1px;transform:translateX(-50%);width:0;height:0;` +
+          `border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid ${GRAPE};` +
+          `filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));opacity:${h == null ? 0 : 1};transition:opacity .2s"></div>` +
+          `<div style="position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(124,92,246,.22)"></div>` +
+          `<div style="position:absolute;left:50%;top:50%;width:16px;height:16px;transform:translate(-50%,-50%);border-radius:50%;background:${GRAPE};border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55)"></div>`;
+        el.appendChild(rot);
+        youElRef.current = rot;
       } else {
         const color = s.color ?? GRAPE;
         el.style.cssText =
@@ -332,6 +348,15 @@ export function WayfareMap({
     if (!map) return;
     map.easeTo({ pitch, duration: 500 });
   }, [pitch]);
+
+  // Spin the "you" puck's pointer to the live heading — no map redraw needed.
+  useEffect(() => {
+    const rot = youElRef.current;
+    if (!rot) return;
+    rot.style.transform = `rotate(${youHeading ?? 0}deg)`;
+    const beak = rot.querySelector('.wf-beak') as HTMLElement | null;
+    if (beak) beak.style.opacity = youHeading == null ? '0' : '1';
+  }, [youHeading]);
 
   return (
     <View style={[{ height, width: '100%', borderRadius: 22, overflow: 'hidden', backgroundColor: NIGHT, position: 'relative' }, style]}>

@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -527,7 +527,44 @@
   <div class="files"><h3>Touched</h3><code>lib/route.ts (directions)</code><code>app/navigate.tsx</code><code>wayfare-map.web.tsx (pitch)</code><code>icon.tsx (style + phone)</code><code>place/[name].tsx</code><code>activity/[id].tsx</code><code>day/[id].tsx</code></div>
 </div></section>
 
+<!-- ============ v2.11.0 ============ -->
+<section id="v2-11-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.11.0</span><h2>Navigation polish: real Walk, directional puck, cleaner Up&nbsp;Next</h2></div>
+  <div class="req"><b>Requested.</b> Improve the day's Up&nbsp;Next card — drop the animated walking figure and make Navigate open the in-app navigator; make <b>both Drive and Walk</b> route for real; give the "you are here" marker a <b>direction pointer</b> (which way you're facing); keep <b>top-down as the default</b> with 3D optional, tucked behind the locate control.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Real Walk routing</b> — <code>route.ts</code> now resolves the OSRM server <em>per mode</em> via FOSSGIS (<code>routed-foot</code>/<code>routed-car</code>/<code>routed-bike</code>) instead of the car-only demo, so Walk returns genuine footpaths. A self-hosted <code>EXPO_PUBLIC_OSRM_URL</code> still overrides all modes.</li>
+      <li><b>Live heading</b> — <code>useLocation</code> now returns a compass <code>heading</code> (keeps the last known value when a fix reports none).</li>
+      <li><b>Directional puck</b> — the map's "you" dot became a halo + dot + triangular <b>pointer</b> that rotates to your heading, updated live without a map redraw (<code>youHeading</code> passthrough on the map + MapFirst).</li>
+      <li><b>Cleaner Up&nbsp;Next</b> — removed the animated walker/dashed strip; Navigate opens the in-app navigator; a distance chip + ETA replaces the figure.</li>
+      <li><b>Controls</b> — navigator defaults to 2D top-down; the 2D/3D toggle sits behind the primary locate button.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>The car-only public demo made Walk a straight-line guess; FOSSGIS's per-mode servers are the smallest change that makes the mode toggle honest <span class="conn">connects → lib/route.ts</span> — still keyless and $0.</p>
+      <p>The pointer rides an <em>inner</em> element so MapLibre keeps positioning the marker while we rotate the puck — a heading tick costs one CSS transform, not a redraw. Heading holds its last value when stationary so the arrow doesn't snap to north.</p>
+      <p><b>Verified:</b> foot 0.84&nbsp;km / 11&nbsp;min / 12 steps and car 12.1&nbsp;km / 16&nbsp;min / 13 steps via the exact URLs the app builds; typecheck + web bundle clean.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 900 130" role="img" aria-label="Navigation polish data flow">
+    <defs><marker id="p" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="44" width="168" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="100" y="64" text-anchor="middle" fill="#fff">useLocation</text><text x="100" y="80" text-anchor="middle" fill="var(--sub)" font-size="9.5">coords + heading</text>
+      <rect x="224" y="44" width="180" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="314" y="64" text-anchor="middle" fill="#fff">directions(mode)</text><text x="314" y="80" text-anchor="middle" fill="var(--sub)" font-size="9.5">FOSSGIS foot/car · $0</text>
+      <rect x="452" y="18" width="220" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="562" y="43" text-anchor="middle" fill="var(--ink)" font-size="10.5">Puck rotates to heading</text>
+      <rect x="452" y="72" width="220" height="42" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="562" y="97" text-anchor="middle" fill="var(--ink)" font-size="10.5">Route + turn-by-turn steps</text>
+      <rect x="712" y="44" width="170" height="46" rx="10" fill="var(--night2)" stroke="var(--marigold)"/><text x="797" y="64" text-anchor="middle" fill="var(--ink)" font-size="10">2D default · 3D optional</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M184 67 L229 67" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#p)"/>
+      <path d="M404 60 L448 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#p)"/>
+      <path d="M404 74 L448 92" stroke="var(--sky)" color="var(--sky)" marker-end="url(#p)"/>
+      <path d="M672 39 L708 55" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#p)"/>
+    </g>
+  </svg></div><figcaption>GPS heading spins the puck; per-mode FOSSGIS routing makes Drive and Walk both real; camera stays 2D unless you tap 3D.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>up-next.tsx (walker removed)</code><code>lib/route.ts (FOSSGIS per-mode)</code><code>use-location.ts (heading)</code><code>wayfare-map.web.tsx (puck)</code><code>wayfare-map.shared.ts</code><code>map-first.tsx</code><code>navigate.tsx</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.10.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.11.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

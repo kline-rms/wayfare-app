@@ -134,14 +134,15 @@ export default function Navigate() {
           )}
         </View>
         <View style={{ gap: 8 }}>
-          <Pressable onPress={() => setTilted((t) => !t)}>
-            <MapIconButton>
-              <Txt style={{ color: '#fff', fontWeight: '900', fontSize: 12.5 }}>{tilted ? '2D' : '3D'}</Txt>
-            </MapIconButton>
-          </Pressable>
+          {/* Primary: recenter on where we are. Secondary (behind it): 2D/3D. */}
           <Pressable onPress={recenter}>
             <MapIconButton>
               <Icon name="locate" size={18} color="#fff" />
+            </MapIconButton>
+          </Pressable>
+          <Pressable onPress={() => setTilted((t) => !t)}>
+            <MapIconButton>
+              <Txt style={{ color: tilted ? '#FFA828' : '#fff', fontWeight: '900', fontSize: 12.5 }}>{tilted ? '3D' : '2D'}</Txt>
             </MapIconButton>
           </Pressable>
         </View>
@@ -156,6 +157,7 @@ export default function Navigate() {
       stops={stops}
       route={dir?.geometry}
       pitch={tilted ? 55 : 0}
+      youHeading={loc.heading}
       fit={!focusYou}
       focus={focusYou ? { lng: origin.lng, lat: origin.lat, zoom: 16.5 } : null}
       sheetTop={0.46}

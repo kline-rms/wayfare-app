@@ -3,6 +3,23 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.11.0] — 2026-09-05
+
+### Added
+- **Real walking directions.** Routing now picks the OSRM server per mode via
+  FOSSGIS (`routed-foot`/`routed-car`/`routed-bike`), so **Walk returns genuine
+  footpaths** (the old demo server was car-only). A self-hosted
+  `EXPO_PUBLIC_OSRM_URL` still overrides all modes.
+- **Directional "you are here" puck.** The map marker is now a halo + dot + a
+  triangular pointer that rotates to your live compass heading (via a new
+  `heading` on `useLocation`), updated without redrawing the map.
+
+### Changed
+- **Up Next card** — removed the animated walking figure; Navigate now opens the
+  in-app turn-by-turn navigator, with a distance chip + ETA in place of the strip.
+- **Navigator controls** — 2D top-down stays the default; the 2D/3D toggle now
+  sits behind the primary "locate / where we are" button.
+
 ## [2.10.0] — 2026-09-05
 
 ### Added
@@ -188,6 +205,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.11.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.11.0
 [2.10.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.10.0
 [2.9.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.9.0
 [2.8.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.8.0

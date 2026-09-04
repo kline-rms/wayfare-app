@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -564,7 +564,44 @@
   <div class="files"><h3>Touched</h3><code>up-next.tsx (walker removed)</code><code>lib/route.ts (FOSSGIS per-mode)</code><code>use-location.ts (heading)</code><code>wayfare-map.web.tsx (puck)</code><code>wayfare-map.shared.ts</code><code>map-first.tsx</code><code>navigate.tsx</code></div>
 </div></section>
 
+<!-- ============ v2.12.0 ============ -->
+<section id="v2-12-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.12.0</span><h2>Chase camera, triangle arrow &amp; live re-routing</h2></div>
+  <div class="req"><b>Requested.</b> Ride the navigation camera <b>behind the pointer</b> (facing your direction of travel), replace the plain circle with a <b>triangle nav arrow</b> that shows which way you face, and keep the route live as you move.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Chase cam</b> — a focus can now carry a <code>bearing</code> (map turns to your heading) and a screen <code>offset</code> that pushes you low so the road ahead fills the view. The navigator follows by default.</li>
+      <li><b>Triangle nav arrow</b> — the "you" puck is now a halo + a white-bordered grape triangle that rotates to your heading (with a dot fallback when heading is unknown).</li>
+      <li><b>Live re-routing</b> — the route re-anchors to your position every ~40&nbsp;m; the puck moves continuously; Recenter snaps route + camera back to you.</li>
+      <li><b>Heading anywhere</b> — <code>useLocation</code> derives heading from movement when the device reports no compass, so the arrow and chase cam still orient.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>The camera work lives in the existing focus path <span class="conn">connects → wayfare-map.web.tsx</span> — bearing + offset on the same easeTo, re-eased when heading changes — so no new camera system, and every screen that already uses focus is unaffected.</p>
+      <p>Re-routing is throttled to ~40&nbsp;m so a moving fix doesn't spam OSRM, while the puck itself reads live coordinates for smooth motion. Movement-derived heading means the chase cam works on plain browser geolocation, not just phones with a compass.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 880 128" role="img" aria-label="Chase camera data flow">
+    <defs><marker id="q" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="42" width="170" height="46" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="101" y="62" text-anchor="middle" fill="#fff">GPS coords+heading</text><text x="101" y="78" text-anchor="middle" fill="var(--sub)" font-size="9.5">watch · derive if none</text>
+      <rect x="226" y="16" width="180" height="42" rx="10" fill="#3a2e80" stroke="var(--sky)"/><text x="316" y="41" text-anchor="middle" fill="#fff">re-route @ ~40 m</text>
+      <rect x="226" y="72" width="180" height="42" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="316" y="97" text-anchor="middle" fill="#fff">chase focus</text>
+      <rect x="452" y="16" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="552" y="41" text-anchor="middle" fill="var(--ink)" font-size="10.5">route + steps update</text>
+      <rect x="452" y="72" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--marigold)"/><text x="552" y="97" text-anchor="middle" fill="var(--ink)" font-size="10">bearing=heading · offset low</text>
+      <rect x="692" y="44" width="170" height="44" rx="10" fill="var(--night2)" stroke="var(--mint)"/><text x="777" y="70" text-anchor="middle" fill="var(--ink)" font-size="10.5">triangle arrow puck</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M186 55 L222 38" stroke="var(--sky)" color="var(--sky)" marker-end="url(#q)"/>
+      <path d="M186 74 L222 92" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#q)"/>
+      <path d="M406 37 L448 37" stroke="var(--sky)" color="var(--sky)" marker-end="url(#q)"/>
+      <path d="M406 93 L448 93" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#q)"/>
+      <path d="M652 93 L688 70" stroke="var(--mint)" color="var(--mint)" marker-end="url(#q)"/>
+    </g>
+  </svg></div><figcaption>Heading feeds both the re-route/chase focus (camera behind you, turned to travel) and the rotating triangle arrow.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>navigate.tsx (chase + live route)</code><code>wayfare-map.web.tsx (arrow + focus bearing/offset)</code><code>wayfare-map.shared.ts</code><code>map-first.tsx</code><code>use-location.ts (movement heading)</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.11.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.12.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

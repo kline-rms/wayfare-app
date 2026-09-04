@@ -49,7 +49,7 @@ export function MapFirst({
   /** Override auto-fit (defaults to true when there are 2+ stops). */
   fit?: boolean;
   /** Fly the map to a selected point (day / block) instead of fitting all pins. */
-  focus?: { lng: number; lat: number; zoom?: number } | null;
+  focus?: { lng: number; lat: number; zoom?: number; bearing?: number; offset?: [number, number] } | null;
   /** Let the sheet collapse (tap map to maximise, tap handle to restore). */
   collapsible?: boolean;
   /** Sheet position when collapsed (0–1). */

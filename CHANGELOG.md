@@ -3,6 +3,18 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.12.0] — 2026-09-05
+
+### Added
+- **Chase camera + live re-routing in the navigator.** The camera now rides
+  behind the pointer, turned to your direction of travel, with you sitting low so
+  the road ahead is visible; the route re-anchors to your position as you move
+  (~40 m), and Recenter snaps it back. `useLocation` derives heading from movement
+  when the device has no compass.
+- **Triangle navigation arrow.** The "you are here" marker is now a halo + a
+  white-bordered triangle that rotates to your heading (a dot when heading is
+  unknown), replacing the plain circle.
+
 ## [2.11.0] — 2026-09-05
 
 ### Added
@@ -205,6 +217,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.12.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.12.0
 [2.11.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.11.0
 [2.10.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.10.0
 [2.9.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.9.0

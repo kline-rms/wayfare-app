@@ -40,7 +40,7 @@ export interface WayfareMapProps {
    * Fly the camera to one point (a selected day / schedule block). When set it
    * takes over from `fit` so the map "points" where the list selection is.
    */
-  focus?: { lng: number; lat: number; zoom?: number } | null;
+  focus?: { lng: number; lat: number; zoom?: number; bearing?: number; offset?: [number, number] } | null;
   /** Render 3D building extrusions (only shows with a vector basemap). */
   buildings3d?: boolean;
   /**

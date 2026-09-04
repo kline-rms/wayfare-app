@@ -159,7 +159,8 @@ monorepo config).
 | `release/v2.8.0` · tag `v2.8.0` | + Google Places toggle + money gate |
 | `release/v2.9.0` · tag `v2.9.0` | + Real Places photos, cards & reviews |
 | `release/v2.10.0` · tag `v2.10.0` | + In-app turn-by-turn navigation |
-| `release/v2.11.0` · tag `v2.11.0` | + Real Walk routing, directional puck, cleaner Up Next (current) |
+| `release/v2.11.0` · tag `v2.11.0` | + Real Walk routing, directional puck, cleaner Up Next |
+| `release/v2.12.0` · tag `v2.12.0` | + Chase camera, triangle arrow, live re-routing (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

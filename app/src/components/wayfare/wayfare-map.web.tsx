@@ -127,19 +127,28 @@ export function WayfareMap({
     stops.forEach((s, i) => {
       const el = document.createElement('div');
       if (s.you) {
-        // Directional puck: a soft halo + solid dot, with a triangular pointer
-        // that shows which way you're facing. The pointer is on an inner element
-        // so MapLibre keeps positioning the marker root while we rotate the puck.
-        el.style.cssText = 'width:34px;height:34px;position:relative';
+        // Directional puck: a soft halo + a triangular nav arrow that points the
+        // way you're facing (with a solid dot for when heading is unknown). The
+        // arrow is on an inner element so MapLibre keeps positioning the marker
+        // root while we rotate the puck.
+        el.style.cssText = 'width:40px;height:40px;position:relative';
         const rot = document.createElement('div');
         const h = dataRef.current.youHeading;
+        const arrowOn = h == null ? '0' : '1';
         rot.style.cssText = `position:absolute;inset:0;transition:transform .2s ease-out;transform:rotate(${h ?? 0}deg)`;
         rot.innerHTML =
-          `<div class="wf-beak" style="position:absolute;left:50%;top:-1px;transform:translateX(-50%);width:0;height:0;` +
-          `border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid ${GRAPE};` +
-          `filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));opacity:${h == null ? 0 : 1};transition:opacity .2s"></div>` +
-          `<div style="position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(124,92,246,.22)"></div>` +
-          `<div style="position:absolute;left:50%;top:50%;width:16px;height:16px;transform:translate(-50%,-50%);border-radius:50%;background:${GRAPE};border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.55)"></div>`;
+          // halo
+          `<div style="position:absolute;left:50%;top:50%;width:34px;height:34px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(124,92,246,.20)"></div>` +
+          // white outline triangle (slightly larger, sits behind)
+          `<div class="wf-facing" style="position:absolute;left:50%;top:1px;transform:translateX(-50%);width:0;height:0;` +
+          `border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:22px solid #fff;` +
+          `filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));opacity:${arrowOn};transition:opacity .2s"></div>` +
+          // grape nav arrow on top
+          `<div class="wf-facing" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);width:0;height:0;` +
+          `border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:16px solid ${GRAPE};` +
+          `opacity:${arrowOn};transition:opacity .2s"></div>` +
+          // center dot (position anchor; the fallback when heading is unknown)
+          `<div style="position:absolute;left:50%;top:50%;width:13px;height:13px;transform:translate(-50%,-50%);border-radius:50%;background:${GRAPE};border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)"></div>`;
         el.appendChild(rot);
         youElRef.current = rot;
       } else {
@@ -324,11 +333,15 @@ export function WayfareMap({
     const apply = () => {
       const f = dataRef.current.focus;
       if (f) {
+        // A focus can carry its own bearing (heading-up chase cam) and a screen
+        // offset that pushes the centred point down, so "you" sit low with the
+        // road ahead visible — i.e. the camera rides behind the pointer.
         map.easeTo({
           center: [f.lng, f.lat],
           zoom: f.zoom ?? 16,
           pitch: dataRef.current.pitch,
-          bearing: dataRef.current.bearing,
+          bearing: f.bearing ?? dataRef.current.bearing,
+          offset: f.offset ?? [0, 0],
           duration: 650,
         });
       } else {
@@ -338,7 +351,7 @@ export function WayfareMap({
     if (map.isStyleLoaded && map.isStyleLoaded()) apply();
     else map.once('load', apply);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focus?.lng, focus?.lat, focus?.zoom]);
+  }, [focus?.lng, focus?.lat, focus?.zoom, focus?.bearing, focus?.offset?.[1]]);
 
   // Animate the camera tilt when `pitch` changes — this is what the nav screen's
   // 2D (top-down) ↔ 3D toggle rides on. Kept separate from draw() so a tilt
@@ -349,13 +362,14 @@ export function WayfareMap({
     map.easeTo({ pitch, duration: 500 });
   }, [pitch]);
 
-  // Spin the "you" puck's pointer to the live heading — no map redraw needed.
+  // Spin the "you" puck's arrow to the live heading — no map redraw needed.
   useEffect(() => {
     const rot = youElRef.current;
     if (!rot) return;
     rot.style.transform = `rotate(${youHeading ?? 0}deg)`;
-    const beak = rot.querySelector('.wf-beak') as HTMLElement | null;
-    if (beak) beak.style.opacity = youHeading == null ? '0' : '1';
+    rot.querySelectorAll('.wf-facing').forEach((n: Element) => {
+      (n as HTMLElement).style.opacity = youHeading == null ? '0' : '1';
+    });
   }, [youHeading]);
 
   return (

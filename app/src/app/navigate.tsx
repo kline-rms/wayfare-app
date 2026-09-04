@@ -4,7 +4,7 @@
 // (keyless, $0); "Open in Google Maps" stays as a one-tap fallback.
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { Icon, type IconName } from '@/components/wayfare/icon';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
@@ -13,7 +13,7 @@ import { StateView, Txt } from '@/components/wayfare/ui';
 import type { MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { Space } from '@/constants/wayfare';
 import { useLocation } from '@/hooks/use-location';
-import type { LatLng } from '@/lib/geo';
+import { haversineKm, type LatLng } from '@/lib/geo';
 import { openMaps } from '@/lib/maps';
 import { back } from '@/lib/nav';
 import { directions, type Directions, type NavStep, type TravelProfile } from '@/lib/route';
@@ -58,6 +58,7 @@ const MODES: { key: TravelProfile; label: string; icon: IconName }[] = [
 export default function Navigate() {
   const { lat, lng, label } = useLocalSearchParams<{ lat: string; lng: string; label?: string }>();
   const { c, cardShadow } = useWayfare();
+  const { height: winH } = useWindowDimensions();
   const loc = useLocation();
 
   const dest = useMemo<LatLng | null>(() => {
@@ -68,46 +69,56 @@ export default function Navigate() {
 
   // Origin is frozen from the GPS fix at route time (and on Recenter), so a live
   // position update doesn't churn the route; Recenter re-reads the latest fix.
-  const [origin, setOrigin] = useState<LatLng | null>(null);
   const [profile, setProfile] = useState<TravelProfile>('driving');
+  const [routeOrigin, setRouteOrigin] = useState<LatLng | null>(null);
   const [dir, setDir] = useState<Directions | null>(null);
   const [routing, setRouting] = useState(false);
   const [routeErr, setRouteErr] = useState<string | null>(null);
-  const [tilted, setTilted] = useState(false); // false = top-down (default)
-  const [focusYou, setFocusYou] = useState(false);
+  const [tilted, setTilted] = useState(false); // false = flat (default), true = 3D tilt
+  const [follow, setFollow] = useState(true); // chase cam behind the pointer
 
-  // Seed origin from the first GPS fix.
+  // Live re-routing: anchor the route origin on the first fix, and re-anchor each
+  // time we've moved ~40 m from where the current route started.
   useEffect(() => {
-    if (!origin && loc.coords) setOrigin(loc.coords);
-  }, [loc.coords, origin]);
+    if (!loc.coords) return;
+    const here = loc.coords;
+    setRouteOrigin((prev) => (!prev || haversineKm(prev, here) > 0.04 ? here : prev));
+  }, [loc.coords]);
 
-  // (Re)route whenever we have both ends or the travel mode changes.
+  // (Re)route from the current anchor whenever it or the travel mode changes.
   useEffect(() => {
-    if (!origin || !dest) return;
+    if (!routeOrigin || !dest) return;
     let alive = true;
     setRouting(true);
     setRouteErr(null);
-    directions(origin, dest, profile)
+    directions(routeOrigin, dest, profile)
       .then((d) => alive && setDir(d))
       .catch((e) => alive && setRouteErr(e?.message ?? 'Could not compute a route'))
       .finally(() => alive && setRouting(false));
     return () => {
       alive = false;
     };
-  }, [origin, dest, profile]);
+  }, [routeOrigin, dest, profile]);
 
   const recenter = () => {
-    if (loc.coords) setOrigin(loc.coords); // re-route from the latest fix
-    setFocusYou(true);
+    setFollow(true);
+    if (loc.coords) setRouteOrigin(loc.coords); // snap the route to where I am now
   };
 
   if (!dest) return <StateView loading={false} error="No destination was provided for navigation." onRetry={back} />;
   if (loc.status === 'denied')
     return <StateView loading={false} error="Location permission is off. Enable it to navigate from where you are." onRetry={back} />;
-  if (!origin) return <StateView loading error={null} />;
+  if (!loc.coords) return <StateView loading error={null} />;
+
+  const me = loc.coords;
+  // Chase cam: centre on me, turn the map to my heading, and push the centre down
+  // (offset) so I sit low with the road ahead — the camera rides behind me.
+  const chase = follow
+    ? { lng: me.lng, lat: me.lat, zoom: 16.8, bearing: loc.heading ?? 0, offset: [0, Math.round(winH * 0.14)] as [number, number] }
+    : null;
 
   const stops: MapStop[] = [
-    { lat: origin.lat, lng: origin.lng, label: 'You', you: true },
+    { lat: me.lat, lng: me.lng, label: 'You', you: true },
     { lat: dest.lat, lng: dest.lng, label: label ?? 'Destination', sub: dir ? `${fmtM(dir.distanceM)} · ${fmtMin(dir.durationS)}` : undefined, color: '#7C5CF6' },
   ];
 
@@ -158,8 +169,8 @@ export default function Navigate() {
       route={dir?.geometry}
       pitch={tilted ? 55 : 0}
       youHeading={loc.heading}
-      fit={!focusYou}
-      focus={focusYou ? { lng: origin.lng, lat: origin.lat, zoom: 16.5 } : null}
+      fit={!follow}
+      focus={chase}
       sheetTop={0.46}
       header={header}>
       {/* Destination + next maneuver */}

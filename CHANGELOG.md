@@ -3,6 +3,15 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.20.1] — 2026-09-05
+
+### Fixed
+- **Places adopt Google's authoritative coordinates.** `finalize` now overwrites a
+  resolved place's (and matched activity's) lat/lng with the cached Google
+  location and stamps `coordinateSource: "Google Places"`, so a bad AI/import
+  coordinate (e.g. a hallucinated latitude putting a BGC venue ~300 km out to sea)
+  self-corrects on crawl — retroactive by re-finalizing with the gate on.
+
 ## [2.20.0] — 2026-09-05
 
 ### Added
@@ -345,6 +354,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.20.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.1
 [2.20.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.0
 [2.19.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.1
 [2.19.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.0

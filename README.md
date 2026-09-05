@@ -171,7 +171,8 @@ monorepo config).
 | `release/v2.18.1` · tag `v2.18.1` | + Housekeeping: gate-off photos, Playwright, DFD |
 | `release/v2.19.0` · tag `v2.19.0` | + Native dev-build path (EAS) |
 | `release/v2.19.1` · tag `v2.19.1` | + Navigator: centred location + minimized sheet |
-| `release/v2.20.0` · tag `v2.20.0` | + Native MapLibre map (pre-wired) (current) |
+| `release/v2.20.0` · tag `v2.20.0` | + Native MapLibre map (pre-wired) |
+| `release/v2.20.1` · tag `v2.20.1` | + Coordinate hardening (adopt Google coords) (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

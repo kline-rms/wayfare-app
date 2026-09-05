@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a><a href="#v2-20-1">v2.20.1</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -962,7 +962,39 @@
   <div class="files"><h3>Touched</h3><code>components/wayfare/wayfare-map.tsx (native rewrite)</code><code>@maplibre/maplibre-react-native dep + plugin</code></div>
 </div></section>
 
+<!-- ============ v2.20.1 ============ -->
+<section id="v2-20-1" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.20.1</span><h2>Coordinate hardening — adopt Google's coords</h2></div>
+  <div class="req"><b>Requested.</b> A bad AI/import coordinate (a hallucinated latitude put BGC venues ~300 km out to sea) should self-correct when Places resolves the place, instead of just linking a Place ID over a wrong lat/lng.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>What changed</h3><ul>
+      <li><b>Places adopt Google coords</b> — <code>finalize</code> now overwrites a resolved catalog place's <code>lat</code>/<code>lng</code> (and its <code>coordinates</code> string) with the cached Google location, and stamps <code>coordinateSource: "Google Places"</code>.</li>
+      <li><b>Activities too</b> — a block matched to a resolved place takes that place's Google coordinates, so map + list always agree.</li>
+      <li><b>Only when resolved</b> — the source map holds Google-sourced places only (never stubs), so nothing adopts a 0,0.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why</h3>
+      <p>Google is the source of truth for a resolved place, so its coordinate should win over whatever the generator or spreadsheet guessed. Doing it in <code>finalize</code> means it happens on every crawl for free, and the fix is retroactive — re-finalizing a trip with the gate on repairs old bad data <span class="conn">connects → server/places/finalize.ts</span>.</p>
+      <p><b>Verified:</b> re-finalized the family trip — the Mind Museum moved from the seeded 14.55208,121.0455 to Google's exact 14.552276,121.0457261 with <code>coordinateSource: "Google Places"</code>; a hallucinated 11.55 latitude would likewise snap back to 14.55.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 820 112" role="img" aria-label="Coordinate adoption">
+    <defs><marker id="co" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="38" width="180" height="42" rx="10" fill="#3a2e80" stroke="var(--coral)"/><text x="106" y="57" text-anchor="middle" fill="#fff">place (wrong lat)</text><text x="106" y="72" text-anchor="middle" fill="var(--sub)" font-size="9.5">11.55 · 300km out</text>
+      <rect x="236" y="38" width="170" height="42" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="321" y="57" text-anchor="middle" fill="#fff">finalize resolve</text><text x="321" y="72" text-anchor="middle" fill="var(--sub)" font-size="9.5">Google placeId</text>
+      <rect x="446" y="38" width="170" height="42" rx="10" fill="#3a2e80" stroke="var(--sky)"/><text x="531" y="57" text-anchor="middle" fill="#fff">adopt location</text><text x="531" y="72" text-anchor="middle" fill="var(--sub)" font-size="9.5">overwrite lat/lng</text>
+      <rect x="656" y="38" width="150" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="731" y="63" text-anchor="middle" fill="var(--ink)" font-size="10.5">correct · on map</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M196 59 L232 59" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#co)"/>
+      <path d="M406 59 L442 59" stroke="var(--sky)" color="var(--sky)" marker-end="url(#co)"/>
+      <path d="M616 59 L652 59" stroke="var(--mint)" color="var(--mint)" marker-end="url(#co)"/>
+    </g>
+  </svg></div><figcaption>On resolve, the place adopts Google's coordinate, snapping a wrong lat/lng back onto the map.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>server/places/finalize.ts</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.20.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.20.1 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

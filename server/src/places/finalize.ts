@@ -59,23 +59,30 @@ export async function finalizeItineraryPlaces(itinerary: Itinerary, repo: Repo):
     }
   }
 
-  // Link placeIds back onto the catalog.
+  // Link placeIds back onto the catalog AND adopt Google's authoritative
+  // coordinates. Google is the source of truth for a resolved place, so this
+  // self-corrects a bad AI/import lat/lng (e.g. a hallucinated latitude that put
+  // a BGC venue 300 km out to sea) the moment the place is crawled.
   const places = catalog.map((p) => {
     const c = byName.get(norm(p.name));
-    return c ? { ...p, placeId: c.placeId } : p;
+    if (!c) return p;
+    return {
+      ...p,
+      placeId: c.placeId,
+      lat: c.location.lat,
+      lng: c.location.lng,
+      coordinates: `${c.location.lat}, ${c.location.lng}`,
+      coordinateSource: "Google Places",
+    };
   });
 
-  // Link placeId AND coordinates onto activities (from catalog match or the
-  // activity-only resolution), so every located block maps correctly.
+  // Link placeId AND Google coordinates onto activities (from catalog match or
+  // the activity-only resolution) — the resolved place's coords override any
+  // wrong lat/lng so map + list agree.
   const linkActivity = (a: Activity): Activity => {
     const c = byName.get(norm(a.where)) ?? byWhere.get(norm(a.where));
     if (!c) return a;
-    const next: Activity = { ...a, placeId: a.placeId ?? c.placeId };
-    if (!hasCoords(a)) {
-      next.lat = c.location.lat;
-      next.lng = c.location.lng;
-    }
-    return next;
+    return { ...a, placeId: a.placeId ?? c.placeId, lat: c.location.lat, lng: c.location.lng };
   };
   const proposals = itinerary.proposals.map((prop) => ({
     ...prop,

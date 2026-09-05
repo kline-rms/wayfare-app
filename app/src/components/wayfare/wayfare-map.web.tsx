@@ -93,6 +93,32 @@ export function WayfareMap({
       .addTo(map);
   }
 
+  // Keep the "you" chevron pointing the true travel direction regardless of how
+  // the map is turned: screen angle = heading − mapBearing. When the map is
+  // heading/route-up (bearing ≠ 0) this reads as "up"; on a north-up map with a
+  // known heading it points to the compass; with neither, it shows a plain dot.
+  function updateYouRotation() {
+    const rot = youElRef.current;
+    const map = mapRef.current;
+    if (!rot || !map) return;
+    const b = map.getBearing ? map.getBearing() : 0;
+    const h = dataRef.current.youHeading;
+    const known = h != null;
+    // Show the directional chevron only when there's a real facing to show: a
+    // known compass heading, or a nav focus that turns the map to travel (route-up).
+    const oriented = known || dataRef.current.focus?.bearing != null;
+    const nav = rot.querySelector('.wf-nav') as HTMLElement | null;
+    const dot = rot.querySelector('.wf-dot') as HTMLElement | null;
+    if (oriented) {
+      rot.style.transform = `rotate(${(known ? (h as number) : b) - b}deg)`;
+      if (nav) nav.style.opacity = '1';
+      if (dot) dot.style.opacity = '0';
+    } else {
+      if (nav) nav.style.opacity = '0';
+      if (dot) dot.style.opacity = '1';
+    }
+  }
+
   function draw() {
     const map = mapRef.current;
     if (!map) return;
@@ -127,30 +153,24 @@ export function WayfareMap({
     stops.forEach((s, i) => {
       const el = document.createElement('div');
       if (s.you) {
-        // Directional puck: a soft halo + a triangular nav arrow that points the
-        // way you're facing (with a solid dot for when heading is unknown). The
-        // arrow is on an inner element so MapLibre keeps positioning the marker
-        // root while we rotate the puck.
-        el.style.cssText = 'width:40px;height:40px;position:relative';
+        // Navigation puck — a Google-style chevron on a soft halo. It points the
+        // way you're heading; because the nav map turns to travel direction
+        // (heading/route-up), the chevron reads "straight up" as you walk. On a
+        // north-up map it rotates to the compass heading, and falls back to a dot
+        // when no direction is known. Rotation is kept in sync with the map's
+        // own bearing by updateYouRotation().
+        el.style.cssText = 'width:46px;height:46px;position:relative';
         const rot = document.createElement('div');
-        const h = dataRef.current.youHeading;
-        const arrowOn = h == null ? '0' : '1';
-        rot.style.cssText = `position:absolute;inset:0;transition:transform .2s ease-out;transform:rotate(${h ?? 0}deg)`;
+        rot.style.cssText = 'position:absolute;inset:0;transition:transform .18s linear;transform-origin:50% 50%';
         rot.innerHTML =
-          // halo
-          `<div style="position:absolute;left:50%;top:50%;width:34px;height:34px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(124,92,246,.20)"></div>` +
-          // white outline triangle (slightly larger, sits behind)
-          `<div class="wf-facing" style="position:absolute;left:50%;top:1px;transform:translateX(-50%);width:0;height:0;` +
-          `border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:22px solid #fff;` +
-          `filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));opacity:${arrowOn};transition:opacity .2s"></div>` +
-          // grape nav arrow on top
-          `<div class="wf-facing" style="position:absolute;left:50%;top:4px;transform:translateX(-50%);width:0;height:0;` +
-          `border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:16px solid ${GRAPE};` +
-          `opacity:${arrowOn};transition:opacity .2s"></div>` +
-          // center dot (position anchor; the fallback when heading is unknown)
-          `<div style="position:absolute;left:50%;top:50%;width:13px;height:13px;transform:translate(-50%,-50%);border-radius:50%;background:${GRAPE};border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)"></div>`;
+          `<div style="position:absolute;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(124,92,246,.18)"></div>` +
+          `<div class="wf-nav" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-52%)">` +
+          `<svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 2.5 L20 21 L12 16.4 L4 21 Z" fill="${GRAPE}" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>` +
+          `</div>` +
+          `<div class="wf-dot" style="position:absolute;left:50%;top:50%;width:13px;height:13px;transform:translate(-50%,-50%);border-radius:50%;background:${GRAPE};border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);opacity:0"></div>`;
         el.appendChild(rot);
         youElRef.current = rot;
+        updateYouRotation();
       } else {
         const color = s.color ?? GRAPE;
         el.style.cssText =
@@ -302,6 +322,8 @@ export function WayfareMap({
       map.dragRotate?.enable();
       map.touchZoomRotate?.enableRotation();
     }
+    // Keep the "you" chevron aligned to true north as the map turns (auto or by hand).
+    map.on('rotate', updateYouRotation);
     // Tap empty map to dismiss an open pin popup (marker clicks stopPropagation).
     map.on('click', () => {
       if (popupRef.current) {
@@ -378,13 +400,9 @@ export function WayfareMap({
 
   // Spin the "you" puck's arrow to the live heading — no map redraw needed.
   useEffect(() => {
-    const rot = youElRef.current;
-    if (!rot) return;
-    rot.style.transform = `rotate(${youHeading ?? 0}deg)`;
-    rot.querySelectorAll('.wf-facing').forEach((n: Element) => {
-      (n as HTMLElement).style.opacity = youHeading == null ? '0' : '1';
-    });
-  }, [youHeading]);
+    updateYouRotation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [youHeading, focus?.bearing]);
 
   return (
     <View style={[{ height, width: '100%', borderRadius: 22, overflow: 'hidden', backgroundColor: NIGHT, position: 'relative' }, style]}>

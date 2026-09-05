@@ -9,6 +9,7 @@
 // need the basemap's vector source id, best pinned against a running map).
 import { useMemo } from 'react';
 import { View } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import { Camera, GeoJSONSource, Layer, Map, Marker } from '@maplibre/maplibre-react-native';
 
 import { GRAPE, NIGHT, OPENFREEMAP_DARK, ROUTE_AMBER, routeFrom, type WayfareMapProps } from './wayfare-map.shared';
@@ -17,28 +18,19 @@ function styleUrl(): string {
   return process.env.EXPO_PUBLIC_MAP_STYLE_URL || OPENFREEMAP_DARK;
 }
 
-/** Directional "you" puck — a halo + arrow (or dot when heading is unknown). */
-function YouPuck({ heading }: { heading?: number | null }) {
+/** Navigation puck — a halo + Google-style chevron (the map is heading/route-up,
+ * so the chevron reads "up" = travel direction), or a dot when there's no facing. */
+function YouPuck({ oriented }: { oriented: boolean }) {
   return (
-    <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
-      <View style={{ position: 'absolute', width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(124,92,246,0.20)' }} />
-      {heading != null ? (
-        <View style={{ position: 'absolute', top: 1, transform: [{ rotate: `${heading}deg` }] }}>
-          <View
-            style={{
-              width: 0,
-              height: 0,
-              borderLeftWidth: 8,
-              borderRightWidth: 8,
-              borderBottomWidth: 16,
-              borderLeftColor: 'transparent',
-              borderRightColor: 'transparent',
-              borderBottomColor: GRAPE,
-            }}
-          />
-        </View>
-      ) : null}
-      <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: GRAPE, borderWidth: 2.5, borderColor: '#fff' }} />
+    <View style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ position: 'absolute', width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(124,92,246,0.18)' }} />
+      {oriented ? (
+        <Svg width={30} height={30} viewBox="0 0 24 24" style={{ position: 'absolute' }}>
+          <Path d="M12 2.5 L20 21 L12 16.4 L4 21 Z" fill={GRAPE} stroke="#fff" strokeWidth={1.6} strokeLinejoin="round" />
+        </Svg>
+      ) : (
+        <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: GRAPE, borderWidth: 2.5, borderColor: '#fff' }} />
+      )}
     </View>
   );
 }
@@ -110,7 +102,7 @@ export function WayfareMap({
 
         {stops.map((s, i) => (
           <Marker key={`${s.lat},${s.lng},${i}`} id={`wf-stop-${i}`} lngLat={[s.lng, s.lat]} anchor={s.you ? 'center' : 'bottom'}>
-            {s.you ? <YouPuck heading={youHeading} /> : <Pin n={s.number ?? i + 1} color={s.color} />}
+            {s.you ? <YouPuck oriented={youHeading != null || focus?.bearing != null} /> : <Pin n={s.number ?? i + 1} color={s.color} />}
           </Marker>
         ))}
       </Map>

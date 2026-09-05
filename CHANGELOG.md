@@ -3,6 +3,18 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.21.0] — 2026-09-05
+
+### Changed
+- **Google-Maps-style walking navigation.** The navigator now turns the map to
+  your travel direction (device compass, else route-up toward the path ahead), so
+  you always walk "up"; the camera is tilted and rides behind you with the pointer
+  low and the road ahead. The "you" marker is a Google-style **navigation chevron**
+  that stays aligned to your true facing as the map rotates (and the map is
+  rotatable). The 2D toggle still flattens it; trip/day maps keep a plain dot.
+  Applied to web + native maps. (True compass heading-up needs a device; on web it
+  falls back to route-up.)
+
 ## [2.20.1] — 2026-09-05
 
 ### Fixed
@@ -354,6 +366,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.21.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.21.0
 [2.20.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.1
 [2.20.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.0
 [2.19.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.1

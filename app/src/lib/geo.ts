@@ -16,6 +16,16 @@ export function haversineKm(a: LatLng, b: LatLng): number {
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
+/** Compass bearing (deg, 0 = north) from a → b. */
+export function bearingDeg(a: LatLng, b: LatLng): number {
+  const φ1 = (a.lat * Math.PI) / 180;
+  const φ2 = (b.lat * Math.PI) / 180;
+  const Δλ = ((b.lng - a.lng) * Math.PI) / 180;
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  return (Math.atan2(y, x) * (180 / Math.PI) + 360) % 360;
+}
+
 /** Rough ETA in minutes: walk if very close, otherwise a city-driving pace. */
 export function etaMinutes(km: number): number {
   const speedKmh = km < 1.2 ? 4.8 : 18; // walking vs city Grab/taxi

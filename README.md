@@ -172,7 +172,8 @@ monorepo config).
 | `release/v2.19.0` · tag `v2.19.0` | + Native dev-build path (EAS) |
 | `release/v2.19.1` · tag `v2.19.1` | + Navigator: centred location + minimized sheet |
 | `release/v2.20.0` · tag `v2.20.0` | + Native MapLibre map (pre-wired) |
-| `release/v2.20.1` · tag `v2.20.1` | + Coordinate hardening (adopt Google coords) (current) |
+| `release/v2.20.1` · tag `v2.20.1` | + Coordinate hardening (adopt Google coords) |
+| `release/v2.21.0` · tag `v2.21.0` | + Google-Maps-style walking navigation (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

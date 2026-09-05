@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a><a href="#v2-20-1">v2.20.1</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a><a href="#v2-20-1">v2.20.1</a><a href="#v2-21-0">v2.21.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -994,7 +994,42 @@
   <div class="files"><h3>Touched</h3><code>server/places/finalize.ts</code></div>
 </div></section>
 
+<!-- ============ v2.21.0 ============ -->
+<section id="v2-21-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.21.0</span><h2>Google-Maps-style walking navigation</h2></div>
+  <div class="req"><b>Requested.</b> Make navigation behave like Google Maps walking: a proper navigator icon; the map turns so you always walk "up" (heading-up); a tilted camera that rides behind you with the pointer low; rotatable.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Heading/route-up</b> — the nav map turns to your travel direction: the device compass when available, else the bearing toward the route ahead (<code>bearingDeg</code>), so it orients even without a compass.</li>
+      <li><b>Navigation chevron</b> — the "you" marker is now a Google-style chevron. It's kept aligned to the true facing as the map turns (screen angle = heading − map bearing), reading "up" in heading/route-up nav; a dot when there's no facing.</li>
+      <li><b>Tilted chase cam, pointer low</b> — the navigator defaults to the tilted 3D view with the chevron sitting low (road ahead above), offset tracking the sheet; the 2D toggle still flattens it.</li>
+      <li><b>Rotatable</b> — drag/two-finger rotate stays live and the chevron re-aligns on every <code>rotate</code> event. Native map (v2.20.0) inherits the same heading-up + tilt via its Camera.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Google's walking view is heading-up + tilted + pointer-low; route-up as the no-compass fallback keeps that behaviour testable on the web and useful on desktop. Decoupling the chevron's screen angle from the map bearing (<code>heading − bearing</code>) is the one trick that makes it correct whether the map is north-up (trip/day) or turned to travel (nav) <span class="conn">connects → wayfare-map.web.tsx</span> — the same shared props drive both maps, so nothing else changed.</p>
+      <p><b>Verified on web:</b> the nav opens tilted, route-up (map turned toward the destination), chevron pointing up with the road ahead filling the screen, sheet minimized; trip/day maps still show a plain dot (chevron gated to a nav focus). 8/8 smoke clean. True compass heading-up is confirmed on a device (desktop reports no heading).</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 880 128" role="img" aria-label="Walking navigation data flow">
+    <defs><marker id="gm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="44" width="180" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="106" y="63" text-anchor="middle" fill="#fff">heading ?? route</text><text x="106" y="79" text-anchor="middle" fill="var(--sub)" font-size="9.5">travel bearing</text>
+      <rect x="236" y="16" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="336" y="41" text-anchor="middle" fill="var(--ink)" font-size="10.5">map: heading-up + tilt</text>
+      <rect x="236" y="66" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="336" y="91" text-anchor="middle" fill="var(--ink)" font-size="10">chase cam · pointer low</text>
+      <rect x="476" y="44" width="190" height="44" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="571" y="63" text-anchor="middle" fill="#fff">chevron align</text><text x="571" y="79" text-anchor="middle" fill="var(--sub)" font-size="9.5">heading − bearing</text>
+      <rect x="700" y="44" width="150" height="44" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="775" y="63" text-anchor="middle" fill="var(--ink)" font-size="10">rotatable</text><text x="775" y="79" text-anchor="middle" fill="var(--sub)" font-size="9">re-align on turn</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M196 58 L232 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#gm)"/>
+      <path d="M196 74 L232 88" stroke="var(--sky)" color="var(--sky)" marker-end="url(#gm)"/>
+      <path d="M436 66 L472 66" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#gm)"/>
+      <path d="M666 66 L696 66" stroke="var(--coral)" color="var(--coral)" marker-end="url(#gm)"/>
+    </g>
+  </svg></div><figcaption>Travel bearing turns the map; the chevron subtracts the map bearing to always point the true way — Google-Maps walking view.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>navigate.tsx</code><code>wayfare-map.web.tsx (chevron + rotate align)</code><code>wayfare-map.tsx (native chevron)</code><code>lib/geo.ts (bearingDeg)</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.20.1 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.21.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

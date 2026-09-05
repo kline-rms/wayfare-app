@@ -13,7 +13,7 @@ import { StateView, Txt } from '@/components/wayfare/ui';
 import type { MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { Space } from '@/constants/wayfare';
 import { useLocation } from '@/hooks/use-location';
-import { haversineKm, type LatLng } from '@/lib/geo';
+import { bearingDeg, haversineKm, type LatLng } from '@/lib/geo';
 import { openMaps } from '@/lib/maps';
 import { back } from '@/lib/nav';
 import { directions, type Directions, type NavStep, type TravelProfile } from '@/lib/route';
@@ -74,7 +74,7 @@ export default function Navigate() {
   const [dir, setDir] = useState<Directions | null>(null);
   const [routing, setRouting] = useState(false);
   const [routeErr, setRouteErr] = useState<string | null>(null);
-  const [tilted, setTilted] = useState(false); // false = flat (default), true = 3D tilt
+  const [tilted, setTilted] = useState(true); // Google-style tilted nav view by default
   const [follow, setFollow] = useState(true); // chase cam behind the pointer
   const [sheetExpanded, setSheetExpanded] = useState(false); // start minimized so the map shows
 
@@ -112,17 +112,20 @@ export default function Navigate() {
   if (!loc.coords) return <StateView loading error={null} />;
 
   const me = loc.coords;
-  // Chase cam: centre on me and turn the map to my heading. Keep me centred in
-  // the VISIBLE map (the area not covered by the sheet), so the offset tracks
-  // whether the sheet is minimized (most of the screen) or expanded.
+  // Google-Maps-style chase cam. Orient the map to travel direction — the device
+  // compass when available, else the bearing toward the route ahead (route-up),
+  // so the map turns as you walk and you're always heading "up". Sit the pointer
+  // LOW in the visible map (road ahead above), tracking the sheet's coverage.
   const sheetFrac = sheetExpanded ? 0.46 : 0.86;
+  const nextTarget = dir?.steps.find((s) => s.distanceM > 5)?.location;
+  const travelBearing = loc.heading ?? bearingDeg(me, nextTarget ? { lat: nextTarget[1], lng: nextTarget[0] } : dest);
   const chase = follow
     ? {
         lng: me.lng,
         lat: me.lat,
-        zoom: 16.8,
-        bearing: loc.heading ?? 0,
-        offset: [0, Math.round((winH * (sheetFrac - 1)) / 2)] as [number, number],
+        zoom: 17.2,
+        bearing: travelBearing,
+        offset: [0, Math.round(winH * (0.7 * sheetFrac - 0.5))] as [number, number],
       }
     : null;
 

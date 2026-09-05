@@ -3,6 +3,17 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.20.0] — 2026-09-05
+
+### Added
+- **Native MapLibre map (pre-wired).** `wayfare-map.tsx` now renders a real
+  MapLibre map on native (`@maplibre/maplibre-react-native` v11) — dark vector
+  ground, camera driven by the same `focus`/`stops` props as web, a GeoJSON route
+  line, numbered pins and a directional "you" puck — replacing the static SVG
+  preview. Web is unaffected (native-only import; still 8/8 smoke). Renders in a
+  custom dev build (see `docs/NATIVE-BUILD.md`); 3D building extrusions are the
+  next on-device step. Type-checks against the real MapLibre types.
+
 ## [2.19.1] — 2026-09-05
 
 ### Changed
@@ -334,6 +345,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.20.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.0
 [2.19.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.1
 [2.19.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.0
 [2.18.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.1

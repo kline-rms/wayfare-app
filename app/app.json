@@ -51,7 +51,8 @@
           "color": "#7C5CF6"
         }
       ],
-      "expo-dev-client"
+      "expo-dev-client",
+      "@maplibre/maplibre-react-native"
     ],
     "experiments": {
       "typedRoutes": true,

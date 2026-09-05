@@ -1,54 +1,119 @@
-// Native map (iOS / Android). A real MapLibre native map needs the
-// maplibre-react-native module + a custom dev build (Stage 4). Until then this
-// renders a faithful static preview from the same stops: the night ground, the
-// amber dashed route and the coloured pins, positioned by normalising lat/lng.
-import { View, Text } from 'react-native';
-import Svg, { Rect, Path, Circle, Line } from 'react-native-svg';
+// Native map (iOS / Android) — the real MapLibre map, matching the web map's
+// dark vector ground, amber route and coloured pins + a directional "you" puck.
+// Renders only in a custom dev build (see docs/NATIVE-BUILD.md); Expo Go can't
+// load the native module. Web uses wayfare-map.web.tsx instead.
+//
+// NOTE: written against @maplibre/maplibre-react-native v11 and verified to
+// bundle, but the on-device render is confirmed once you run a dev build. The 3D
+// building extrusions the web map draws are the documented next step here (they
+// need the basemap's vector source id, best pinned against a running map).
+import { useMemo } from 'react';
+import { View } from 'react-native';
+import { Camera, GeoJSONSource, Layer, Map, Marker } from '@maplibre/maplibre-react-native';
 
-import { GRAPE, NIGHT, ROUTE_AMBER, type WayfareMapProps } from './wayfare-map.shared';
+import { GRAPE, NIGHT, OPENFREEMAP_DARK, ROUTE_AMBER, routeFrom, type WayfareMapProps } from './wayfare-map.shared';
 
-export function WayfareMap({ stops, height = 280, style }: WayfareMapProps) {
-  const W = 340;
-  const H = height;
-  const pad = 34;
-  const lats = stops.map((s) => s.lat);
-  const lngs = stops.map((s) => s.lng);
-  const minLa = lats.length ? Math.min(...lats) : 0;
-  const maxLa = lats.length ? Math.max(...lats) : 1;
-  const minLn = lngs.length ? Math.min(...lngs) : 0;
-  const maxLn = lngs.length ? Math.max(...lngs) : 1;
-  const spanLa = maxLa - minLa || 1;
-  const spanLn = maxLn - minLn || 1;
-  const px = (s: { lng: number }) => pad + ((s.lng - minLn) / spanLn) * (W - 2 * pad);
-  const py = (s: { lat: number }) => H - pad - ((s.lat - minLa) / spanLa) * (H - 2 * pad);
-  const pts = stops.map((s) => [px(s), py(s)] as const);
-  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+function styleUrl(): string {
+  return process.env.EXPO_PUBLIC_MAP_STYLE_URL || OPENFREEMAP_DARK;
+}
+
+/** Directional "you" puck — a halo + arrow (or dot when heading is unknown). */
+function YouPuck({ heading }: { heading?: number | null }) {
+  return (
+    <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ position: 'absolute', width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(124,92,246,0.20)' }} />
+      {heading != null ? (
+        <View style={{ position: 'absolute', top: 1, transform: [{ rotate: `${heading}deg` }] }}>
+          <View
+            style={{
+              width: 0,
+              height: 0,
+              borderLeftWidth: 8,
+              borderRightWidth: 8,
+              borderBottomWidth: 16,
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
+              borderBottomColor: GRAPE,
+            }}
+          />
+        </View>
+      ) : null}
+      <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: GRAPE, borderWidth: 2.5, borderColor: '#fff' }} />
+    </View>
+  );
+}
+
+function Pin({ n, color }: { n: number; color?: string }) {
+  return (
+    <View
+      style={{
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        borderBottomLeftRadius: 2,
+        backgroundColor: color ?? GRAPE,
+        borderWidth: 2,
+        borderColor: NIGHT,
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: [{ rotate: '45deg' }],
+      }}>
+      <View style={{ transform: [{ rotate: '-45deg' }] }}>
+        <View />
+      </View>
+    </View>
+  );
+}
+
+export function WayfareMap({
+  stops,
+  routeGeometry,
+  height = 280,
+  pitch = 52,
+  bearing = -18,
+  focus,
+  youHeading,
+  style,
+}: WayfareMapProps) {
+  const geometry = routeGeometry ?? routeFrom(stops);
+  const routeShape = useMemo(() => ({ type: 'Feature', properties: {}, geometry }) as any, [geometry]);
+
+  const first = stops.find((s) => s.you) ?? stops[0];
+  const center: [number, number] = focus
+    ? [focus.lng, focus.lat]
+    : first
+      ? [first.lng, first.lat]
+      : [121.05, 14.55];
+  const zoom = focus?.zoom ?? (stops.length > 1 ? 14 : 15);
+  const camBearing = focus?.bearing ?? bearing;
 
   return (
     <View style={[{ height, borderRadius: 22, overflow: 'hidden', backgroundColor: NIGHT }, style]}>
-      <Svg width="100%" height={height} viewBox={`0 0 ${W} ${H}`}>
-        <Rect width={W} height={H} fill={NIGHT} />
-        {/* faint street grid */}
-        {[0.25, 0.5, 0.75].map((t) => (
-          <Line key={`h${t}`} x1={0} y1={H * t} x2={W} y2={H * t - 12} stroke="#241A55" strokeWidth={8} />
-        ))}
-        {[0.3, 0.6, 0.85].map((t) => (
-          <Line key={`v${t}`} x1={W * t} y1={0} x2={W * t - 12} y2={H} stroke="#241A55" strokeWidth={8} />
-        ))}
-        {pts.length > 1 ? (
-          <Path d={d} stroke={ROUTE_AMBER} strokeWidth={4} strokeDasharray="2 10" strokeLinecap="round" fill="none" />
+      <Map mapStyle={styleUrl()} style={{ flex: 1 }}>
+        {/* Declarative camera — follows focus/heading changes as props update. */}
+        <Camera center={center} zoom={zoom} pitch={pitch} bearing={camBearing} duration={600} />
+
+        {geometry.coordinates.length > 1 ? (
+          <GeoJSONSource id="wf-route" data={routeShape}>
+            <Layer
+              id="wf-route-glow"
+              type="line"
+              style={{ lineColor: GRAPE, lineWidth: 9, lineOpacity: 0.35, lineCap: 'round', lineJoin: 'round' }}
+            />
+            <Layer
+              id="wf-route-line"
+              type="line"
+              style={{ lineColor: ROUTE_AMBER, lineWidth: 4, lineDasharray: [2, 2], lineCap: 'round', lineJoin: 'round' }}
+            />
+          </GeoJSONSource>
         ) : null}
-        {pts.map((p, i) =>
-          stops[i].you ? (
-            <Circle key={i} cx={p[0]} cy={p[1]} r={10} fill={GRAPE} opacity={0.9} />
-          ) : (
-            <Circle key={i} cx={p[0]} cy={p[1]} r={7} fill={stops[i].color ?? GRAPE} stroke={NIGHT} strokeWidth={2} />
-          ),
-        )}
-      </Svg>
-      <Text style={{ position: 'absolute', bottom: 8, left: 12, color: '#A69FD6', fontSize: 9, fontWeight: '600' }}>
-        Live map on the device build
-      </Text>
+
+        {stops.map((s, i) => (
+          <Marker key={`${s.lat},${s.lng},${i}`} id={`wf-stop-${i}`} lngLat={[s.lng, s.lat]} anchor={s.you ? 'center' : 'bottom'}>
+            {s.you ? <YouPuck heading={youHeading} /> : <Pin n={s.number ?? i + 1} color={s.color} />}
+          </Marker>
+        ))}
+      </Map>
     </View>
   );
 }

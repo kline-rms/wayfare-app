@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -926,7 +926,43 @@
   <div class="files"><h3>Touched</h3><code>app/navigate.tsx</code></div>
 </div></section>
 
+<!-- ============ v2.20.0 ============ -->
+<section id="v2-20-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.20.0</span><h2>Native MapLibre map (pre-wired)</h2></div>
+  <div class="req"><b>Requested.</b> Make the native app show the real live map (the web map's dark vector ground, route and pins) instead of the static SVG preview — wired and ready for the first dev build.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Native map</b> — <code>wayfare-map.tsx</code> rewritten on <code>@maplibre/maplibre-react-native</code> v11: <code>Map</code> + <code>Camera</code> (centre / zoom / pitch / heading from the same <code>focus</code>/<code>stops</code> props the web map uses), a GeoJSON route line, and markers — numbered pins + a directional "you" puck that rotates to heading.</li>
+      <li><b>Dependency + plugin</b> — installed the SDK; Expo auto-added its config plugin, so a dev build compiles the native module.</li>
+      <li><b>Web untouched</b> — the native file is loaded only on native (metro picks <code>.web.tsx</code> for web); the whole thing bundles + type-checks with no web change.</li>
+      <li><b>Documented follow-up</b> — the 3D building extrusions (web has them) need the running basemap's vector source id, so they're the next on-device step.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Sharing one prop contract across platforms — <code>wayfare-map.shared.ts</code> — means the native map consumes the exact <code>stops</code> / <code>routeGeometry</code> / <code>focus</code> / <code>youHeading</code> the screens already pass <span class="conn">connects → components/wayfare/wayfare-map.shared.ts</span>, so no screen changes. Writing it against the installed v11 types (not remembered API) caught the real differences up front — <code>data</code> not <code>shape</code>, string <code>Anchor</code>, nested layers.</p>
+      <p><b>Verified here:</b> type-checks against the real MapLibre types, web still bundles + 8/8 smoke clean. The on-device render is confirmed when you run a dev build — it can't render in Expo Go or the web harness.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 880 122" role="img" aria-label="Native map data flow">
+    <defs><marker id="nm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="42" width="180" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="106" y="61" text-anchor="middle" fill="#fff">shared props</text><text x="106" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">stops·route·focus·heading</text>
+      <rect x="236" y="16" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="336" y="41" text-anchor="middle" fill="var(--ink)" font-size="10.5">native: Map + Camera</text>
+      <rect x="236" y="66" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="336" y="91" text-anchor="middle" fill="var(--ink)" font-size="10">route Layer + Markers</text>
+      <rect x="476" y="16" width="180" height="42" rx="10" fill="var(--night2)" stroke="var(--marigold)"/><text x="566" y="41" text-anchor="middle" fill="var(--ink)" font-size="10">web: .web.tsx (unchanged)</text>
+      <rect x="476" y="66" width="180" height="42" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="566" y="86" text-anchor="middle" fill="var(--ink)" font-size="10">3D extrusions</text><text x="566" y="100" text-anchor="middle" fill="var(--sub)" font-size="9">on-device next</text>
+      <rect x="700" y="42" width="150" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="775" y="67" text-anchor="middle" fill="#fff">dev build</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M196 56 L232 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#nm)"/>
+      <path d="M196 72 L232 86" stroke="var(--sky)" color="var(--sky)" marker-end="url(#nm)"/>
+      <path d="M436 37 L472 37" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#nm)"/>
+      <path d="M656 64 L696 64" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#nm)"/>
+    </g>
+  </svg></div><figcaption>Native map consumes the same shared props; it renders in a dev build, with 3D extrusions the next on-device step.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>components/wayfare/wayfare-map.tsx (native rewrite)</code><code>@maplibre/maplibre-react-native dep + plugin</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.19.1 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.20.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

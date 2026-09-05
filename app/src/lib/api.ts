@@ -169,6 +169,11 @@ export const api = {
   generateStatus: (): Promise<{ engine: 'openai' | 'stub'; model: string | null }> =>
     getJson('/api/generate/status'),
 
+  // Free-form: extract a structured request from a plain paragraph. `missing`
+  // lists still-needed fields (usually just the destination).
+  parsePlan: (prompt: string): Promise<{ request: Partial<GenerateRequest>; missing: string[]; engine: string }> =>
+    postJson('/api/generate/parse', { prompt }),
+
   // Step 1 — three day-level proposals from a request (not yet saved).
   generate: (request: GenerateRequest): Promise<GenerateResult> => postJson('/api/generate', request),
 

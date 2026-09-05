@@ -81,7 +81,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a><a href="#v2-20-1">v2.20.1</a><a href="#v2-21-0">v2.21.0</a><a href="#v2-22-0">v2.22.0</a><a href="#v2-22-1">v2.22.1</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a><a href="#v2-20-1">v2.20.1</a><a href="#v2-21-0">v2.21.0</a><a href="#v2-22-0">v2.22.0</a><a href="#v2-22-1">v2.22.1</a><a href="#v2-23-0">v2.23.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -1099,7 +1099,42 @@
   <div class="files"><h3>Touched</h3><code>server/routes/route.ts (fallback)</code><code>app/place/[name].tsx (trip id)</code><code>app/day/[id].tsx (pass it)</code></div>
 </div></section>
 
+<!-- ============ v2.23.0 ============ -->
+<section id="v2-23-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.23.0</span><h2>Free-form AI planner — describe your trip in one message</h2></div>
+  <div class="req"><b>Requested.</b> "I'll talk to the AI and say: plan an itinerary with my 3 kids (11/10/2) for Sep 9–14, make it beautiful." — one paragraph in, a full plan out. Built under the full process (graphify → disconnection analysis → e2e → layout check).</div>
+  <div class="panel prereq" style="margin-bottom:14px"><h3>Disconnection analysis</h3>
+  <table class="discon"><thead><tr><th>Gap</th><th>Fill</th><th>Why</th></tr></thead><tbody>
+    <tr><td>No free-form → structured-request parser (the generator needs a typed <code>GenerateRequest</code>, not prose)</td><td><code>POST /api/generate/parse</code> — OpenAI extracts origin, destination, dates, party, pace, budget, purpose, interests, constraints</td><td>Turn "plan a BGC trip with my 3 kids Sep 9–14" into fields the existing generator already consumes</td></tr>
+    <tr><td>Prompts usually omit a destination (yours did) — generate would 400</td><td>Parser returns <code>missing[]</code>; the UI asks back for <b>only</b> the destination; dates/party/pace are inferred or defaulted</td><td>Don't fail silently on the one field people forget; don't re-ask what was already said</td></tr>
+    <tr><td>No free-form entry point</td><td><code>create/plan.tsx</code> (a text box) + a "Describe your trip" option on the create menu</td><td>The actual "just talk to it" surface</td></tr>
+    <tr><td>No api method</td><td><code>api.parsePlan()</code></td><td>Client↔server wire</td></tr>
+  </tbody></table></div>
+  <div class="panel why"><h3>Why &amp; verification</h3>
+    <p>Parsing is a thin front door onto the proven pipeline: the paragraph becomes a <code>GenerateRequest</code>, then the same <code>/api/generate</code> → proposals → expand → save flow runs unchanged. Empty parsed fields are dropped so the wizard's defaults fill them; only a truly-missing destination blocks, and it's asked back inline. The AI is told never to invent a destination, so "around BGC" stays honest.</p>
+    <p><b>End-to-end verified:</b> your exact prompt parsed to origin/homeBase "Avida Verte", startDate 2026-09-09 / endDate 2026-09-14, partySize, constraint "2-year-old needs stroller access", kid interests — flagging <code>missing:["destination"]</code>; a with-destination prompt returned <code>missing:[]</code>; empty → 400. The full UI flow (type → Plan it → generate) reached the proposals screen with 3 plans. <b>Layout:</b> 8/8 smoke clean.</p>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 880 122" role="img" aria-label="Free-form planner data flow">
+    <defs><marker id="ff" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="42" width="150" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="91" y="61" text-anchor="middle" fill="#fff">paragraph</text><text x="91" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">create/plan</text>
+      <rect x="206" y="42" width="160" height="44" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="286" y="61" text-anchor="middle" fill="#fff">/generate/parse</text><text x="286" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">AI extract</text>
+      <rect x="406" y="16" width="170" height="42" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="491" y="36" text-anchor="middle" fill="var(--ink)" font-size="10">missing dest?</text><text x="491" y="50" text-anchor="middle" fill="var(--sub)" font-size="9">ask inline</text>
+      <rect x="406" y="66" width="170" height="42" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="491" y="91" text-anchor="middle" fill="#fff">GenerateRequest</text>
+      <rect x="616" y="42" width="150" height="44" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="691" y="61" text-anchor="middle" fill="var(--ink)" font-size="10.5">/generate</text><text x="691" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">3 proposals</text>
+      <rect x="796" y="42" width="70" height="44" rx="10" fill="var(--night2)" stroke="var(--sky)"/><text x="831" y="67" text-anchor="middle" fill="var(--ink)" font-size="10">save</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M166 64 L202 64" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#ff)"/>
+      <path d="M366 56 L402 40 M366 72 L402 88" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#ff)"/>
+      <path d="M576 87 L612 74" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#ff)"/>
+      <path d="M766 64 L792 64" stroke="var(--mint)" color="var(--mint)" marker-end="url(#ff)"/>
+    </g>
+  </svg></div><figcaption>A paragraph is parsed to a request (destination asked back if missing), then runs the existing generate → proposals → save pipeline.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>routes/generate.ts (/parse)</code><code>app/create/plan.tsx (new)</code><code>create/index.tsx (entry)</code><code>api.parsePlan</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.22.1 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.23.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

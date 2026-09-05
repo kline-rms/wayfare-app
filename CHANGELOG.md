@@ -3,6 +3,18 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.23.0] — 2026-09-05
+
+### Added
+- **Free-form AI planner.** A "Describe your trip" entry lets you type the whole
+  request in one message ("plan a BGC trip with my 3 kids 11/10/2, Sep 9–14, make
+  it beautiful, we stay at Avida Verte"). New `POST /api/generate/parse` extracts a
+  structured request (origin, dates, party, pace, budget, interests, constraints)
+  and flags what's missing — usually just the destination, which the screen asks
+  back inline — then runs the existing generate → proposals → save pipeline. New
+  `create/plan.tsx` + `api.parsePlan`. Verified end-to-end (parse, ask-destination,
+  full generate to proposals); 8/8 smoke.
+
 ## [2.22.1] — 2026-09-05
 
 ### Fixed
@@ -387,6 +399,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.23.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.23.0
 [2.22.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.22.1
 [2.22.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.22.0
 [2.21.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.21.0

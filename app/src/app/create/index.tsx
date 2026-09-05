@@ -44,9 +44,15 @@ export default function StartMethod() {
         <View style={{ gap: Space.m, marginTop: Space.l }}>
           <Option
             leading={<AIOrb size={44} />}
+            title="Describe your trip"
+            sub="Just tell us in one message — AI plans it"
+            badge="New"
+            onPress={() => go('/create/plan')}
+          />
+          <Option
+            leading={<Cat name="spark" color={c.a4} />}
             title="Chat with Wayfare AI"
             sub="Answer a few questions, get 3 plans"
-            badge="Fastest"
             onPress={() => go('/create/chat')}
           />
           <Option leading={<Cat name="wand" color={c.a3} />} title="Build it yourself" sub="Set the basics — we fill the details" onPress={start} />

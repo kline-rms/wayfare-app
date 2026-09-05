@@ -169,7 +169,8 @@ monorepo config).
 | `release/v2.17.0` · tag `v2.17.0` | + Cross-account auth (accept a share) |
 | `release/v2.18.0` · tag `v2.18.0` | + Self-host-ready routing proxy |
 | `release/v2.18.1` · tag `v2.18.1` | + Housekeeping: gate-off photos, Playwright, DFD |
-| `release/v2.19.0` · tag `v2.19.0` | + Native dev-build path (EAS) (current) |
+| `release/v2.19.0` · tag `v2.19.0` | + Native dev-build path (EAS) |
+| `release/v2.19.1` · tag `v2.19.1` | + Navigator: centred location + minimized sheet (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -895,7 +895,38 @@
   <div class="files"><h3>Touched</h3><code>app/eas.json (new)</code><code>app/app.json (plugins)</code><code>expo-dev-client dep</code><code>docs/NATIVE-BUILD.md (new)</code></div>
 </div></section>
 
+<!-- ============ v2.19.1 ============ -->
+<section id="v2-19-1" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.19.1</span><h2>Navigator: centred location + minimized sheet</h2></div>
+  <div class="req"><b>Requested.</b> On the navigate screen keep the current location centred in the visible map, and start the bottom "Navigating to" panel minimized so more map shows.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>What changed</h3><ul>
+      <li><b>Minimized by default</b> — the nav sheet is now <code>collapsible</code> and starts collapsed; the map fills ~85% of the screen. Drag it up for the full step list; the ETA pill + controls still float on top.</li>
+      <li><b>Centred on the visible map</b> — the chase-cam offset now tracks the sheet state so "you" sit in the middle of the <em>uncovered</em> map, not the middle of the whole screen (which would hide behind the sheet when expanded).</li>
+    </ul></div>
+    <div class="panel why"><h3>Why</h3>
+      <p>Centring on the raw screen middle would drop the puck behind the sheet whenever it's up. Deriving the offset from the sheet's top fraction (0.86 collapsed / 0.46 expanded) keeps the pointer centred in whatever map is actually showing, and it re-eases automatically when the sheet is dragged <span class="conn">connects → app/navigate.tsx · map-first focus</span>.</p>
+      <p><b>Verified:</b> nav opens with the sheet minimized and the location dot centred in the visible area, route + street labels around it; ETA/close/locate/3D still reachable.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 800 112" role="img" aria-label="Centred chase-cam offset">
+    <defs><marker id="cc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="38" width="176" height="42" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="104" y="57" text-anchor="middle" fill="#fff">sheet state</text><text x="104" y="72" text-anchor="middle" fill="var(--sub)" font-size="9.5">0.86 min / 0.46 exp</text>
+      <rect x="232" y="38" width="176" height="42" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="320" y="57" text-anchor="middle" fill="#fff">visible fraction</text><text x="320" y="72" text-anchor="middle" fill="var(--sub)" font-size="9.5">→ offset y</text>
+      <rect x="448" y="38" width="160" height="42" rx="10" fill="#3a2e80" stroke="var(--sky)"/><text x="528" y="57" text-anchor="middle" fill="#fff">chase focus</text><text x="528" y="72" text-anchor="middle" fill="var(--sub)" font-size="9.5">easeTo offset</text>
+      <rect x="648" y="38" width="140" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="718" y="63" text-anchor="middle" fill="var(--ink)" font-size="10.5">puck centred</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M192 59 L228 59" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#cc)"/>
+      <path d="M408 59 L444 59" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#cc)"/>
+      <path d="M608 59 L644 59" stroke="var(--mint)" color="var(--mint)" marker-end="url(#cc)"/>
+    </g>
+  </svg></div><figcaption>The sheet's coverage drives the camera offset, keeping the pointer centred in the map that's actually visible.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>app/navigate.tsx</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.19.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.19.1 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

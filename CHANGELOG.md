@@ -3,6 +3,14 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.19.1] — 2026-09-05
+
+### Changed
+- **Navigator shows more map.** The bottom "Navigating to" sheet now starts
+  minimized (drag up for the steps), and the current-location pointer stays
+  centred in the *visible* map — the chase-cam offset tracks the sheet's coverage
+  so the dot never hides behind the panel.
+
 ## [2.19.0] — 2026-09-05
 
 ### Added
@@ -326,6 +334,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.19.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.1
 [2.19.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.0
 [2.18.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.1
 [2.18.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.0

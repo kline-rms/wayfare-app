@@ -174,7 +174,8 @@ monorepo config).
 | `release/v2.20.0` · tag `v2.20.0` | + Native MapLibre map (pre-wired) |
 | `release/v2.20.1` · tag `v2.20.1` | + Coordinate hardening (adopt Google coords) |
 | `release/v2.21.0` · tag `v2.21.0` | + Google-Maps-style walking navigation |
-| `release/v2.22.0` · tag `v2.22.0` | + Push notifications (pre-wired) (current) |
+| `release/v2.22.0` · tag `v2.22.0` | + Push notifications (pre-wired) |
+| `release/v2.22.1` · tag `v2.22.1` | + E2E hardening: routing fallback + place trip context (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

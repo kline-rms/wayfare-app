@@ -372,7 +372,7 @@ export default function DayScreen() {
               {places.map((pl) => (
                 <Pressable
                   key={pl.name}
-                  onPress={() => go({ pathname: '/place/[name]', params: { name: pl.name } })}
+                  onPress={() => go({ pathname: '/place/[name]', params: { name: pl.name, it: it.id } })}
                   style={({ pressed }) => [styles.placeRow, { backgroundColor: c.card }, cardShadow, pressed && { opacity: 0.85 }]}>
                   <PlacePhoto placeId={pl.placeId} fallback={img(photoForPlace(pl.name))} style={styles.placeThumb} />
                   <View style={{ flex: 1 }}>

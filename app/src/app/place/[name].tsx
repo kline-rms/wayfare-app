@@ -32,9 +32,24 @@ interface PlaceData {
   now: boolean;
 }
 
-async function loadPlace(name: string): Promise<PlaceData> {
-  const list = await api.listItineraries();
-  const it: Itinerary = await api.getItinerary(list[0].id);
+async function loadPlace(name: string, itId?: string): Promise<PlaceData> {
+  // Load the trip we came from; if none was passed, find the trip that actually
+  // contains this place (so we never show the wrong trip's copy or "not found").
+  let it: Itinerary;
+  if (itId) {
+    it = await api.getItinerary(itId);
+  } else {
+    const list = await api.listItineraries();
+    let found: Itinerary | null = null;
+    for (const s of list) {
+      const cand = await api.getItinerary(s.id);
+      if (cand.places.some((p) => p.name === name)) {
+        found = cand;
+        break;
+      }
+    }
+    it = found ?? (await api.getItinerary(list[0].id));
+  }
   const place = it.places.find((p) => p.name === name);
   if (!place) throw new Error('Place not found');
   // Find a dining block at this place; prefer the one happening right now.
@@ -57,9 +72,9 @@ async function loadPlace(name: string): Promise<PlaceData> {
 }
 
 export default function PlaceDetail() {
-  const { name } = useLocalSearchParams<{ name: string }>();
+  const { name, it: itId } = useLocalSearchParams<{ name: string; it?: string }>();
   const { c, cardShadow } = useWayfare();
-  const { data, loading, error, reload } = useAsync(() => loadPlace(name), [name]);
+  const { data, loading, error, reload } = useAsync(() => loadPlace(name, itId), [name, itId]);
   const placeId = data?.place.placeId;
   const card = usePlaceCard(placeId);
   const reviews = usePlaceReviews(placeId);

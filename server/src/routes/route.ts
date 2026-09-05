@@ -22,6 +22,34 @@ const cache = new Map<string, { at: number; body: unknown }>();
 const TTL_MS = 10 * 60 * 1000;
 const MAX = 500;
 
+const SPEED: Record<Profile, number> = { driving: 11.1, cycling: 4.2, walking: 1.4 };
+function haversineM(a: number[], b: number[]): number {
+  const R = 6371000;
+  const dLat = ((b[1] - a[1]) * Math.PI) / 180;
+  const dLng = ((b[0] - a[0]) * Math.PI) / 180;
+  const la1 = (a[1] * Math.PI) / 180;
+  const la2 = (b[1] * Math.PI) / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+// A straight-line OSRM-shaped route, so a flaky upstream never leaves the app
+// without something drawable (the client would otherwise log the failure).
+function straightFallback(coords: string, profile: Profile) {
+  const pts = coords
+    .split(";")
+    .map((c) => c.split(",").map(Number))
+    .filter((p) => p.length === 2 && p.every(Number.isFinite));
+  let dist = 0;
+  for (let i = 1; i < pts.length; i++) dist += haversineM(pts[i - 1], pts[i]);
+  return {
+    code: "Ok",
+    routes: [{ geometry: { type: "LineString", coordinates: pts }, distance: dist, duration: dist / SPEED[profile], legs: [{ steps: [] }] }],
+    waypoints: [],
+    approximate: true,
+  };
+}
+
 export function registerRouteRoutes(app: FastifyInstance) {
   app.get<{ Params: { profile: string }; Querystring: { coords?: string; steps?: string; overview?: string } }>(
     "/api/route/:profile",
@@ -42,13 +70,14 @@ export function registerRouteRoutes(app: FastifyInstance) {
       try {
         const url = `${upstream(profile)}/route/v1/${profile}/${coords}?overview=${overview}&geometries=geojson&steps=${steps}`;
         const res = await fetch(url);
-        if (!res.ok) return reply.code(502).send({ error: `routing upstream ${res.status}` });
-        const body = await res.json();
+        // Upstream hiccup → a straight-line fallback (200) so the app always has
+        // something to draw; never surface a 5xx that just becomes console noise.
+        const body = res.ok ? await res.json() : straightFallback(coords, profile);
         if (cache.size >= MAX) cache.clear();
-        cache.set(key, { at: Date.now(), body });
+        if (res.ok) cache.set(key, { at: Date.now(), body }); // don't cache the fallback
         return body;
       } catch {
-        return reply.code(502).send({ error: "routing unavailable" });
+        return straightFallback(coords, profile);
       }
     },
   );

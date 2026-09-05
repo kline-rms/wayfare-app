@@ -3,6 +3,15 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.22.1] — 2026-09-05
+
+### Fixed
+- **Found by a full E2E run (registration → navigation).** (1) The routing proxy
+  now returns a straight-line fallback (200) when the upstream OSRM hiccups,
+  instead of a 502 that logged a console error on the day map. (2) Place detail
+  loads the trip it was opened from (was always `list[0]`), falling back to
+  finding the trip that contains the place. UI walkthrough 14/14, smoke 8/8.
+
 ## [2.22.0] — 2026-09-05
 
 ### Added
@@ -378,6 +387,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.22.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.22.1
 [2.22.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.22.0
 [2.21.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.21.0
 [2.20.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.1

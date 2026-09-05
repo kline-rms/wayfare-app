@@ -192,6 +192,13 @@ export const api = {
   removeActivity: (itineraryId: string, activityId: string): Promise<Itinerary> =>
     delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/activities/${encodeURIComponent(activityId)}`),
 
+  // Split-party: set which members (ids) attend a stop. Empty = whole party.
+  setAttendees: (itineraryId: string, activityId: string, attendees: string[]): Promise<Itinerary> =>
+    patchJson(
+      `/api/itineraries/${encodeURIComponent(itineraryId)}/activities/${encodeURIComponent(activityId)}/attendees`,
+      { attendees },
+    ),
+
   // ---- expenses / reimbursements ----
   // Vision OCR: read a receipt image into a structured draft.
   parseReceipt: (imageUrl: string): Promise<ParsedReceipt> => postJson('/api/receipts/parse', { imageUrl }),

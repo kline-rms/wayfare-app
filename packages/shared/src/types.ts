@@ -79,6 +79,9 @@ export interface Activity {
   cost?: number;
   /** Whether the block is optional (Yes/No in the source). */
   optional?: boolean;
+  /** Party members (Member.id) on this stop. Empty/undefined = whole party
+      together; a subset means the group split (a parent peeled off, etc). */
+  attendees?: string[];
   /** User-added stop (not from the original AI plan) — shown as editable/removable. */
   added?: boolean;
 }

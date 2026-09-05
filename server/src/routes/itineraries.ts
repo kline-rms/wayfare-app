@@ -145,6 +145,35 @@ export function registerItineraryRoutes(app: FastifyInstance, repo: Repo) {
     },
   );
 
+  // Assign which party members attend a stop (split-party). Works on any block
+  // (original or added) of a readable itinerary. Empty array = whole party.
+  app.patch<{ Params: { id: string; activityId: string }; Body: { attendees?: string[] } }>(
+    "/api/itineraries/:id/activities/:activityId/attendees",
+    async (req, reply) => {
+      const uid = requireAuth(req, reply);
+      if (!uid) return;
+      const it = await repo.getItinerary(req.params.id);
+      if (!it) return reply.code(404).send({ error: "Itinerary not found" });
+      if (!canRead(it, uid)) return reply.code(403).send({ error: "Not your itinerary" });
+      const aid = req.params.activityId;
+      const attendees = Array.isArray(req.body?.attendees) ? req.body!.attendees.filter((x) => typeof x === "string") : [];
+      let found = false;
+      const proposals = it.proposals.map((p) => ({
+        ...p,
+        days: p.days.map((d) => ({
+          ...d,
+          activities: (d.activities ?? []).map((a) => {
+            if (a.id !== aid) return a;
+            found = true;
+            return { ...a, attendees };
+          }),
+        })),
+      }));
+      if (!found) return reply.code(404).send({ error: "Activity not found in this itinerary" });
+      return repo.updateItinerary(it.id, { proposals, updatedAt: new Date().toISOString() });
+    },
+  );
+
   // Backfill Google Place data for an EXISTING trip on demand — the app's
   // "Load real photos & info" action. Runs the same finalize linker in the
   // FOREGROUND and persists the resolved Place IDs so the next read shows real

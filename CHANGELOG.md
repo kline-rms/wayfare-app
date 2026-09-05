@@ -3,6 +3,16 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.16.0] — 2026-09-05
+
+### Added
+- **Split-party assignment.** Assign which travellers/companions are on each stop
+  — a parent can peel off (work) while the kids + companions continue. New
+  `Activity.attendees`, a `PATCH …/activities/:id/attendees` endpoint, a
+  `PartyAssign` avatar control on the activity screen (tap to peel someone off,
+  saves optimistically), and a split badge with the attending names on the day
+  timeline. The party pool is the Companions roster; "everyone" is the default.
+
 ## [2.15.0] — 2026-09-05
 
 ### Added
@@ -270,6 +280,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.16.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.16.0
 [2.15.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.15.0
 [2.14.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.1
 [2.14.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.0

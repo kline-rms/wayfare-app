@@ -21,10 +21,10 @@ import { img, photoForPlace } from '@/lib/images';
 import { PlacePhoto } from '@/components/wayfare/place-photo';
 import { back, go } from '@/lib/nav';
 import { edits, useEditsVersion } from '@/lib/edits';
-import { hasSplitRoles } from '@/lib/activity';
+import { attendeesOf, hasSplitRoles, isSplit, partyOf } from '@/lib/activity';
 import { openMaps } from '@/lib/maps';
 import { scheduleDayReminders, supportsReminders } from '@/lib/reminders';
-import type { Activity, Day, Itinerary, Place } from '@/lib/types';
+import type { Activity, Day, Itinerary, Member, Place } from '@/lib/types';
 
 // Search every itinerary/proposal for the day id (family day ids live in the
 // 2nd itinerary, so a list[0]-only lookup would miss them).
@@ -348,7 +348,7 @@ export default function DayScreen() {
               <View style={{ gap: Space.s, marginTop: Space.s }}>
                 {day.activities.map((a, i) => (
                   <Animated.View key={a.id} entering={FadeInDown.delay(Math.min(i, 8) * 45).duration(320)}>
-                    <ActivityBlock a={a} itId={it.id} dayId={day.id} onRemove={a.added ? () => removeStop(a.id) : undefined} />
+                    <ActivityBlock a={a} itId={it.id} dayId={day.id} party={partyOf(it)} onRemove={a.added ? () => removeStop(a.id) : undefined} />
                   </Animated.View>
                 ))}
               </View>
@@ -418,8 +418,10 @@ export default function DayScreen() {
   );
 }
 
-function ActivityBlock({ a, itId, dayId, onRemove }: { a: Activity; itId: string; dayId: string; onRemove?: () => void }) {
+function ActivityBlock({ a, itId, dayId, party, onRemove }: { a: Activity; itId: string; dayId: string; party: Member[]; onRemove?: () => void }) {
   const { c, cardShadow } = useWayfare();
+  const split = isSplit(a, party);
+  const who = split ? attendeesOf(a, party).map((m) => m.name.split(/\s+/)[0]).join(', ') : '';
   const cat = catStyle(a.category, c);
   const open = () => go({ pathname: '/activity/[id]', params: { id: a.id, it: itId, day: dayId } });
   return (
@@ -465,6 +467,14 @@ function ActivityBlock({ a, itId, dayId, onRemove }: { a: Activity; itId: string
         <View style={styles.blockChips}>
           {a.category ? <Chip label={a.category} color={cat.color} filled small /> : null}
           {a.cost ? <Chip label={money(a.cost)} small /> : null}
+          {split ? (
+            <View style={[styles.splitChip, { backgroundColor: 'rgba(124,92,246,0.18)' }]}>
+              <Icon name="users" size={11} color={c.primary} />
+              <Txt style={{ color: c.primary, fontSize: 10.5, fontWeight: '800' }} numberOfLines={1}>
+                {who}
+              </Txt>
+            </View>
+          ) : null}
         </View>
 
         {hasSplitRoles(a) ? (
@@ -561,5 +571,6 @@ const styles = StyleSheet.create({
   blockThumb: { width: 56, height: 56, borderRadius: 14 },
   blockDot: { width: 26, height: 26, borderRadius: 9, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
   blockChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 7 },
+  splitChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, maxWidth: 180 },
   statusRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 6 },
 });

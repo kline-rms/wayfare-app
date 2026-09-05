@@ -164,7 +164,8 @@ monorepo config).
 | `release/v2.13.0` · tag `v2.13.0` | + Photo collages, day-timeline images, flat 2D nav |
 | `release/v2.14.0` · tag `v2.14.0` | + On-brand Up Next, activity places located |
 | `release/v2.14.1` · tag `v2.14.1` | + Fix: save opens the new trip |
-| `release/v2.15.0` · tag `v2.15.0` | + Row-level spreadsheet importer (current) |
+| `release/v2.15.0` · tag `v2.15.0` | + Row-level spreadsheet importer |
+| `release/v2.16.0` · tag `v2.16.0` | + Split-party assignment (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

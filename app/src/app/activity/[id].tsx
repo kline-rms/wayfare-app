@@ -11,7 +11,9 @@ import type { MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { Space } from '@/constants/wayfare';
 import { useAsync } from '@/hooks/use-async';
 import { useLocation } from '@/hooks/use-location';
-import { hasSplitRoles, isDestination } from '@/lib/activity';
+import { hasSplitRoles, isDestination, partyOf } from '@/lib/activity';
+import { PartyAssign } from '@/components/wayfare/party-assign';
+import { useEditsVersion } from '@/lib/edits';
 import { api } from '@/lib/api';
 import { money } from '@/lib/format';
 import { formatEta, haversineKm } from '@/lib/geo';
@@ -46,7 +48,8 @@ function catStyle(category: string | undefined, c: ReturnType<typeof useWayfare>
 export default function ActivityDetail() {
   const { id, it: itId, day: dayId } = useLocalSearchParams<{ id: string; it: string; day: string }>();
   const { c } = useWayfare();
-  const { data, loading, error, reload } = useAsync(() => loadActivity(itId, dayId, id), [id, itId, dayId]);
+  const editsVersion = useEditsVersion();
+  const { data, loading, error, reload } = useAsync(() => loadActivity(itId, dayId, id), [id, itId, dayId, editsVersion]);
   const loc = useLocation();
   if (loading || error || !data) return <StateView loading={loading} error={error} onRetry={reload} />;
 
@@ -132,6 +135,20 @@ export default function ActivityDetail() {
         {a.category ? <Fact icon={cat.icon} label="Category" value={a.category} /> : null}
       </View>
 
+      {/* Split-party: assign who's on this stop (needs a party — the Companions roster). */}
+      {partyOf(it).length ? (
+        <PartyAssign itineraryId={it.id} activity={a} party={partyOf(it)} />
+      ) : (
+        <Pressable
+          onPress={() => go({ pathname: '/companions', params: { it: it.id } })}
+          style={[styles.addParty, { borderColor: c.line }]}>
+          <Icon name="users" size={16} color={c.sec} />
+          <Txt variant="small" style={{ color: c.sec, fontWeight: '700' }}>
+            Add travelers to assign who&apos;s on each stop
+          </Txt>
+        </Pressable>
+      )}
+
       {hasSplitRoles(a) ? (
         <Card style={{ marginTop: Space.m, gap: 8 }}>
           <Txt variant="small" faint>
@@ -186,5 +203,6 @@ const styles = StyleSheet.create({
   dishNum: { width: 22, height: 22, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
   catDot: { width: 28, height: 28, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: Space.m, marginTop: Space.l },
+  addParty: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderRadius: 14, paddingVertical: 13, marginTop: Space.m },
   fact: { width: '47%', flexGrow: 1, borderRadius: 18, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 10 },
 });

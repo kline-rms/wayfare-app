@@ -46,6 +46,9 @@ export interface Activity {
   restNap?: string;
   cost?: number;
   optional?: boolean;
+  /** Party members (Member.id) on this stop. Empty/undefined = the whole party
+      is together; a subset means the group split (e.g. a parent peeled off). */
+  attendees?: string[];
   /** User-added stop (not from the original AI plan) — shown as editable/removable. */
   added?: boolean;
 }

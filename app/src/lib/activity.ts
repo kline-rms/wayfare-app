@@ -1,7 +1,7 @@
 // Small helpers that make the itinerary render "smartly" — only showing what a
 // block actually needs (a map only when you travel somewhere, a per-person
 // breakdown only when people are doing different things).
-import type { Activity } from './types';
+import type { Activity, Itinerary, Member } from './types';
 
 // Categories / activities that happen where you already are (no travel).
 const STAY_PUT = /rest|sleep|nap|home|prep|pack|admin|routine|transition|wake|bedtime|downtime|shower|cook/i;
@@ -27,4 +27,24 @@ export function hasSplitRoles(a: Activity): boolean {
   const generic = (s: string) => !s || s === 'family' || s === 'off work' || s === 'family time';
   if (generic(mom) && generic(dad)) return false; // everyone's just "family"
   return mom !== dad; // only meaningful when they differ
+}
+
+// ---- Split-party: assign named travellers/companions to individual stops ----
+
+/** The trip's people (travellers + companions), the pool you assign from. */
+export function partyOf(it: Itinerary): Member[] {
+  return it.members ?? [];
+}
+
+/** Members attending a stop. No explicit list ⇒ the whole party is together. */
+export function attendeesOf(a: Activity, party: Member[]): Member[] {
+  if (!a.attendees || a.attendees.length === 0) return party;
+  const set = new Set(a.attendees);
+  return party.filter((m) => set.has(m.id));
+}
+
+/** True when the group splits here — a real subset of a known party attends. */
+export function isSplit(a: Activity, party: Member[]): boolean {
+  if (party.length === 0 || !a.attendees || a.attendees.length === 0) return false;
+  return attendeesOf(a, party).length < party.length;
 }

@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -719,7 +719,40 @@
   <div class="files"><h3>Touched</h3><code>lib/import-parse.ts (new)</code><code>lib/import-build.ts (new)</code><code>app/create/import.web.tsx</code><code>+ xlsx dep</code></div>
 </div></section>
 
+<!-- ============ v2.16.0 ============ -->
+<section id="v2-16-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.16.0</span><h2>Split-party assignment</h2></div>
+  <div class="req"><b>Requested.</b> Let the party split — a parent peels off (works) while the kids + companions continue — and see who's on each stop.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Attendees on a stop</b> — <code>Activity.attendees?: string[]</code> (Member ids). Empty ⇒ whole party together; a subset records a split.</li>
+      <li><b>Assign endpoint</b> — <code>PATCH /itineraries/:id/activities/:activityId/attendees</code>, works on any block of a readable trip (samples included).</li>
+      <li><b>Party helpers</b> — <code>partyOf</code> / <code>attendeesOf</code> / <code>isSplit</code> in <code>lib/activity.ts</code>; the party pool is the existing Companions roster.</li>
+      <li><b>Assign control</b> — <code>PartyAssign</code>: tap a person's avatar to peel them off a stop (optimistic, saves, marks edits stale). On the activity screen; the day timeline badges split blocks with the attending names.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Reusing the members roster as the party avoids a parallel people-list <span class="conn">connects → app/companions.tsx</span> — anyone associated with the trip can be assigned. Storing attendees on the activity (not a separate table) keeps a stop self-describing, and "empty = everyone" means the common case costs nothing and existing trips need no migration.</p>
+      <p>The reactive <code>edits</code> store means assigning on the activity screen refreshes the day's split badges without a manual reload. <b>Verified:</b> Mom peeled off the Mind Museum, Dad + Lily + Grandma remain — persisted, editor + caption correct.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 840 118" role="img" aria-label="Split-party data flow">
+    <defs><marker id="sp" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="38" width="170" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="101" y="58" text-anchor="middle" fill="#fff">party (members)</text><text x="101" y="73" text-anchor="middle" fill="var(--sub)" font-size="9.5">Companions roster</text>
+      <rect x="226" y="38" width="180" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="316" y="58" text-anchor="middle" fill="#fff">PartyAssign (tap)</text><text x="316" y="73" text-anchor="middle" fill="var(--sub)" font-size="9.5">PATCH attendees</text>
+      <rect x="446" y="38" width="170" height="44" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="531" y="58" text-anchor="middle" fill="#fff">activity.attendees</text><text x="531" y="73" text-anchor="middle" fill="var(--sub)" font-size="9.5">subset = split</text>
+      <rect x="656" y="38" width="168" height="44" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="740" y="58" text-anchor="middle" fill="var(--ink)" font-size="10">day badge + caption</text><text x="740" y="73" text-anchor="middle" fill="var(--sub)" font-size="9.5">who's here</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M186 60 L222 60" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#sp)"/>
+      <path d="M406 60 L442 60" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#sp)"/>
+      <path d="M616 60 L652 60" stroke="var(--mint)" color="var(--mint)" marker-end="url(#sp)"/>
+    </g>
+  </svg></div><figcaption>Assign from the party; a subset marks the split and badges the day timeline.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>types (attendees)</code><code>itineraries.ts (attendees PATCH)</code><code>api.setAttendees</code><code>lib/activity.ts</code><code>party-assign.tsx (new)</code><code>activity/[id].tsx</code><code>day/[id].tsx</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.15.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.16.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

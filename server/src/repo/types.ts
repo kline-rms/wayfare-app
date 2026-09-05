@@ -10,6 +10,8 @@ export interface StoredUser {
   displayName?: string;
   passwordHash: string;
   createdAt: string;
+  /** Expo push tokens for this account's devices (deduped). */
+  pushTokens?: string[];
 }
 
 /** Itineraries owned by "sample" are shared demo trips visible to everyone. */
@@ -29,6 +31,7 @@ export interface Repo {
   createUser(user: StoredUser): Promise<StoredUser>;
   getUserByEmail(email: string): Promise<StoredUser | null>;
   getUser(id: string): Promise<StoredUser | null>;
+  updateUser(id: string, patch: Partial<StoredUser>): Promise<StoredUser | null>;
 
   // Places cache — shared across all users/itineraries, keyed by Google Place ID.
   getCachedPlace(placeId: string): Promise<CachedPlace | null>;

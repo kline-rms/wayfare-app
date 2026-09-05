@@ -78,6 +78,14 @@ export function createFirestoreRepo(): Repo {
       return doc.exists ? (doc.data() as import("./types.ts").StoredUser) : null;
     },
 
+    async updateUser(id, patch) {
+      const ref = users().doc(id);
+      const doc = await ref.get();
+      if (!doc.exists) return null;
+      await ref.set({ ...patch, id }, { merge: true });
+      return { ...(doc.data() as import("./types.ts").StoredUser), ...patch, id };
+    },
+
     async getItinerary(id) {
       const doc = await col().doc(id).get();
       return doc.exists ? (doc.data() as Itinerary) : null;

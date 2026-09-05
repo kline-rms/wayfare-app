@@ -6,6 +6,7 @@ import { SAMPLE_OWNER } from "../repo/types.ts";
 import { requireAuth } from "../lib/auth.ts";
 import { env } from "../lib/env.ts";
 import { chatVisionJson } from "../lib/openai.ts";
+import { sendPush } from "../lib/push.ts";
 
 function canRead(it: Itinerary, uid: string): boolean {
   return it.ownerId === uid || it.ownerId === SAMPLE_OWNER || it.ownerId == null;
@@ -128,7 +129,26 @@ export function registerExpenseRoutes(app: FastifyInstance, repo: Repo) {
         ids.has(e.id) ? { ...e, status: "paid" as const, paidAt: now, reimbursementId: reimbursement.id } : e,
       );
       const reimbursements = [...(it.reimbursements ?? []), reimbursement];
-      return repo.updateItinerary(it.id, { expenses, reimbursements, updatedAt: now });
+      const saved = await repo.updateItinerary(it.id, { expenses, reimbursements, updatedAt: now });
+
+      // Notify the trip's OTHER accounts (owner + accepted collaborators) that a
+      // reimbursement was settled — real push, beyond the in-app Alerts. Fire-and-
+      // forget so the response isn't blocked; best-effort if no one has a token.
+      (async () => {
+        const targets = [it.ownerId, ...(it.accessUserIds ?? [])].filter(
+          (u): u is string => !!u && u !== uid && u !== SAMPLE_OWNER,
+        );
+        const users = await Promise.all([...new Set(targets)].map((u) => repo.getUser(u)));
+        const tokens = users.flatMap((u) => u?.pushTokens ?? []);
+        const sent = await sendPush(tokens, {
+          title: "Reimbursement settled",
+          body: `${to} was reimbursed ${reimbursement.currency} ${amount.toLocaleString()} on ${it.title}.`,
+          data: { itineraryId: it.id, type: "reimbursement", reimbursementId: reimbursement.id },
+        });
+        req.log?.info?.(`[push] reimburse on ${it.id} → notified ${sent} device(s)`);
+      })().catch((err) => req.log?.warn?.(`[push] reimburse notify failed: ${err?.message ?? err}`));
+
+      return saved;
     },
   );
 

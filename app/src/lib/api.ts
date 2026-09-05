@@ -234,6 +234,11 @@ export const api = {
   acceptShare: (token: string): Promise<{ itinerary: Itinerary; role: Share['role'] | 'owner'; already?: boolean }> =>
     postJson(`/api/shared/${encodeURIComponent(token)}/accept`, {}),
 
+  // ---- push notifications ----
+  registerPush: (token: string): Promise<{ ok: boolean; devices: number }> => postJson('/api/push/register', { token }),
+  unregisterPush: (token: string): Promise<{ ok: boolean; devices: number }> =>
+    delJson(`/api/push/register/${encodeURIComponent(token)}`),
+
   // ---- app settings (the Google Places money gate) ----
   getAppSettings: (): Promise<AppSettings> => getJson('/api/settings'),
   setPlacesEnabled: (enabled: boolean): Promise<AppSettings> => patchJson('/api/settings', { placesEnabled: enabled }),

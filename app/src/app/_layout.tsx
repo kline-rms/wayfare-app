@@ -1,12 +1,22 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useWayfare } from '@/components/wayfare/theme';
+import { authStore } from '@/lib/auth';
+import { registerForPush } from '@/lib/push';
 
 export default function RootLayout() {
   const { scheme } = useWayfare();
+  // Register this device for push once signed in (and on any later sign-in).
+  useEffect(() => {
+    if (authStore.isAuthed()) registerForPush();
+    return authStore.subscribe(() => {
+      if (authStore.isAuthed()) registerForPush();
+    });
+  }, []);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>

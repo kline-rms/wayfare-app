@@ -3,6 +3,18 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.22.0] — 2026-09-05
+
+### Added
+- **Push notifications (pre-wired).** A settled reimbursement now sends a real
+  push to the trip's other accounts (owner + accepted collaborators, not the
+  settler), beyond the in-app Alerts. New: `pushTokens` on the user + `updateUser`
+  in both repos, `POST/DELETE /api/push/register`, server `sendPush` (Expo push
+  service), the reimburse trigger, client `lib/push` (permission + token +
+  register + tap routing, init on login), `api.registerPush`. Verified end-to-end:
+  register dedupes, settle notified 1 device (actor excluded); 8/8 smoke clean.
+  Real phone delivery needs a dev build + APNs/FCM credentials.
+
 ## [2.21.0] — 2026-09-05
 
 ### Changed
@@ -366,6 +378,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.22.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.22.0
 [2.21.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.21.0
 [2.20.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.1
 [2.20.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.20.0

@@ -59,6 +59,7 @@
 
   footer{padding:44px 0 70px;text-align:center;color:var(--faint)}
   @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.discon{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}.discon th,.discon td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}.discon th{color:var(--sub);font-weight:700;background:rgba(255,255,255,.03)}.discon code{font-size:11px}
 </style>
 
 <header class="hero"><div class="glow"></div><div class="wrap">
@@ -80,7 +81,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a><a href="#v2-20-1">v2.20.1</a><a href="#v2-21-0">v2.21.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a><a href="#v2-19-1">v2.19.1</a><a href="#v2-20-0">v2.20.0</a><a href="#v2-20-1">v2.20.1</a><a href="#v2-21-0">v2.21.0</a><a href="#v2-22-0">v2.22.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -1029,7 +1030,44 @@
   <div class="files"><h3>Touched</h3><code>navigate.tsx</code><code>wayfare-map.web.tsx (chevron + rotate align)</code><code>wayfare-map.tsx (native chevron)</code><code>lib/geo.ts (bearingDeg)</code></div>
 </div></section>
 
+<!-- ============ v2.22.0 ============ -->
+<section id="v2-22-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.22.0</span><h2>Push notifications (pre-wired) — with disconnection analysis</h2></div>
+  <div class="req"><b>Requested.</b> Real push — a settled reimbursement should reach the payer's phone, not just the in-app Alerts. First feature built under the reinforced process: graphify layout → disconnection analysis → end-to-end test → layout check.</div>
+  <div class="panel prereq" style="margin-bottom:14px"><h3>Disconnection analysis (what push would orphan · how we filled it · why)</h3>
+  <table class="discon"><thead><tr><th>Gap</th><th>Fill</th><th>Why</th></tr></thead><tbody>
+    <tr><td>User store can't hold a device token (<code>StoredUser</code> had none; <code>Repo</code> had no <code>updateUser</code>)</td><td>Added <code>pushTokens[]</code> + <code>updateUser()</code> to both repos</td><td>Server must persist a token per account to target a push</td></tr>
+    <tr><td>No registration endpoint</td><td><code>POST/DELETE /api/push/register</code></td><td>Bridge device → account</td></tr>
+    <tr><td>Nothing delivers a push</td><td>Server <code>lib/push.sendPush()</code> (Expo push service)</td><td>Actual APNs/FCM delivery</td></tr>
+    <tr><td>Settle didn't notify remotely</td><td>Reimburse endpoint → <code>sendPush</code> to the trip's owner + accepted accounts</td><td>Close the loop beyond in-app Alerts</td></tr>
+    <tr><td>Client never obtained/handled a token</td><td><code>lib/push</code> (permission + token + register), init on login, tap → the trip / Alerts</td><td>Obtain token, show + route notifications</td></tr>
+    <tr><td>No api method</td><td><code>api.registerPush()</code></td><td>Client↔server wire</td></tr>
+  </tbody></table></div>
+  <div class="panel why"><h3>Why this direction &amp; verification</h3>
+    <p>Storing tokens on the user (not a side table) keeps auth the single owner of a device→account link; the reimburse trigger targets the trip's <em>other</em> accounts (owner + accepted collaborators, actor excluded) so the settler never pushes themselves. Delivery is fire-and-forget + no-op-safe so a missing token or network blip never breaks the settle. Client registration is native-only (a token needs a dev build) and no-ops on web, so nothing on the web path changed.</p>
+    <p><b>End-to-end verified:</b> register deduped (devices stays 1 on re-register); a throwaway owned trip + a second account that accepted an editor share and registered a token → settling logged <code>[push] reimburse … → notified 1 device(s)</code> (actor correctly excluded). <b>Layout check:</b> 8/8 smoke clean. Real phone delivery needs a dev build + APNs/FCM credentials.</p>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 900 128" role="img" aria-label="Push notifications data flow">
+    <defs><marker id="pu" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="42" width="160" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="96" y="61" text-anchor="middle" fill="#fff">device token</text><text x="96" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">on login (native)</text>
+      <rect x="216" y="42" width="170" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="301" y="61" text-anchor="middle" fill="#fff">/push/register</text><text x="301" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">user.pushTokens[]</text>
+      <rect x="426" y="16" width="180" height="42" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="516" y="41" text-anchor="middle" fill="#fff">reimburse (settle)</text>
+      <rect x="426" y="70" width="180" height="42" rx="10" fill="#3a2e80" stroke="var(--sky)"/><text x="516" y="90" text-anchor="middle" fill="#fff">target trip accounts</text><text x="516" y="104" text-anchor="middle" fill="var(--sub)" font-size="9">owner+access, not actor</text>
+      <rect x="646" y="42" width="120" height="44" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="706" y="67" text-anchor="middle" fill="var(--ink)" font-size="10.5">sendPush</text>
+      <rect x="792" y="42" width="92" height="44" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="838" y="61" text-anchor="middle" fill="var(--ink)" font-size="10">Expo</text><text x="838" y="75" text-anchor="middle" fill="var(--sub)" font-size="9">APNs/FCM</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M176 64 L212 64" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#pu)"/>
+      <path d="M386 64 L422 40" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#pu)"/>
+      <path d="M606 37 L642 58 M606 91 L642 68" stroke="var(--sky)" color="var(--sky)" marker-end="url(#pu)"/>
+      <path d="M766 64 L788 64" stroke="var(--mint)" color="var(--mint)" marker-end="url(#pu)"/>
+    </g>
+  </svg></div><figcaption>Token → account on login; settle targets the trip's other accounts and pushes to their devices via Expo.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>repo/types.ts + json/firestore (updateUser, pushTokens)</code><code>routes/push.ts (new)</code><code>lib/push.ts server (new)</code><code>routes/expenses.ts (trigger)</code><code>app/lib/push.ts (new)</code><code>_layout.tsx (init)</code><code>api.registerPush</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.21.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.22.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

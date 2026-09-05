@@ -71,6 +71,15 @@ export function createJsonRepo(): Repo {
       return db.users.find((u) => u.id === id) ?? null;
     },
 
+    async updateUser(id, patch) {
+      const db = await load();
+      const u = db.users.find((x) => x.id === id);
+      if (!u) return null;
+      Object.assign(u, patch, { id: u.id });
+      await save(db);
+      return u;
+    },
+
     async getItinerary(id) {
       const db = await load();
       return db.itineraries.find((it) => it.id === id) ?? null;

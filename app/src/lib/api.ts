@@ -229,6 +229,10 @@ export const api = {
     delJson(`/api/itineraries/${encodeURIComponent(itineraryId)}/shares/${encodeURIComponent(token)}`),
   getShared: (token: string): Promise<{ itinerary: Itinerary; role: Share['role'] }> =>
     getJson(`/api/shared/${encodeURIComponent(token)}`),
+  // Accept a share into the signed-in account (cross-account access). After this
+  // the trip shows in the accepter's list and opens via /trip/[id].
+  acceptShare: (token: string): Promise<{ itinerary: Itinerary; role: Share['role'] | 'owner'; already?: boolean }> =>
+    postJson(`/api/shared/${encodeURIComponent(token)}/accept`, {}),
 
   // ---- app settings (the Google Places money gate) ----
   getAppSettings: (): Promise<AppSettings> => getJson('/api/settings'),

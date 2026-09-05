@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -752,7 +752,43 @@
   <div class="files"><h3>Touched</h3><code>types (attendees)</code><code>itineraries.ts (attendees PATCH)</code><code>api.setAttendees</code><code>lib/activity.ts</code><code>party-assign.tsx (new)</code><code>activity/[id].tsx</code><code>day/[id].tsx</code></div>
 </div></section>
 
+<!-- ============ v2.17.0 ============ -->
+<section id="v2-17-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.17.0</span><h2>Cross-account auth — accept a share into your account</h2></div>
+  <div class="req"><b>Requested.</b> A shared link should add the trip to another person's account (real per-account access), not just show a public read-only view.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Access model</b> — <code>Itinerary.access[]</code> (userId + role) plus a denormalised <code>accessUserIds[]</code> for listing queries.</li>
+      <li><b>Accept endpoint</b> — <code>POST /shared/:token/accept</code> (auth): validates the token, adds the account with the share's role, idempotent, and upgrades a prior viewer to editor.</li>
+      <li><b>Read + write gates</b> — <code>canRead</code> now includes accepted accounts; a new <code>canWrite</code> lets only the owner, samples, or an accepted <b>editor</b> mutate — so viewers are read-only.</li>
+      <li><b>Listing</b> — both repos return accepted trips (Firestore via <code>array-contains</code> on <code>accessUserIds</code>).</li>
+      <li><b>Client</b> — the shared page gains "Add to my trips" (with role) when signed in, or a log-in prompt when not; accepting opens the trip, now in your own list.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Storing access on the trip (not a separate join table) keeps one document authoritative and lets the owner revoke by editing it. The denormalised <code>accessUserIds</code> exists purely so Firestore can answer "trips shared with me" with a single <code>array-contains</code> — no composite index, no full scan. Splitting <code>canRead</code> from <code>canWrite</code> is what makes viewer-vs-editor real: reads open to any accepted account, writes gated to editors <span class="conn">connects → server/routes/itineraries.ts</span>.</p>
+      <p><b>Verified with two accounts:</b> a second user was 403 before accepting, 200 after; the trip appeared in their list; a viewer's edit was refused (403); an editor's add-stop succeeded (200); the owner revoked access (→403).</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 880 128" role="img" aria-label="Cross-account access flow">
+    <defs><marker id="xa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="44" width="150" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="91" y="63" text-anchor="middle" fill="#fff">share link</text><text x="91" y="79" text-anchor="middle" fill="var(--sub)" font-size="9.5">token + role</text>
+      <rect x="206" y="44" width="160" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="286" y="63" text-anchor="middle" fill="#fff">accept (auth)</text><text x="286" y="79" text-anchor="middle" fill="var(--sub)" font-size="9.5">+ your account</text>
+      <rect x="406" y="44" width="170" height="44" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="491" y="63" text-anchor="middle" fill="#fff">access[] + ids</text><text x="491" y="79" text-anchor="middle" fill="var(--sub)" font-size="9.5">on the trip</text>
+      <rect x="616" y="18" width="240" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="736" y="43" text-anchor="middle" fill="var(--ink)" font-size="10.5">canRead → in your list + open</text>
+      <rect x="616" y="74" width="240" height="42" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="736" y="99" text-anchor="middle" fill="var(--sub)" font-size="10">canWrite → editors only</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M166 66 L202 66" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#xa)"/>
+      <path d="M366 66 L402 66" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#xa)"/>
+      <path d="M576 58 L612 42" stroke="var(--mint)" color="var(--mint)" marker-end="url(#xa)"/>
+      <path d="M576 74 L612 92" stroke="var(--coral)" color="var(--coral)" stroke-dasharray="3 4" marker-end="url(#xa)"/>
+    </g>
+  </svg></div><figcaption>Accepting records account+role on the trip; reads open to accepted accounts, writes stay editor-only.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>types (TripAccess/access)</code><code>members.ts (accept)</code><code>itineraries.ts (canRead+canWrite)</code><code>jsonRepo · firestoreRepo (list)</code><code>api.acceptShare</code><code>shared/[token].tsx</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.16.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.17.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

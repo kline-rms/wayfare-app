@@ -53,9 +53,14 @@ export function createFirestoreRepo(): Repo {
 
   return {
     async listItineraries(ownerId: string) {
-      // The user's own trips plus shared samples.
-      const snap = await col().where("ownerId", "in", [SAMPLE_OWNER, ownerId]).get();
-      return snap.docs.map((d) => toSummary(d.data() as Itinerary));
+      // The user's own trips + shared samples + trips they've accepted a share to.
+      const [own, shared] = await Promise.all([
+        col().where("ownerId", "in", [SAMPLE_OWNER, ownerId]).get(),
+        col().where("accessUserIds", "array-contains", ownerId).get(),
+      ]);
+      const byId = new Map<string, Itinerary>();
+      for (const d of [...own.docs, ...shared.docs]) byId.set(d.id, d.data() as Itinerary);
+      return [...byId.values()].map(toSummary);
     },
 
     async createUser(user) {

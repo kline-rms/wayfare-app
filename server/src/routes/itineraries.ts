@@ -7,7 +7,18 @@ import { finalizeInBackground, finalizeItineraryPlaces } from "../places/finaliz
 
 /** Can this user read this itinerary? (their own, or a shared sample) */
 function canRead(it: Itinerary, uid: string): boolean {
-  return it.ownerId === uid || it.ownerId === SAMPLE_OWNER || it.ownerId == null;
+  return (
+    it.ownerId === uid ||
+    it.ownerId === SAMPLE_OWNER ||
+    it.ownerId == null ||
+    (it.accessUserIds ?? []).includes(uid)
+  );
+}
+
+/** Can edit the trip's content: the owner, a sample, or an accepted EDITOR. */
+function canWrite(it: Itinerary, uid: string): boolean {
+  if (it.ownerId === uid || it.ownerId === SAMPLE_OWNER || it.ownerId == null) return true;
+  return (it.access ?? []).some((a) => a.userId === uid && a.role === "editor");
 }
 
 /** Parse a clock label to minutes-of-day for sorting; untimed blocks sort last. */
@@ -99,7 +110,7 @@ export function registerItineraryRoutes(app: FastifyInstance, repo: Repo) {
       if (!uid) return;
       const it = await repo.getItinerary(req.params.id);
       if (!it) return reply.code(404).send({ error: "Itinerary not found" });
-      if (!canRead(it, uid)) return reply.code(403).send({ error: "Not your itinerary" });
+      if (!canWrite(it, uid)) return reply.code(403).send({ error: "You don't have edit access to this trip" });
       const { dayId, activity } = req.body ?? ({} as { dayId?: string; activity?: Activity });
       if (!dayId || !activity?.activity) {
         return reply.code(400).send({ error: "Body needs { dayId, activity:{activity,...} }" });
@@ -128,7 +139,7 @@ export function registerItineraryRoutes(app: FastifyInstance, repo: Repo) {
       if (!uid) return;
       const it = await repo.getItinerary(req.params.id);
       if (!it) return reply.code(404).send({ error: "Itinerary not found" });
-      if (!canRead(it, uid)) return reply.code(403).send({ error: "Not your itinerary" });
+      if (!canWrite(it, uid)) return reply.code(403).send({ error: "You don't have edit access to this trip" });
       const aid = req.params.activityId;
       let removed = false;
       const proposals = it.proposals.map((p) => ({
@@ -154,7 +165,7 @@ export function registerItineraryRoutes(app: FastifyInstance, repo: Repo) {
       if (!uid) return;
       const it = await repo.getItinerary(req.params.id);
       if (!it) return reply.code(404).send({ error: "Itinerary not found" });
-      if (!canRead(it, uid)) return reply.code(403).send({ error: "Not your itinerary" });
+      if (!canWrite(it, uid)) return reply.code(403).send({ error: "You don't have edit access to this trip" });
       const aid = req.params.activityId;
       const attendees = Array.isArray(req.body?.attendees) ? req.body!.attendees.filter((x) => typeof x === "string") : [];
       let found = false;
@@ -185,7 +196,7 @@ export function registerItineraryRoutes(app: FastifyInstance, repo: Repo) {
     if (!uid) return;
     const it = await repo.getItinerary(req.params.id);
     if (!it) return reply.code(404).send({ error: "Itinerary not found" });
-    if (!canRead(it, uid)) return reply.code(403).send({ error: "Not your itinerary" });
+    if (!canWrite(it, uid)) return reply.code(403).send({ error: "You don't have edit access to this trip" });
     const patched = await finalizeItineraryPlaces(it, repo);
     const linked = patched.places.filter((p) => p.placeId).length;
     if (linked > 0) {

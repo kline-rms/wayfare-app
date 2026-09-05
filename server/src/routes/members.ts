@@ -109,4 +109,36 @@ export function registerMemberRoutes(app: FastifyInstance, repo: Repo) {
     if (!share) return reply.code(404).send({ error: "This link is no longer active" });
     return { itinerary: it, role: share.role };
   });
+
+  // Accept a share into your account — cross-account access. Auth required.
+  // Idempotent: re-accepting won't duplicate, and a later editor link upgrades a
+  // prior viewer. Afterwards the trip appears in the accepter's list + is readable.
+  app.post<{ Params: { token: string } }>("/api/shared/:token/accept", async (req, reply) => {
+    const uid = requireAuth(req, reply);
+    if (!uid) return;
+    const token = req.params.token;
+    const itineraryId = token.split("~")[0];
+    if (!itineraryId) return reply.code(400).send({ error: "Bad share token" });
+    const it = await repo.getItinerary(itineraryId);
+    if (!it) return reply.code(404).send({ error: "Shared trip not found" });
+    const share = (it.shares ?? []).find((s) => s.token === token);
+    if (!share) return reply.code(404).send({ error: "This link is no longer active" });
+    if (it.ownerId === uid) return { itinerary: it, role: "owner", already: true };
+
+    const access = it.access ?? [];
+    const existing = access.find((a) => a.userId === uid);
+    let nextAccess = access;
+    if (!existing) {
+      nextAccess = [...access, { userId: uid, role: share.role, acceptedAt: new Date().toISOString() }];
+    } else if (existing.role !== "editor" && share.role === "editor") {
+      nextAccess = access.map((a) => (a.userId === uid ? { ...a, role: "editor" as const } : a));
+    }
+    const accessUserIds = Array.from(new Set(nextAccess.map((a) => a.userId)));
+    const updated = await repo.updateItinerary(it.id, {
+      access: nextAccess,
+      accessUserIds,
+      updatedAt: new Date().toISOString(),
+    });
+    return { itinerary: updated, role: share.role };
+  });
 }

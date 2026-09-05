@@ -3,6 +3,19 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.17.0] — 2026-09-05
+
+### Added
+- **Cross-account auth.** A share link now adds the trip to the recipient's own
+  account. New `POST /shared/:token/accept` records the account + the share's role
+  on the trip (`access[]` / `accessUserIds[]`, idempotent, viewer→editor upgrade);
+  `canRead` includes accepted accounts and a new `canWrite` limits edits to the
+  owner or an accepted editor (viewers are read-only). Both repos list accepted
+  trips (Firestore `array-contains`). The shared page gains "Add to my trips"
+  (with role) when signed in, or a log-in prompt otherwise. Verified with two
+  accounts: 403 before / 200 after, appears in the list, viewer refused, editor
+  allowed, owner can revoke.
+
 ## [2.16.0] — 2026-09-05
 
 ### Added
@@ -280,6 +293,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.17.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.17.0
 [2.16.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.16.0
 [2.15.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.15.0
 [2.14.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.14.1

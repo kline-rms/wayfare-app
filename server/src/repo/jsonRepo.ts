@@ -45,7 +45,12 @@ export function createJsonRepo(): Repo {
     async listItineraries(ownerId: string) {
       const db = await load();
       return db.itineraries
-        .filter((it) => it.ownerId === SAMPLE_OWNER || it.ownerId === ownerId)
+        .filter(
+          (it) =>
+            it.ownerId === SAMPLE_OWNER ||
+            it.ownerId === ownerId ||
+            (it.accessUserIds ?? []).includes(ownerId),
+        )
         .map(toSummary);
     },
 

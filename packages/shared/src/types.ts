@@ -204,11 +204,23 @@ export interface Itinerary {
   members?: Member[];
   /** Active share links (tokenised access to this trip). */
   shares?: Share[];
+  /** Accounts that accepted a share link — cross-account access to this trip. */
+  access?: TripAccess[];
+  /** Denormalised userIds from `access`, for array-contains listing queries. */
+  accessUserIds?: string[];
   /** Owner id (for multi-user later; e.g. Firebase uid). Optional for now. */
   ownerId?: string;
   /** ISO timestamps. */
   createdAt?: string;
   updatedAt?: string;
+}
+
+/** An account granted standing access to a trip by accepting a share link. */
+export interface TripAccess {
+  userId: string;
+  role: "editor" | "viewer";
+  name?: string;
+  acceptedAt?: string;
 }
 
 /** One line item read from a receipt. */

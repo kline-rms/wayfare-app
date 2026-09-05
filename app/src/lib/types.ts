@@ -127,9 +127,18 @@ export interface Itinerary {
   reimbursements?: Reimbursement[];
   members?: Member[];
   shares?: Share[];
+  access?: TripAccess[];
+  accessUserIds?: string[];
   ownerId?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface TripAccess {
+  userId: string;
+  role: 'editor' | 'viewer';
+  name?: string;
+  acceptedAt?: string;
 }
 
 export interface ExpenseItem {

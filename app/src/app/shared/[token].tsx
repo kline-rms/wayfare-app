@@ -1,20 +1,21 @@
 // Opening a share link — a read-only view of someone else's trip, resolved by
 // token (public, no login needed). Editors get the same view for now; full
 // cross-account editing arrives with real per-account auth.
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Icon } from '@/components/wayfare/icon';
 import { MapFirst, MapIconButton } from '@/components/wayfare/map-first';
 import { useWayfare } from '@/components/wayfare/theme';
-import { Card, StateView, StatusPill, Txt } from '@/components/wayfare/ui';
+import { Card, PillButton, StateView, StatusPill, Txt } from '@/components/wayfare/ui';
 import type { MapStop } from '@/components/wayfare/wayfare-map.shared';
 import { Space } from '@/constants/wayfare';
 import { useAsync } from '@/hooks/use-async';
 import { api } from '@/lib/api';
+import { authStore } from '@/lib/auth';
 import { dayCount, shortRange } from '@/lib/format';
-import { back } from '@/lib/nav';
+import { back, go, replaceTo } from '@/lib/nav';
 
 const PIN = ['#FFA828', '#7C5CF6', '#2FD98A'];
 
@@ -22,6 +23,20 @@ export default function SharedTrip() {
   const { token } = useLocalSearchParams<{ token: string }>();
   const { c, cardShadow } = useWayfare();
   const { data, loading, error, reload } = useAsync(() => api.getShared(token), [token]);
+  const [accepting, setAccepting] = useState(false);
+  const [acceptErr, setAcceptErr] = useState<string | null>(null);
+
+  const accept = async () => {
+    setAccepting(true);
+    setAcceptErr(null);
+    try {
+      const res = await api.acceptShare(token);
+      replaceTo({ pathname: '/trip/[id]', params: { id: res.itinerary.id } });
+    } catch (e) {
+      setAcceptErr((e as Error).message);
+      setAccepting(false);
+    }
+  };
 
   const stops = useMemo<MapStop[]>(() => {
     if (!data) return [];
@@ -55,11 +70,38 @@ export default function SharedTrip() {
 
   return (
     <MapFirst stops={stops} sheetTop={0.42} header={header} collapsible>
-      <View style={[styles.banner, { backgroundColor: c.a3 + '22' }]}>
-        <Icon name="share" size={15} color={c.a3} />
-        <Txt variant="small" style={{ color: c.a3, flex: 1, fontWeight: '600' }}>
-          You&apos;re viewing a shared trip. Nothing here changes your own trips.
-        </Txt>
+      {/* Cross-account: pull this shared trip into your own account. */}
+      <View style={{ gap: Space.s }}>
+        {authStore.isAuthed() ? (
+          <PillButton
+            label={accepting ? 'Adding to your trips…' : data.role === 'editor' ? 'Add to my trips · can edit' : 'Add to my trips'}
+            icon="plus"
+            knob
+            onPress={accepting ? undefined : accept}
+          />
+        ) : (
+          <View style={[styles.banner, { backgroundColor: c.a3 + '22' }]}>
+            <Icon name="share" size={15} color={c.a3} />
+            <View style={{ flex: 1 }}>
+              <Txt variant="small" style={{ color: c.a3, fontWeight: '800' }}>
+                Log in to save this trip
+              </Txt>
+              <Txt variant="small" muted>
+                Sign in and it&apos;ll appear in your own trips.
+              </Txt>
+            </View>
+            <Pressable onPress={() => go('/(auth)/login')}>
+              <Txt variant="small" style={{ color: c.a3, fontWeight: '800' }}>
+                Log in
+              </Txt>
+            </Pressable>
+          </View>
+        )}
+        {acceptErr ? (
+          <Txt variant="small" style={{ color: c.danger }}>
+            {acceptErr}
+          </Txt>
+        ) : null}
       </View>
 
       <View style={[styles.summary, { backgroundColor: c.fieldBg }]}>

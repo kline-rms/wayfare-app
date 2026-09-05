@@ -3,6 +3,17 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.19.0] — 2026-09-05
+
+### Added
+- **Native dev-build path (EAS).** `eas.json` with a dev-client `development`
+  profile (+ preview/production), `expo-dev-client`, and `app.json` location +
+  notification plugins so a custom dev build carries the right native permissions.
+  `docs/NATIVE-BUILD.md` walks through building/installing/running it and the
+  on-device follow-ons (MapLibre-native map, push). Validated here: `expo config`
+  resolves all plugins and the web build is unaffected; the device build runs on
+  the developer's machine (EAS + signing credentials).
+
 ## [2.18.1] — 2026-09-05
 
 ### Fixed
@@ -315,6 +326,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.19.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.19.0
 [2.18.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.1
 [2.18.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.0
 [2.17.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.17.0

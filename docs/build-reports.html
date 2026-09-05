@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a><a href="#v2-19-0">v2.19.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -860,7 +860,42 @@
   <div class="files"><h3>Touched</h3><code>server/places/service.ts</code><code>server/places/google.ts (export)</code><code>docs/build-reports.html (v2.18.0 DFD)</code><code>app playwright dep</code></div>
 </div></section>
 
+<!-- ============ v2.19.0 ============ -->
+<section id="v2-19-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.19.0</span><h2>Native dev-build path (EAS)</h2></div>
+  <div class="req"><b>Requested.</b> Set up the native build path — the keystone that lets Wayfare run as a real iOS/Android app (device GPS, native map, push), unlocking the remaining native features.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>EAS config</b> — <code>eas.json</code> with a <code>development</code> profile (dev-client, internal distribution, iOS simulator + Android APK), plus preview + production.</li>
+      <li><b>Dev client</b> — <code>expo-dev-client</code> installed; the app can run outside Expo Go with native modules.</li>
+      <li><b>Native permissions</b> — <code>app.json</code> now declares the <code>expo-location</code> (GPS/heading) and <code>expo-notifications</code> plugins so the build carries the right Info.plist / manifest entries.</li>
+      <li><b>Build guide</b> — <code>docs/NATIVE-BUILD.md</code>: one-time setup, build/install/run, and the on-device follow-ons (MapLibre-native map, push registration).</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>A custom dev client (not Expo Go) is required because the app's native modules — MapLibre native, notifications — aren't in Expo Go. Configuring EAS in-repo means the actual build is a single <code>eas build</code> away; only the account + signing credentials live outside the repo. Keeping the config additive (native-only plugins, dev-client) left the web build untouched <span class="conn">connects → app/app.json · eas.json</span>.</p>
+      <p><b>Verified here:</b> <code>expo config</code> resolves all plugins, web still bundles clean. The device/cloud build itself runs on the developer's machine (EAS auth + Apple/Google credentials) — documented step-by-step rather than run from the repo.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 880 120" role="img" aria-label="Native dev-build path">
+    <defs><marker id="nb" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="42" width="176" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="104" y="61" text-anchor="middle" fill="#fff">eas.json + app.json</text><text x="104" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">dev-client · perms</text>
+      <rect x="232" y="42" width="150" height="44" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="307" y="61" text-anchor="middle" fill="#fff">eas build</text><text x="307" y="77" text-anchor="middle" fill="var(--sub)" font-size="9.5">development</text>
+      <rect x="422" y="42" width="160" height="44" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="502" y="61" text-anchor="middle" fill="var(--ink)" font-size="10.5">dev build on device</text>
+      <rect x="622" y="16" width="160" height="42" rx="10" fill="#3a2e80" stroke="var(--sky)"/><text x="702" y="41" text-anchor="middle" fill="#fff">npm start → Metro</text>
+      <rect x="622" y="66" width="240" height="42" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="742" y="86" text-anchor="middle" fill="var(--ink)" font-size="10">unlocks native map · push</text><text x="742" y="100" text-anchor="middle" fill="var(--sub)" font-size="9">#9b · #6</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M192 64 L228 64" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#nb)"/>
+      <path d="M382 64 L418 64" stroke="var(--marigold)" color="var(--marigold)" marker-end="url(#nb)"/>
+      <path d="M582 56 L618 40" stroke="var(--sky)" color="var(--sky)" marker-end="url(#nb)"/>
+      <path d="M582 72 L618 86" stroke="var(--coral)" color="var(--coral)" stroke-dasharray="3 4" marker-end="url(#nb)"/>
+    </g>
+  </svg></div><figcaption>Config → one eas build → a dev client that runs the app natively and unlocks the native map + push.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>app/eas.json (new)</code><code>app/app.json (plugins)</code><code>expo-dev-client dep</code><code>docs/NATIVE-BUILD.md (new)</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.18.1 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.19.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

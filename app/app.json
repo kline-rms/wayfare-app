@@ -38,7 +38,20 @@
             "backgroundColor": "#141110"
           }
         }
-      ]
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Wayfare uses your location to show where you are on the map and give you turn-by-turn navigation."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#7C5CF6"
+        }
+      ],
+      "expo-dev-client"
     ],
     "experiments": {
       "typedRoutes": true,

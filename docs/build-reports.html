@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -788,7 +788,26 @@
   <div class="files"><h3>Touched</h3><code>types (TripAccess/access)</code><code>members.ts (accept)</code><code>itineraries.ts (canRead+canWrite)</code><code>jsonRepo · firestoreRepo (list)</code><code>api.acceptShare</code><code>shared/[token].tsx</code></div>
 </div></section>
 
+<!-- ============ v2.18.0 ============ -->
+<section id="v2-18-0" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.18.0</span><h2>Self-host-ready routing (server proxy)</h2></div>
+  <div class="req"><b>Requested.</b> Routing hit FOSSGIS's free shared servers directly from every client — fine for dev, risky for production. Make it production-ready and easy to self-host.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>Prerequisites &amp; what was added</h3><ul>
+      <li><b>Routing proxy</b> — <code>GET /api/route/:profile?coords=…&steps=</code> proxies to the configured OSRM and returns the raw OSRM JSON the app already parses.</li>
+      <li><b>One upstream knob</b> — <code>OSRM_URL</code> env overrides every mode (point it at a self-hosted OSRM for production); default is FOSSGIS's per-mode car/foot/bike.</li>
+      <li><b>Cache</b> — a short in-memory TTL so a repeated A→B (live re-routes, walk lines) returns instantly.</li>
+      <li><b>Clients route through us</b> — <code>lib/route.ts</code> now calls our proxy; <code>EXPO_PUBLIC_OSRM_URL</code> still bypasses it for direct dev testing.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why this direction</h3>
+      <p>Centralising the upstream means self-hosting is a one-env change, not an app rebuild, and the clients carry no third-party routing dependency (no CORS surface, no shared-server rate limit hit per device). The cache turns the navigator's frequent re-routes into cheap repeats. Returning OSRM's own JSON shape keeps the client parser untouched <span class="conn">connects → app/lib/route.ts</span>.</p>
+      <p><b>Verified:</b> drive 12.1&nbsp;km / 16&nbsp;min / 13 steps and walk 0.84&nbsp;km / 11&nbsp;min via the proxy; a repeat call served from cache in ~36&nbsp;ms; the in-app navigator confirmed routing through <code>/api/route</code> with 13 steps rendered; bad coords → 400.</p>
+    </div>
+  </div>
+  <div class="files"><h3>Touched</h3><code>server/routes/route.ts (new)</code><code>server/index.ts</code><code>app/lib/route.ts</code><code>env OSRM_URL</code></div>
+</div></section>
+
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.17.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.18.0 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

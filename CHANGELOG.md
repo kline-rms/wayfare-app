@@ -3,6 +3,16 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.18.0] — 2026-09-05
+
+### Changed
+- **Routing now goes through our server (self-host-ready).** New cached
+  `GET /api/route/:profile` proxy with a single configurable upstream — set
+  `OSRM_URL` to a self-hosted OSRM for production (default: FOSSGIS per-mode).
+  Clients no longer hit third-party routing directly (`EXPO_PUBLIC_OSRM_URL` still
+  bypasses for dev). Verified: drive/walk correct through the proxy, cache ~36 ms,
+  navigator routes via `/api/route`.
+
 ## [2.17.0] — 2026-09-05
 
 ### Added
@@ -293,6 +303,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.18.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.0
 [2.17.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.17.0
 [2.16.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.16.0
 [2.15.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.15.0

@@ -166,7 +166,8 @@ monorepo config).
 | `release/v2.14.1` · tag `v2.14.1` | + Fix: save opens the new trip |
 | `release/v2.15.0` · tag `v2.15.0` | + Row-level spreadsheet importer |
 | `release/v2.16.0` · tag `v2.16.0` | + Split-party assignment |
-| `release/v2.17.0` · tag `v2.17.0` | + Cross-account auth (accept a share) (current) |
+| `release/v2.17.0` · tag `v2.17.0` | + Cross-account auth (accept a share) |
+| `release/v2.18.0` · tag `v2.18.0` | + Self-host-ready routing proxy (current) |
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for what changed between versions.
 

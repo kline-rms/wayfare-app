@@ -3,6 +3,18 @@
 All notable changes to Wayfare. Format based on [Keep a Changelog](https://keepachangelog.com/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [2.18.1] — 2026-09-05
+
+### Fixed
+- **No failed photo requests when the Places gate is off.** `getPlaceCard` now
+  omits photo URLs unless the gate allows resolving them, so cards fall back to
+  stock immediately instead of firing a `/photo` request that 404s (ORB-blocked).
+
+### Housekeeping
+- Restored Playwright so the smoke suite runs (8/8 clean). Kept the Places gate
+  **OFF** as the default (money-safe). Added the graphify DFD that v2.18.0 was
+  missing — every report section now carries one.
+
 ## [2.18.0] — 2026-09-05
 
 ### Changed
@@ -303,6 +315,7 @@ Initial Wayfare app.
 - Fastify read API, shared TypeScript types, and the design canvas.
 - Installable Android APK (arm64-v8a) under `releases/`.
 
+[2.18.1]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.1
 [2.18.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.18.0
 [2.17.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.17.0
 [2.16.0]: https://github.com/kline-rms/wayfare-app/releases/tag/v2.16.0

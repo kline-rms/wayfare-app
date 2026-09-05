@@ -80,7 +80,7 @@
 <nav class="toc"><div class="wrap">
   <a class="eco" href="#eco">Eco-cycle</a>
   <a href="#v2-0-0">v2.0.0</a><a href="#v2-1-0">v2.1.0</a><a href="#v2-2-0">v2.2.0</a>
-  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a>
+  <a href="#v2-3-0">v2.3.0</a><a href="#v2-4-0">v2.4.0</a><a href="#v2-5-0">v2.5.0</a><a href="#v2-6-0">v2.6.0</a><a href="#v2-7-0">v2.7.0</a><a href="#v2-8-0">v2.8.0</a><a href="#v2-9-0">v2.9.0</a><a href="#v2-10-0">v2.10.0</a><a href="#v2-11-0">v2.11.0</a><a href="#v2-12-0">v2.12.0</a><a href="#v2-13-0">v2.13.0</a><a href="#v2-14-0">v2.14.0</a><a href="#v2-14-1">v2.14.1</a><a href="#v2-15-0">v2.15.0</a><a href="#v2-16-0">v2.16.0</a><a href="#v2-17-0">v2.17.0</a><a href="#v2-18-0">v2.18.0</a><a href="#v2-18-1">v2.18.1</a>
 </div></nav>
 
 <!-- ============ MASTER ECO-CYCLE ============ -->
@@ -804,10 +804,63 @@
       <p><b>Verified:</b> drive 12.1&nbsp;km / 16&nbsp;min / 13 steps and walk 0.84&nbsp;km / 11&nbsp;min via the proxy; a repeat call served from cache in ~36&nbsp;ms; the in-app navigator confirmed routing through <code>/api/route</code> with 13 steps rendered; bad coords → 400.</p>
     </div>
   </div>
+    <figure><div class="dfd-scroll"><svg viewBox="0 0 860 118" role="img" aria-label="Routing proxy data flow">
+    <defs><marker id="rp" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="40" width="160" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="96" y="59" text-anchor="middle" fill="#fff">app lib/route</text><text x="96" y="75" text-anchor="middle" fill="var(--sub)" font-size="9.5">directions / walk</text>
+      <rect x="216" y="40" width="180" height="44" rx="10" fill="#3a2e80" stroke="var(--marigold)"/><text x="306" y="59" text-anchor="middle" fill="#fff">/api/route proxy</text><text x="306" y="75" text-anchor="middle" fill="var(--sub)" font-size="9.5">cache · one upstream</text>
+      <rect x="436" y="16" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="536" y="41" text-anchor="middle" fill="var(--ink)" font-size="10.5">cache hit → instant</text>
+      <rect x="436" y="66" width="200" height="42" rx="10" fill="var(--card)" stroke="var(--sky)"/><text x="536" y="91" text-anchor="middle" fill="var(--ink)" font-size="10">OSRM_URL / FOSSGIS</text>
+      <rect x="676" y="66" width="168" height="42" rx="10" fill="var(--night2)" stroke="var(--sky)"/><text x="760" y="91" text-anchor="middle" fill="var(--sub)" font-size="10">self-host = 1 env</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M176 62 L212 62" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#rp)"/>
+      <path d="M396 54 L432 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#rp)"/>
+      <path d="M396 70 L432 86" stroke="var(--sky)" color="var(--sky)" marker-end="url(#rp)"/>
+      <path d="M636 87 L672 87" stroke="var(--sky)" color="var(--sky)" marker-end="url(#rp)"/>
+    </g>
+  </svg></div><figcaption>Clients route through our cached proxy; the upstream is one env away from self-hosted.</figcaption></figure>
   <div class="files"><h3>Touched</h3><code>server/routes/route.ts (new)</code><code>server/index.ts</code><code>app/lib/route.ts</code><code>env OSRM_URL</code></div>
+</div></section>
+
+<!-- ============ v2.18.1 ============ -->
+<section id="v2-18-1" class="ver"><div class="wrap">
+  <div class="verhead"><span class="tag">v2.18.1</span><h2>Housekeeping — gate-off photos, Playwright, DFD backfill</h2></div>
+  <div class="req"><b>Requested.</b> Housekeeping: settle the Places-gate default, restore the smoke test, and (per "use graphify always") add the DFD I skipped on v2.18.0.</div>
+  <div class="grid2">
+    <div class="panel prereq"><h3>What changed</h3><ul>
+      <li><b>Gate-off photo bug</b> — with the gate off, cards still advertised photo URLs, so <code>PlacePhoto</code> fired <code>/photo</code> requests that 404'd (ORB-blocked) before falling back. <code>getPlaceCard</code> now returns <code>photoUrls: []</code> unless <code>placesAllowed()</code> — the app shows stock straight away.</li>
+      <li><b>Playwright restored</b> — reinstalled so the smoke suite runs again (now 8/8 clean).</li>
+      <li><b>Gate default = OFF</b> — kept: money-safety must not depend on remembering to turn it off; a restart returns to safe.</li>
+      <li><b>DFD backfill</b> — added the graphify diagram v2.18.0 was missing; every version section now carries one.</li>
+    </ul></div>
+    <div class="panel why"><h3>Why</h3>
+      <p>The card is the single source of "are there photos here", so gating <code>photoUrls</code> there fixes every surface at once (collage, day thumbs, hero) with no client change <span class="conn">connects → server/places/service.ts</span> — and removes a noisy failed request on every gate-off render.</p>
+      <p>Kept <code>map-first-3d-redesign</code> (it's the active working branch, not stale). Verified: 8/8 smoke clean with the gate off.</p>
+    </div>
+  </div>
+  <figure><div class="dfd-scroll"><svg viewBox="0 0 820 118" role="img" aria-label="Gate-off photo handling">
+    <defs><marker id="hk" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker></defs>
+    <g font-family="DM Mono" font-size="11">
+      <rect x="16" y="40" width="160" height="44" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="96" y="59" text-anchor="middle" fill="#fff">getPlaceCard</text><text x="96" y="75" text-anchor="middle" fill="var(--sub)" font-size="9.5">placesAllowed()?</text>
+      <rect x="236" y="16" width="180" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="326" y="41" text-anchor="middle" fill="var(--ink)" font-size="10.5">ON → photoUrls[]</text>
+      <rect x="236" y="66" width="180" height="42" rx="10" fill="var(--night2)" stroke="var(--coral)"/><text x="326" y="91" text-anchor="middle" fill="var(--sub)" font-size="10">OFF → [] (no /photo)</text>
+      <rect x="476" y="16" width="170" height="42" rx="10" fill="#3a2e80" stroke="var(--grape)"/><text x="561" y="41" text-anchor="middle" fill="#fff">PlacePhoto</text>
+      <rect x="676" y="16" width="130" height="42" rx="10" fill="var(--card)" stroke="var(--mint)"/><text x="741" y="41" text-anchor="middle" fill="var(--ink)" font-size="10">real photo</text>
+      <rect x="676" y="66" width="130" height="42" rx="10" fill="var(--night2)" stroke="var(--sub)"/><text x="741" y="91" text-anchor="middle" fill="var(--sub)" font-size="10">stock</text>
+    </g>
+    <g fill="none" stroke-width="1.6">
+      <path d="M176 54 L232 40" stroke="var(--mint)" color="var(--mint)" marker-end="url(#hk)"/>
+      <path d="M176 70 L232 86" stroke="var(--coral)" color="var(--coral)" stroke-dasharray="3 4" marker-end="url(#hk)"/>
+      <path d="M416 37 L472 37" stroke="var(--grape-hi)" color="var(--grape-hi)" marker-end="url(#hk)"/>
+      <path d="M646 33 L672 33" stroke="var(--mint)" color="var(--mint)" marker-end="url(#hk)"/>
+      <path d="M561 58 L710 66" stroke="var(--sub)" color="var(--sub)" stroke-dasharray="3 4" marker-end="url(#hk)"/>
+    </g>
+  </svg></div><figcaption>The card gates photo URLs, so gate-off renders show stock with no failed request.</figcaption></figure>
+  <div class="files"><h3>Touched</h3><code>server/places/service.ts</code><code>server/places/google.ts (export)</code><code>docs/build-reports.html (v2.18.0 DFD)</code><code>app playwright dep</code></div>
 </div></section>
 
 <footer><div class="wrap">
   <div class="disp" style="font-size:22px;color:var(--ink)">Wayfare</div>
-  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.18.0 · one eco-cycle, one document, one reactive loop</p>
+  <p class="mono" style="margin-top:8px">Build reports · v1.0.0 → v2.18.1 · one eco-cycle, one document, one reactive loop</p>
 </div></footer>

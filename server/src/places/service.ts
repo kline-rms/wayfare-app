@@ -9,7 +9,7 @@
 //   - review text ............... served live (getPlaceReviews), never stored
 import type { CachedPlace, PlaceCard, PlaceReview } from "../../../packages/shared/src/index.ts";
 import type { Repo } from "../repo/types.ts";
-import { searchPlaceId, fetchDetails, fetchReviews, resolvePhotoUri } from "./google.ts";
+import { searchPlaceId, fetchDetails, fetchReviews, resolvePhotoUri, placesAllowed } from "./google.ts";
 
 /** Facts stay "fresh" for 30 days, then the next access triggers a cheap refresh. */
 const TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -95,9 +95,13 @@ export async function enrichPlace(input: EnrichInput, repo: Repo, itineraryId?: 
 export async function getPlaceCard(placeId: string, repo: Repo, originBase: string): Promise<PlaceCard | null> {
   const p = await repo.getCachedPlace(placeId);
   if (!p) return null;
-  const photoUrls = (p.photoRefs ?? []).map(
-    (ref) => `${originBase}/api/places/${encodeURIComponent(placeId)}/photo?ref=${encodeURIComponent(ref)}&w=800`,
-  );
+  // Only advertise photo URLs when the gate can actually resolve them; otherwise
+  // the app would fire /photo requests that 404 (gate off) before falling back.
+  const photoUrls = placesAllowed()
+    ? (p.photoRefs ?? []).map(
+        (ref) => `${originBase}/api/places/${encodeURIComponent(placeId)}/photo?ref=${encodeURIComponent(ref)}&w=800`,
+      )
+    : [];
   return {
     placeId: p.placeId,
     name: p.name,

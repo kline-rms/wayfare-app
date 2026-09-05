@@ -15,7 +15,7 @@ const BASE = "https://places.googleapis.com/v1";
 // THE GATE. Every Google-Places call passes through this. A request only goes out
 // when there's a key AND the runtime toggle is ON — otherwise we never touch the
 // network (no spend). Gated attempts are logged so we can see they were blocked.
-function placesAllowed(): boolean {
+export function placesAllowed(): boolean {
   if (!env.hasGoogleMaps) return false;
   if (!getPlacesEnabled()) {
     console.log("[places] gate OFF — request blocked (no spend)");
